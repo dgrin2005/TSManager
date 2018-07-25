@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="ru.trustsoft.model.UsersEntity" table="users" schema="tsmngr">
+        <id name="userid">
+            <column name="userid" sql-type="int(11)"/>
+        </id>
+        <property name="username">
+            <column name="username" sql-type="text"/>
+        </property>
+        <property name="userpassword">
+            <column name="userpassword" sql-type="text"/>
+        </property>
+        <property name="description">
+            <column name="description" sql-type="text" not-null="true"/>
+        </property>
+        <property name="islocked">
+            <column name="islocked" sql-type="tinyint(1)"/>
+        </property>
+    </class>
+</hibernate-mapping>
