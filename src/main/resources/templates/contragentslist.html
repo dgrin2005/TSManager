@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Contragents List</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<h1>Contragents List</h1>
+<a href="addcontragent">Add Contragent</a>
+<br/>
+<a href="removecontragent">Remove Contragent</a>
+<br/><br/>
+<div>
+    <table border="1">
+        <tr>
+            <th>Contragent ID</th>
+            <th>Contragent Name</th>
+            <th>Description</th>
+        </tr>
+        <tr th:each ="contragent : ${contragents}">
+            <td th:utext="${contragent.contragentid}">...</td>
+            <td th:utext="${contragent.contragentname}">...</td>
+            <td th:utext="${contragent.description}">...</td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

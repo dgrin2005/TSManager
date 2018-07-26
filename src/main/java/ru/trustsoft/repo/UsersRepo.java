@@ -1,4 +1,4 @@
-package ru.trustsoft.dao;
+package ru.trustsoft.repo;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,12 +7,12 @@ import ru.trustsoft.model.UsersEntity;
 import java.util.List;
 
 @Transactional
-public interface UsersDao extends CrudRepository<UsersEntity, Long> {
+public interface UsersRepo extends CrudRepository<UsersEntity, Long> {
 
     UsersEntity findByUsername(String username);
 
-    public UsersEntity findByUserid(int userid);
+    UsersEntity findByUserid(int userid);
 
-    public List<UsersEntity> findByIslocked(boolean islocked);
+    List<UsersEntity> findByIslocked(boolean islocked);
 
 }

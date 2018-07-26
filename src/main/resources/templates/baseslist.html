@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Bases List</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<h1>Bases List</h1>
+<a href="addbase">Add Base</a>
+<br/>
+<a href="removebase">Remove Base</a>
+<br/><br/>
+<div>
+    <table border="1">
+        <tr>
+            <th>Base ID</th>
+            <th>Base Name</th>
+            <th>Description</th>
+        </tr>
+        <tr th:each ="base : ${bases}">
+            <td th:utext="${base.baseid}">...</td>
+            <td th:utext="${base.basename}">...</td>
+            <td th:utext="${base.description}">...</td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>
