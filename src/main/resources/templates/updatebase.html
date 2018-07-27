@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Remove User</title>
+    <title>Update Base</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<h1>Remove a User:</h1>
+<h1>Update a Base:</h1>
 
 <!--
    In Thymeleaf the equivalent of
@@ -14,16 +14,25 @@
    would be @{/edit.html}
    -->
 
-<form th:action="@{/removeuser}"
-      th:object="${userform}" method="POST">
-    User Name:
-    <input type="text" th:field="*{username}" />
+
+<form th:action="@{/updatebase}"
+      th:object="${baseform}" method="POST">
+    <form th:object="${baseform1}">
+        Selected Base Name:
+        <input type="text" th:field="*{basename}" />
+        <br/>
+    </form>
+    New Base Name:
+    <input type="text" th:field="*{basename}" />
     <br/>
-    <input type="submit" value="Remove" />
+    New Description:
+    <input type="text" th:field="*{description}" />
+    <br/>
+    <input type="submit" value="Update" />
 </form>
 
 <br/>
-<a href="userslist">Back to list</a>
+<a href="baseslist">Back to list</a>
 
 <br/>
 

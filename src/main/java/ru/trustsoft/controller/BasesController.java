@@ -156,6 +156,42 @@ public class BasesController {
         return "removebase";
     }
 
+    @GetMapping(path="/updatebase")
+    public String showUpdateBasePage(Model model) {
+
+        BasesEntity base = new BasesEntity();
+        BasesEntity base1 = new BasesEntity();
+        model.addAttribute("baseform", base);
+        model.addAttribute("baseform1", base1);
+
+        return "updatebase";
+    }
+
+    @RequestMapping(value = { "/updatebase" }, method = RequestMethod.POST)
+    public String updateBase(Model model, @ModelAttribute("baseform") BasesEntity baseform, @ModelAttribute("baseform1") BasesEntity baseform1) {
+
+        String selectedbasename = baseform1.getBasename();
+        String basename = baseform.getBasename();
+        String description = baseform.getDescription();
+
+        try {
+            BasesEntity base = baseRepo.findByBasename(selectedbasename);
+            base.setBasename(basename);
+            base.setDescription(description);
+            baseRepo.save(base);
+            //return "Base succesfully updated";
+            return "redirect:/baseslist";
+        }
+        catch (Exception ex) {
+            //return "Error creating the base: " + ex.toString();
+
+            model.addAttribute("errorMessage", "! : " + selectedbasename + "!! : " + basename);
+            //model.addAttribute("errorMessage", "Error updating the base: " + ex.toString());
+        }
+
+        return "updatebase";
+    }
+
     // Private fields
 
     @Autowired
@@ -163,5 +199,7 @@ public class BasesController {
 
     @Value("${error.message}")
     private String errorMessage;
+
+    private BasesEntity baseSelected;
 
 }
