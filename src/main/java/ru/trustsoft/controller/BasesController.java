@@ -1,7 +1,6 @@
 package ru.trustsoft.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,140 +11,47 @@ import ru.trustsoft.model.BasesEntity;
 @RequestMapping(path="/")
 public class BasesController {
 
-/*
-    @GetMapping("/create-base")
-    @ResponseBody
-    public String create(String basename, String description) {
-        String baseId = "";
-        try {
-            BasesEntity base = new BasesEntity(basename, description);
-            baseRepo.save(base);
-            baseId = String.valueOf(base.getBaseid());
-        }
-        catch (Exception ex) {
-            return "Error creating the base: " + ex.toString();
-        }
-        return "Base succesfully created with id = " + baseId;
-    }
-
-    @GetMapping("/delete-base")
-    @ResponseBody
-    public String delete(String basename) {
-        try {
-            BasesEntity base = baseRepo.findByBasename(basename);
-            baseRepo.delete(base);
-        }
-        catch (Exception ex) {
-            return "Error deleting the base:" + ex.toString();
-        }
-        return "Base succesfully deleted!";
-    }
-
-    @GetMapping("/get-by-name-base")
-    @ResponseBody
-    public String getByName(String basename) {
-        String baseId = "";
-        try {
-            BasesEntity base = baseRepo.findByBasename(basename);
-            baseId = String.valueOf(base.getBaseid());
-        }
-        catch (Exception ex) {
-            return "Base not found";
-        }
-        return "The base id is: " + baseId;
-    }
-
-    @GetMapping("/get-by-id-base")
-    @ResponseBody
-    public String getById(int baseid) {
-        String baseName = "";
-        try {
-            BasesEntity base = baseRepo.findByBaseid(baseid);
-            baseName = base.toString();
-        }
-        catch (Exception ex) {
-            return "Base not found";
-        }
-        return "The base name is: " + baseName;
-    }
-
-    @GetMapping("/update-base")
-    @ResponseBody
-    public String updateBase(String basename, String description) {
-        try {
-            BasesEntity base = baseRepo.findByBasename(basename);
-            base.setDescription(description);
-            baseRepo.save(base);
-        }
-        catch (Exception ex) {
-            return "Error updating the base: " + ex.toString();
-        }
-        return "Base succesfully updated!";
-    }
-
-    @GetMapping(path="/all-base")
-    @ResponseBody
-    public Iterable<BasesEntity> getAllUsers() {
-        // This returns a JSON or XML with the users
-        return baseRepo.findAll();
-    }
-*/
+    private BasesEntity findedBase = null;
 
     @GetMapping(path="/baseslist")
     public String basesList(Model model) {
 
+        BasesEntity base = new BasesEntity();
+        if (findedBase != null) {
+            base = findedBase;
+        }
         model.addAttribute("bases", baseRepo.findAll());
+        model.addAttribute("baseform", base);
 
         return "baseslist";
     }
 
-    @GetMapping(path="/addbase")
-    public String showAddBasePage(Model model) {
-
-        BasesEntity base = new BasesEntity();
-        model.addAttribute("baseform", base);
-
-        return "addbase";
-    }
-
-    @RequestMapping(value = { "/addbase" }, method = RequestMethod.POST)
-    public String saveBase(Model model, @ModelAttribute("baseform") BasesEntity baseform) {
+    @RequestMapping(value = { "/baseslist" }, params={"add"}, method = RequestMethod.POST)
+    public String addBase(Model model, @ModelAttribute("baseform") BasesEntity baseform) {
 
         String basename = baseform.getBasename();
         String description = baseform.getDescription();
 
-        String baseId = "";
         try {
             BasesEntity base = new BasesEntity(basename, description);
             baseRepo.save(base);
-            baseId = String.valueOf(base.getBaseid());
-            //return "Base succesfully created with id = " + baseId;
             return "redirect:/baseslist";
         }
         catch (Exception ex) {
-            //return "Error creating the base: " + ex.toString();
             model.addAttribute("errorMessage", "Error creating the base: " + ex.toString());
         }
 
-        return "addbase";
+        return "baseslist";
     }
 
-    @GetMapping(path="/removebase")
-    public String showRemoveBasePage(Model model) {
+    @RequestMapping(value = { "/baseslist" }, params={"delete"}, method = RequestMethod.POST)
+    public String deleteBase(Model model, @ModelAttribute("baseform") BasesEntity baseform) {
 
-        BasesEntity base = new BasesEntity();
-        model.addAttribute("baseform", base);
-
-        return "removebase";
-    }
-
-    @RequestMapping(value = { "/removebase" }, method = RequestMethod.POST)
-    public String removeBase(Model model, @ModelAttribute("baseform") BasesEntity baseform) {
-
-        String basename = baseform.getBasename();
+        int baseid = baseform.getBaseid();
+        findedBase = null;
 
         try {
-            BasesEntity base = baseRepo.findByBasename(basename);
+            BasesEntity base = baseRepo.findByBaseid(baseid);
             baseRepo.delete(base);
             return "redirect:/baseslist";
         }
@@ -153,43 +59,45 @@ public class BasesController {
             model.addAttribute("errorMessage", "Error deleting the base:" + ex.toString());
         }
 
-        return "removebase";
+        return "baseslist";
     }
 
-    @GetMapping(path="/updatebase")
-    public String showUpdateBasePage(Model model) {
+    @RequestMapping(value = { "/baseslist" }, params={"update"}, method = RequestMethod.POST)
+    public String updateBase(Model model, @ModelAttribute("baseform") BasesEntity baseform) {
 
-        BasesEntity base = new BasesEntity();
-        BasesEntity base1 = new BasesEntity();
-        model.addAttribute("baseform", base);
-        model.addAttribute("baseform1", base1);
-
-        return "updatebase";
-    }
-
-    @RequestMapping(value = { "/updatebase" }, method = RequestMethod.POST)
-    public String updateBase(Model model, @ModelAttribute("baseform") BasesEntity baseform, @ModelAttribute("baseform1") BasesEntity baseform1) {
-
-        String selectedbasename = baseform1.getBasename();
+        int baseid = baseform.getBaseid();
         String basename = baseform.getBasename();
         String description = baseform.getDescription();
+        findedBase = null;
 
         try {
-            BasesEntity base = baseRepo.findByBasename(selectedbasename);
+            BasesEntity base = baseRepo.findByBaseid(baseid);
             base.setBasename(basename);
             base.setDescription(description);
             baseRepo.save(base);
-            //return "Base succesfully updated";
             return "redirect:/baseslist";
         }
         catch (Exception ex) {
-            //return "Error creating the base: " + ex.toString();
-
-            model.addAttribute("errorMessage", "! : " + selectedbasename + "!! : " + basename);
-            //model.addAttribute("errorMessage", "Error updating the base: " + ex.toString());
+            model.addAttribute("errorMessage", "Error updating the base:" + ex.toString());
         }
 
-        return "updatebase";
+        return "baseslist";
+    }
+
+    @RequestMapping(value = { "/baseslist" }, params={"findbyid"}, method = RequestMethod.POST)
+    public String findByIdBase(Model model, @ModelAttribute("baseform") BasesEntity baseform) {
+
+        int baseid = baseform.getBaseid();
+
+        try {
+            findedBase = baseRepo.findByBaseid(baseid);
+            return "redirect:/baseslist";
+        }
+        catch (Exception ex) {
+            model.addAttribute("errorMessage", "Error finding the base:" + ex.toString());
+        }
+
+        return "baseslist";
     }
 
     // Private fields
@@ -197,9 +105,6 @@ public class BasesController {
     @Autowired
     private BasesRepo baseRepo;
 
-    @Value("${error.message}")
     private String errorMessage;
-
-    private BasesEntity baseSelected;
 
 }

@@ -1,173 +1,59 @@
 package ru.trustsoft.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.trustsoft.repo.UsersRepo;
 import ru.trustsoft.model.UsersEntity;
 
-import java.util.List;
-
 @Controller
 @RequestMapping(path="/")
 public class UsersController {
 
-/*
-    @GetMapping("/create-user")
-    @ResponseBody
-    public String create(String username, String userpassword, String description, boolean islocked) {
-        String userId = "";
-        try {
-            UsersEntity user = new UsersEntity(username, userpassword, description, islocked);
-            userRepo.save(user);
-            userId = String.valueOf(user.getUserid());
-        }
-        catch (Exception ex) {
-            return "Error creating the user: " + ex.toString();
-        }
-        return "User succesfully created with id = " + userId;
-    }
-
-    @GetMapping("/delete-user")
-    @ResponseBody
-    public String delete(String username) {
-        try {
-            UsersEntity user = userRepo.findByUsername(username);
-            userRepo.delete(user);
-        }
-        catch (Exception ex) {
-            return "Error deleting the user:" + ex.toString();
-        }
-        return "User succesfully deleted!";
-    }
-
-    @GetMapping("/get-by-name-user")
-    @ResponseBody
-    public String getByName(String username) {
-        String userId = "";
-        try {
-            UsersEntity user = userRepo.findByUsername(username);
-            userId = String.valueOf(user.getUserid());
-        }
-        catch (Exception ex) {
-            return "User not found";
-        }
-        return "The user id is: " + userId;
-    }
-
-    @GetMapping("/get-by-id-user")
-    @ResponseBody
-    public String getById(int userid) {
-        String userName = "";
-        try {
-            UsersEntity user = userRepo.findByUserid(userid);
-            userName = user.toString();
-        }
-        catch (Exception ex) {
-            return "User not found";
-        }
-        return "The user name is: " + userName;
-    }
-
-    @GetMapping("/get-by-locked-user")
-    @ResponseBody
-    public String getByLocked(boolean islocked) {
-        String userName = "";
-        try {
-            List<UsersEntity> users = userRepo.findByIslocked(islocked);
-            userName = users.toString();
-        }
-        catch (Exception ex) {
-            return "Users not found";
-        }
-        return "The users names are: " + userName;
-    }
-
-    @GetMapping("/update-user")
-    @ResponseBody
-    public String updateUser(String username, String userpassword, String description, boolean islocked) {
-        try {
-            UsersEntity user = userRepo.findByUsername(username);
-            user.setUserpassword(userpassword);
-            user.setDescription(description);
-            user.setIslocked(islocked);
-            userRepo.save(user);
-        }
-        catch (Exception ex) {
-            return "Error updating the user: " + ex.toString();
-        }
-        return "User succesfully updated!";
-    }
-
-    @GetMapping(path="/all-user")
-    @ResponseBody
-    public Iterable<UsersEntity> getAllUsers() {
-        // This returns a JSON or XML with the users
-        return userRepo.findAll();
-    }
-*/
+    private UsersEntity findedUser = null;
 
     @GetMapping(path="/userslist")
     public String usersList(Model model) {
 
+        UsersEntity user = new UsersEntity();
+        if (findedUser != null) {
+            user = findedUser;
+        }
         model.addAttribute("users", userRepo.findAll());
+        model.addAttribute("userform", user);
 
         return "userslist";
     }
 
-    @GetMapping(path="/adduser")
-    public String showAddUserPage(Model model) {
-
-        UsersEntity user = new UsersEntity();
-        model.addAttribute("userform", user);
-
-        return "adduser";
-    }
-
-    @RequestMapping(value = { "/adduser" }, method = RequestMethod.POST)
-    public String saveUser(Model model, @ModelAttribute("userform") UsersEntity userform) {
+    @RequestMapping(value = { "/userslist" }, params={"add"}, method = RequestMethod.POST)
+    public String addUser(Model model, @ModelAttribute("userform") UsersEntity userform) {
 
         String username = userform.getUsername();
         String userpassword = userform.getUserpassword();
         String description = userform.getDescription();
-        Boolean islocked = userform.getIslocked();
+        boolean isLocked = userform.getIslocked();
 
-        String userId = "";
         try {
-            UsersEntity user = new UsersEntity(username, userpassword, description, islocked);
+            UsersEntity user = new UsersEntity(username, userpassword, description, isLocked);
             userRepo.save(user);
-            userId = String.valueOf(user.getUserid());
-            //return "User succesfully created with id = " + userId;
             return "redirect:/userslist";
         }
         catch (Exception ex) {
-            //return "Error creating the user: " + ex.toString();
             model.addAttribute("errorMessage", "Error creating the user: " + ex.toString());
         }
 
-        //model.addAttribute("errorMessage", errorMessage);
-
-        return "adduser";
+        return "userslist";
     }
 
-    @GetMapping(path="/removeuser")
-    public String showRemoveUserPage(Model model) {
+    @RequestMapping(value = { "/userslist" }, params={"delete"}, method = RequestMethod.POST)
+    public String deleteUser(Model model, @ModelAttribute("userform") UsersEntity userform) {
 
-        UsersEntity user = new UsersEntity();
-        model.addAttribute("userform", user);
-
-        return "removeuser";
-    }
-
-    @RequestMapping(value = { "/removeuser" }, method = RequestMethod.POST)
-    public String removeUser(Model model, @ModelAttribute("userform") UsersEntity userform) {
-
-        String username = userform.getUsername();
+        int userid = userform.getUserid();
+        findedUser = null;
 
         try {
-            UsersEntity user = userRepo.findByUsername(username);
+            UsersEntity user = userRepo.findByUserid(userid);
             userRepo.delete(user);
             return "redirect:/userslist";
         }
@@ -175,7 +61,49 @@ public class UsersController {
             model.addAttribute("errorMessage", "Error deleting the user:" + ex.toString());
         }
 
-        return "removeuser";
+        return "userslist";
+    }
+
+    @RequestMapping(value = { "/userslist" }, params={"update"}, method = RequestMethod.POST)
+    public String updateUser(Model model, @ModelAttribute("userform") UsersEntity userform) {
+
+        int userid = userform.getUserid();
+        String username = userform.getUsername();
+        String userpassword = userform.getUserpassword();
+        String description = userform.getDescription();
+        boolean isLocked = userform.getIslocked();
+        findedUser = null;
+
+        try {
+            UsersEntity user = userRepo.findByUserid(userid);
+            user.setUsername(username);
+            user.setUserpassword(userpassword);
+            user.setDescription(description);
+            user.setIslocked(isLocked);
+            userRepo.save(user);
+            return "redirect:/userslist";
+        }
+        catch (Exception ex) {
+            model.addAttribute("errorMessage", "Error updating the user:" + ex.toString());
+        }
+
+        return "userslist";
+    }
+
+    @RequestMapping(value = { "/userslist" }, params={"findbyid"}, method = RequestMethod.POST)
+    public String findByIdContragent(Model model, @ModelAttribute("userform") UsersEntity userform) {
+
+        int userid = userform.getUserid();
+
+        try {
+            findedUser = userRepo.findByUserid(userid);
+            return "redirect:/userslist";
+        }
+        catch (Exception ex) {
+            model.addAttribute("errorMessage", "Error finding the user:" + ex.toString());
+        }
+
+        return "userslist";
     }
 
     // Private fields
@@ -183,7 +111,6 @@ public class UsersController {
     @Autowired
     private UsersRepo userRepo;
 
-    @Value("${error.message}")
     private String errorMessage;
 
 }

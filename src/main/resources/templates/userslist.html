@@ -7,10 +7,6 @@
 </head>
 <body>
 <h1>Users List</h1>
-<a href="adduser">Add User</a>
-<br/>
-<a href="removeuser">Remove User</a>
-<br/><br/>
 <div>
     <table border="1">
         <tr>
@@ -30,7 +26,37 @@
     </table>
 </div>
 <br/>
+<h2>User Form</h2>
+<form th:object="${userform}" method="POST">
+    User ID:
+    <input type="text" th:field="*{userid}" />
+    <button type="submit" name="findbyid">Find by ID</button>
+    <br/>
+    User Name:
+    <input type="text" th:field="*{username}" />
+    <br/>
+    User Password:
+    <input type="password" th:field="*{userpassword}" />
+    <br/>
+    Description:
+    <input type="text" th:field="*{description}" />
+    <br/>
+    Is Locked:
+    <input type="checkbox" th:field="*{islocked}" />
+    <br/>
+    <button type="submit" name="add">Add user</button>
+    <button type="submit" name="delete">Delete user</button>
+    <button type="submit" name="update">Update user</button>
+</form>
+<br/>
+
 <a href="/">To the main page</a>
+
+<!-- Check if errorMessage is not null and not empty -->
+<div th:if="${errorMessage}" th:utext="${errorMessage}"
+     style="color:red;font-style:italic;">
+    ...
+</div>
 
 </body>
 </html>

@@ -7,10 +7,6 @@
 </head>
 <body>
 <h1>Contragents List</h1>
-<a href="addcontragent">Add Contragent</a>
-<br/>
-<a href="removecontragent">Remove Contragent</a>
-<br/><br/>
 <div>
     <table border="1">
         <tr>
@@ -26,7 +22,31 @@
     </table>
 </div>
 <br/>
+<h2>Contragent Form</h2>
+<form th:object="${contragentform}" method="POST">
+    Contragent ID:
+    <input type="text" th:field="*{contragentid}" />
+    <button type="submit" name="findbyid">Find by ID</button>
+    <br/>
+    Contragent Name:
+    <input type="text" th:field="*{contragentname}" />
+    <br/>
+    Description:
+    <input type="text" th:field="*{description}" />
+    <br/>
+    <button type="submit" name="add">Add contragent</button>
+    <button type="submit" name="delete">Delete contragent</button>
+    <button type="submit" name="update">Update contragent</button>
+</form>
+<br/>
+
 <a href="/">To the main page</a>
+
+<!-- Check if errorMessage is not null and not empty -->
+<div th:if="${errorMessage}" th:utext="${errorMessage}"
+     style="color:red;font-style:italic;">
+    ...
+</div>
 
 </body>
 </html>
