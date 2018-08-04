@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Bases List</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+
+<form th:object="${userform}" method="POST">
+    User ID:
+    <input type="text" th:field="*{userid}" />
+    <button type="submit" name="findbyid">Find by ID</button>
+</form>
+<h1>Bases List</h1>
+<div>
+    <table border="1">
+        <tr>
+            <th>Base ID</th>
+            <th>Base Name</th>
+            <th>Description</th>
+        </tr>
+        <tr th:each ="base : ${basesofuser}">
+            <td th:utext="${base.getBase().baseid}">...</td>
+            <td th:utext="${base.getBase().basename}">...</td>
+            <td th:utext="${base.getBase().description}">...</td>
+        </tr>
+    </table>
+</div>
+
+
+
+<a href="/">To the main page</a>
+
+</body>
+</html>
