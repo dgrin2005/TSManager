@@ -1,4 +1,4 @@
-package ru.trustsoft;
+package ru.trustsoft.model;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -9,10 +9,22 @@ public class Bases {
     private int id;
     private String basename;
     private String description;
+    private int contragentid;
     private Contragents contragentsByContragentid;
     private Collection<Basesofusers> basesofusersById;
 
+    public Bases() {
+    }
+
+    public Bases(String basename, String description, Contragents contragentsByContragentid) {
+        this.basename = basename;
+        this.description = description;
+        this.contragentsByContragentid = contragentsByContragentid;
+        this.contragentid = contragentsByContragentid.getId();
+    }
+
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     public int getId() {
         return id;
@@ -56,6 +68,16 @@ public class Bases {
     public int hashCode() {
 
         return Objects.hash(id, basename, description);
+    }
+
+    @Basic
+    @Column(name = "contragentid", nullable = false, length = -1)
+    public int getContragentid() {
+        return contragentid;
+    }
+
+    public void setContragentid(int contragentid) {
+        this.contragentid = contragentid;
     }
 
     @ManyToOne

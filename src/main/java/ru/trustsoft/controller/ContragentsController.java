@@ -4,19 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.trustsoft.repo.ContragentssRepo;
-import ru.trustsoft.model.ContragentsEntity;
+import ru.trustsoft.model.Contragents;
+import ru.trustsoft.repo.ContragentsRepo;
 
 @Controller
 @RequestMapping(path="/")
 public class ContragentsController {
 
-    private ContragentsEntity findedContragent = null;
+    private Contragents findedContragent = null;
 
     @GetMapping(path="/contragentslist")
     public String contragentsList(Model model) {
 
-        ContragentsEntity contragent = new ContragentsEntity();
+        Contragents contragent = new Contragents();
         if (findedContragent != null) {
             contragent = findedContragent;
         }
@@ -27,52 +27,49 @@ public class ContragentsController {
     }
 
     @RequestMapping(value = { "/contragentslist" }, params={"add"}, method = RequestMethod.POST)
-    public String addContragent(Model model, @ModelAttribute("contragentform") ContragentsEntity contragentform) {
+    public String addContragent(Model model, @ModelAttribute("contragentform") Contragents contragentform) {
 
         String contragentname = contragentform.getContragentname();
         String description = contragentform.getDescription();
 
         try {
-            ContragentsEntity contragent = new ContragentsEntity(contragentname, description);
+            Contragents contragent = new Contragents(contragentname, description);
             contragentRepo.save(contragent);
             return "redirect:/contragentslist";
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", "Error creating the contragent: " + ex.toString());
+            return contragentsList(model);
         }
-
-
-        return "contragentslist";
     }
 
     @RequestMapping(value = { "/contragentslist" }, params={"delete"}, method = RequestMethod.POST)
-    public String deleteContragent(Model model, @ModelAttribute("contragentform") ContragentsEntity contragentform) {
+    public String deleteContragent(Model model, @ModelAttribute("contragentform") Contragents contragentform) {
 
-        int contragentid = contragentform.getContragentid();
+        int contragentid = contragentform.getId();
         findedContragent = null;
 
         try {
-            ContragentsEntity contragent = contragentRepo.findByContragentid(contragentid);
+            Contragents contragent = contragentRepo.findById(contragentid);
             contragentRepo.delete(contragent);
             return "redirect:/contragentslist";
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", "Error deleting the contragent:" + ex.toString());
+            return contragentsList(model);
         }
-
-        return "contragentslist";
     }
 
     @RequestMapping(value = { "/contragentslist" }, params={"update"}, method = RequestMethod.POST)
-    public String updateContragent(Model model, @ModelAttribute("contragentform") ContragentsEntity contragentform) {
+    public String updateContragent(Model model, @ModelAttribute("contragentform") Contragents contragentform) {
 
-        int contragentid = contragentform.getContragentid();
+        int contragentid = contragentform.getId();
         String contragentname = contragentform.getContragentname();
         String description = contragentform.getDescription();
         findedContragent = null;
 
         try {
-            ContragentsEntity contragent = contragentRepo.findByContragentid(contragentid);
+            Contragents contragent = contragentRepo.findById(contragentid);
             contragent.setContragentname(contragentname);
             contragent.setDescription(description);
             contragentRepo.save(contragent);
@@ -80,31 +77,29 @@ public class ContragentsController {
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", "Error updating the contragent:" + ex.toString());
+            return contragentsList(model);
         }
-
-        return "contragentslist";
     }
 
     @RequestMapping(value = { "/contragentslist" }, params={"findbyid"}, method = RequestMethod.POST)
-    public String findByIdContragent(Model model, @ModelAttribute("contragentform") ContragentsEntity contragentform) {
+    public String findByIdContragent(Model model, @ModelAttribute("contragentform") Contragents contragentform) {
 
-        int contragentid = contragentform.getContragentid();
+        int contragentid = contragentform.getId();
 
         try {
-            findedContragent = contragentRepo.findByContragentid(contragentid);
+            findedContragent = contragentRepo.findById(contragentid);
             return "redirect:/contragentslist";
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", "Error finding the contragent:" + ex.toString());
+            return contragentsList(model);
         }
-
-        return "contragentslist";
     }
 
     // Private fields
 
     @Autowired
-    private ContragentssRepo contragentRepo;
+    private ContragentsRepo contragentRepo;
 
     private String errorMessage;
 

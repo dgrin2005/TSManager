@@ -2,13 +2,13 @@ package ru.trustsoft.repo;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.trustsoft.model.BasesEntity;
+import ru.trustsoft.model.Bases;
 
 @Transactional
-public interface BasesRepo extends CrudRepository<BasesEntity, Long> {
+public interface BasesRepo extends CrudRepository<Bases, Long> {
 
-    BasesEntity findByBasename(String basename);
+    Bases findByBasename(String basename);
 
-    BasesEntity findByBaseid(int baseid);
+    Bases findById(int id);
 
 }

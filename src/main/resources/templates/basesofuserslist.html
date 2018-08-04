@@ -6,31 +6,57 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-
-<form th:object="${userform}" method="POST">
-    User ID:
-    <input type="text" th:field="*{userid}" />
-    <button type="submit" name="findbyid">Find by ID</button>
-</form>
-<h1>Bases List</h1>
+<h1>Bases of users List</h1>
 <div>
     <table border="1">
         <tr>
-            <th>Base ID</th>
-            <th>Base Name</th>
-            <th>Description</th>
+            <th>Record ID</th>
+            <th>User</th>
+            <th>Base</th>
         </tr>
-        <tr th:each ="base : ${basesofuser}">
-            <td th:utext="${base.getBase().baseid}">...</td>
-            <td th:utext="${base.getBase().basename}">...</td>
-            <td th:utext="${base.getBase().description}">...</td>
+        <tr th:each ="baseofusers : ${basesofusers}">
+            <td th:utext="${baseofusers.id}">...</td>
+            <td th:utext="${baseofusers.usersByUserid.getUsername()}">...</td>
+            <td th:utext="${baseofusers.basesByBaseid.getBasename()}">...</td>
         </tr>
     </table>
 </div>
-
+<br/>
+<h2>Base of users Form</h2>
+<form th:object="${baseofusersform}" method="POST">
+    Base ID:
+    <input type="text" th:field="*{id}" />
+    <button type="submit" name="findbyid">Find by ID</button>
+    <br/>
+    User:
+    <select th:field="*{userid}">
+        <option value="0"> -- </option>
+        <option th:each="user : ${users}"
+                th:value="${user.getId()}"
+                th:text="${user.getUsername()}"></option>
+    </select>
+    <br/>
+    Base:
+    <select th:field="*{baseid}">
+        <option value="0"> -- </option>
+        <option th:each="base : ${bases}"
+                th:value="${base.getId()}"
+                th:text="${base.getBasename()}"></option>
+    </select>
+    <br/>
+    <button type="submit" name="add">Add base</button>
+    <button type="submit" name="delete">Delete base</button>
+    <button type="submit" name="update">Update base</button>
+</form>
 
 
 <a href="/">To the main page</a>
+
+<!-- Check if errorMessage is not null and not empty -->
+<div th:if="${errorMessage}" th:utext="${errorMessage}"
+     style="color:red;font-style:italic;">
+    ...
+</div>
 
 </body>
 </html>

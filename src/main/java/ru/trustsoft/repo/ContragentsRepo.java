@@ -2,13 +2,13 @@ package ru.trustsoft.repo;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.trustsoft.model.ContragentsEntity;
+import ru.trustsoft.model.Contragents;
 
 @Transactional
-public interface ContragentssRepo extends CrudRepository<ContragentsEntity, Long> {
+public interface ContragentsRepo extends CrudRepository<Contragents, Long> {
 
-    ContragentsEntity findByContragentname(String contragentname);
+    Contragents findByContragentname(String contragentname);
 
-    ContragentsEntity findByContragentid(int contragentid);
+    Contragents findById(int id);
 
 }

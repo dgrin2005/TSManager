@@ -15,7 +15,7 @@
             <th>Description</th>
         </tr>
         <tr th:each ="contragent : ${contragents}">
-            <td th:utext="${contragent.contragentid}">...</td>
+            <td th:utext="${contragent.id}">...</td>
             <td th:utext="${contragent.contragentname}">...</td>
             <td th:utext="${contragent.description}">...</td>
         </tr>
@@ -25,7 +25,7 @@
 <h2>Contragent Form</h2>
 <form th:object="${contragentform}" method="POST">
     Contragent ID:
-    <input type="text" th:field="*{contragentid}" />
+    <input type="text" th:field="*{id}" />
     <button type="submit" name="findbyid">Find by ID</button>
     <br/>
     Contragent Name:

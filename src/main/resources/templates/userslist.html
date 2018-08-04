@@ -15,13 +15,17 @@
             <th>User Password</th>
             <th>Description</th>
             <th>Is Locked</th>
+            <th>Is Admin</th>
+            <th>Contragent</th>
         </tr>
         <tr th:each ="user : ${users}">
-            <td th:utext="${user.userid}">...</td>
+            <td th:utext="${user.id}">...</td>
             <td th:utext="${user.username}">...</td>
             <td th:utext="${user.userpassword}">...</td>
             <td th:utext="${user.description}">...</td>
-            <td th:utext="${user.islocked}">...</td>
+            <td th:utext="${user.locked}">...</td>
+            <td th:utext="${user.admin}">...</td>
+            <td th:utext="${user.contragentsByContragentid.getContragentname()}">...</td>
         </tr>
     </table>
 </div>
@@ -29,7 +33,7 @@
 <h2>User Form</h2>
 <form th:object="${userform}" method="POST">
     User ID:
-    <input type="text" th:field="*{userid}" />
+    <input type="text" th:field="*{id}" />
     <button type="submit" name="findbyid">Find by ID</button>
     <br/>
     User Name:
@@ -42,7 +46,18 @@
     <input type="text" th:field="*{description}" />
     <br/>
     Is Locked:
-    <input type="checkbox" th:field="*{islocked}" />
+    <input type="checkbox" th:field="*{locked}" />
+    <br/>
+    Is Admin:
+    <input type="checkbox" th:field="*{admin}" />
+    <br/>
+    Contragent:
+    <select th:field="*{contragentid}">
+        <option value="0"> -- </option>
+        <option th:each="contragent : ${contragents}"
+                th:value="${contragent.getId()}"
+                th:text="${contragent.getContragentname()}"></option>
+    </select>
     <br/>
     <button type="submit" name="add">Add user</button>
     <button type="submit" name="delete">Delete user</button>

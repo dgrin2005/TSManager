@@ -7,23 +7,19 @@
     <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
     <property name="connection.url">jdbc:mysql://localhost:3306/tsmngr</property>
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-    <!-- <property name="connection.username"/> -->
+      <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
-    <property name="connection.username">root</property>
-    <property name="connection.password">Verbatim0</property>
 
-    <mapping resource="BasesEntity.hbm.xml"/>
-    <mapping class="ru.trustsoft.model.BasesEntity"/>
-    <mapping resource="BasesofusersEntity.hbm.xml"/>
-    <mapping class="ru.trustsoft.model.BasesofusersEntity"/>
-    <mapping resource="ContragentsEntity.hbm.xml"/>
-    <mapping class="ru.trustsoft.model.ContragentsEntity"/>
-    <mapping resource="UsersEntity.hbm.xml"/>
-    <mapping class="ru.trustsoft.model.UsersEntity"/>
-    <mapping class="ru.trustsoft.model.UsersofcontragentsEntity"/>
-    <mapping resource="UsersofcontragentsEntity.hbm.xml"/>
+      <mapping resource="ru/trustsoft/Bases.hbm.xml"/>
+      <mapping class="ru.trustsoft.model.Bases"/>
+      <mapping resource="ru/trustsoft/Basesofusers.hbm.xml"/>
+      <mapping class="ru.trustsoft.model.Basesofusers"/>
+      <mapping resource="ru/trustsoft/Contragents.hbm.xml"/>
+      <mapping class="ru.trustsoft.model.Contragents"/>
+      <mapping resource="ru/trustsoft/Users.hbm.xml"/>
+      <mapping class="ru.trustsoft.model.Users"/>
 
-    <!-- DB schema will be updated if needed -->
+      <!-- DB schema will be updated if needed -->
     <!-- <property name="hbm2ddl.auto">update</property> -->
   </session-factory>
 </hibernate-configuration>

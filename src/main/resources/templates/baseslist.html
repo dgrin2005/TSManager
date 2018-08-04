@@ -13,11 +13,13 @@
             <th>Base ID</th>
             <th>Base Name</th>
             <th>Description</th>
+            <th>Contragent</th>
         </tr>
         <tr th:each ="base : ${bases}">
-            <td th:utext="${base.baseid}">...</td>
+            <td th:utext="${base.id}">...</td>
             <td th:utext="${base.basename}">...</td>
             <td th:utext="${base.description}">...</td>
+            <td th:utext="${base.contragentsByContragentid.getContragentname()}">...</td>
         </tr>
     </table>
 </div>
@@ -25,7 +27,7 @@
 <h2>Base Form</h2>
 <form th:object="${baseform}" method="POST">
     Base ID:
-    <input type="text" th:field="*{baseid}" />
+    <input type="text" th:field="*{id}" />
     <button type="submit" name="findbyid">Find by ID</button>
     <br/>
     Base Name:
@@ -33,6 +35,14 @@
     <br/>
     Description:
     <input type="text" th:field="*{description}" />
+    <br/>
+    Contragent:
+    <select th:field="*{contragentid}">
+        <option value="0"> -- </option>
+        <option th:each="contragent : ${contragents}"
+                th:value="${contragent.getId()}"
+                th:text="${contragent.getContragentname()}"></option>
+    </select>
     <br/>
     <button type="submit" name="add">Add base</button>
     <button type="submit" name="delete">Delete base</button>

@@ -2,17 +2,19 @@ package ru.trustsoft.repo;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.trustsoft.model.UsersEntity;
+import ru.trustsoft.model.Users;
 
 import java.util.List;
 
 @Transactional
-public interface UsersRepo extends CrudRepository<UsersEntity, Long> {
+public interface UsersRepo extends CrudRepository<Users, Long> {
 
-    UsersEntity findByUsername(String username);
+    Users findByUsername(String username);
 
-    UsersEntity findByUserid(int userid);
+    Users findById(int id);
 
-    List<UsersEntity> findByIslocked(boolean islocked);
+    List<Users> findByLocked(boolean locked);
+
+    List<Users> findByAdmin(boolean admin);
 
 }

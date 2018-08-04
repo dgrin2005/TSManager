@@ -1,4 +1,4 @@
-package ru.trustsoft;
+package ru.trustsoft.model;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -6,10 +6,23 @@ import java.util.Objects;
 @Entity
 public class Basesofusers {
     private int id;
+    private int userid;
     private Users usersByUserid;
+    private int baseid;
     private Bases basesByBaseid;
 
+    public Basesofusers() {
+    }
+
+    public Basesofusers(Users usersByUserid, Bases basesByBaseid) {
+        this.usersByUserid = usersByUserid;
+        this.basesByBaseid = basesByBaseid;
+        userid = usersByUserid.getId();
+        baseid = basesByBaseid.getId();
+    }
+
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     public int getId() {
         return id;
@@ -31,6 +44,26 @@ public class Basesofusers {
     public int hashCode() {
 
         return Objects.hash(id);
+    }
+
+    @Basic
+    @Column(name = "userid", nullable = false, length = -1)
+    public int getUserid() {
+        return userid;
+    }
+
+    public void setUserid(int userid) {
+        this.userid = userid;
+    }
+
+    @Basic
+    @Column(name = "baseid", nullable = false, length = -1)
+    public int getBaseid() {
+        return baseid;
+    }
+
+    public void setBaseid(int baseid) {
+        this.baseid = baseid;
     }
 
     @ManyToOne

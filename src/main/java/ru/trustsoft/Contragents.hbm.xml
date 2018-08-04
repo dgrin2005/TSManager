@@ -4,7 +4,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="ru.trustsoft.Contragents" table="contragents" schema="tsmngr">
+    <class name="ru.trustsoft.model.Contragents" table="contragents" schema="tsmngr">
         <id name="id">
             <column name="id" sql-type="int(11)"/>
         </id>
@@ -18,13 +18,13 @@
             <key>
                 <column name="contragentid"/>
             </key>
-            <one-to-many not-found="ignore" class="ru.trustsoft.Bases"/>
+            <one-to-many not-found="ignore" class="ru.trustsoft.model.Bases"/>
         </set>
         <set name="usersById" inverse="true">
             <key>
                 <column name="contragentid"/>
             </key>
-            <one-to-many not-found="ignore" class="ru.trustsoft.Users"/>
+            <one-to-many not-found="ignore" class="ru.trustsoft.model.Users"/>
         </set>
     </class>
 </hibernate-mapping>

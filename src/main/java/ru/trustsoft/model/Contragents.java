@@ -1,4 +1,4 @@
-package ru.trustsoft;
+package ru.trustsoft.model;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -12,7 +12,16 @@ public class Contragents {
     private Collection<Bases> basesById;
     private Collection<Users> usersById;
 
+    public Contragents() {
+    }
+
+    public Contragents(String contragentname, String description) {
+        this.contragentname = contragentname;
+        this.description = description;
+    }
+
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     public int getId() {
         return id;

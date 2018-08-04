@@ -1,4 +1,4 @@
-package ru.trustsoft;
+package ru.trustsoft.model;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -11,12 +11,26 @@ public class Users {
     private String userpassword;
     private String description;
     private boolean locked;
-    private boolean admin;
-    private Byte islocked;
-    private Collection<Basesofusers> basesofusersById;
+    private int contragentid;
     private Contragents contragentsByContragentid;
+    private boolean admin;
+    private Collection<Basesofusers> basesofusersById;
+
+    public Users() {
+    }
+
+    public Users(String username, String userpassword, String description, boolean locked, Contragents contragentsByContragentid, boolean admin) {
+        this.username = username;
+        this.userpassword = userpassword;
+        this.description = description;
+        this.locked = locked;
+        this.admin = admin;
+        this.contragentsByContragentid = contragentsByContragentid;
+        this.contragentid = contragentsByContragentid.getId();
+    }
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     public int getId() {
         return id;
@@ -76,16 +90,6 @@ public class Users {
         this.admin = admin;
     }
 
-    @Basic
-    @Column(name = "islocked", nullable = true)
-    public Byte getIslocked() {
-        return islocked;
-    }
-
-    public void setIslocked(Byte islocked) {
-        this.islocked = islocked;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,14 +100,23 @@ public class Users {
                 admin == users.admin &&
                 Objects.equals(username, users.username) &&
                 Objects.equals(userpassword, users.userpassword) &&
-                Objects.equals(description, users.description) &&
-                Objects.equals(islocked, users.islocked);
+                Objects.equals(description, users.description);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, username, userpassword, description, locked, admin, islocked);
+        return Objects.hash(id, username, userpassword, description, locked, admin);
+    }
+
+    @Basic
+    @Column(name = "contragentid", nullable = false, length = -1)
+    public int getContragentid() {
+        return contragentid;
+    }
+
+    public void setContragentid(int contragentid) {
+        this.contragentid = contragentid;
     }
 
     @OneToMany(mappedBy = "usersByUserid")

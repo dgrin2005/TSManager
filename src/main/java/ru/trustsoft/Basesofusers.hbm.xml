@@ -4,14 +4,14 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="ru.trustsoft.Basesofusers" table="basesofusers" schema="tsmngr">
+    <class name="ru.trustsoft.model.Basesofusers" table="basesofusers" schema="tsmngr">
         <id name="id">
             <column name="id" sql-type="int(11)"/>
         </id>
-        <many-to-one name="usersByUserid" class="ru.trustsoft.Users">
+        <many-to-one name="usersByUserid" class="ru.trustsoft.model.Users">
             <column name="userid"/>
         </many-to-one>
-        <many-to-one name="basesByBaseid" class="ru.trustsoft.Bases">
+        <many-to-one name="basesByBaseid" class="ru.trustsoft.model.Bases">
             <column name="baseid"/>
         </many-to-one>
     </class>
