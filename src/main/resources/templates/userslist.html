@@ -24,7 +24,7 @@
             <td th:utext="${user.userpassword}">...</td>
             <td th:utext="${user.description}">...</td>
             <td th:utext="${user.locked}">...</td>
-            <td th:utext="${user.admin}">...</td>
+            <td th:utext="${user.adm}">...</td>
             <td th:utext="${user.contragentsByContragentid.getContragentname()}">...</td>
         </tr>
     </table>
@@ -49,7 +49,7 @@
     <input type="checkbox" th:field="*{locked}" />
     <br/>
     Is Admin:
-    <input type="checkbox" th:field="*{admin}" />
+    <input type="checkbox" th:field="*{adm}" />
     <br/>
     Contragent:
     <select th:field="*{contragentid}">

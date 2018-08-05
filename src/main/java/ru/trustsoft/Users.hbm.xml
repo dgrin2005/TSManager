@@ -20,8 +20,8 @@
         <property name="locked">
             <column name="locked" sql-type="tinyint(1)"/>
         </property>
-        <property name="admin">
-            <column name="admin" sql-type="tinyint(1)"/>
+        <property name="adm">
+            <column name="adm" sql-type="tinyint(1)"/>
         </property>
         <many-to-one name="contragentsByContragentid" class="ru.trustsoft.model.Contragents">
             <column name="contragentid"/>

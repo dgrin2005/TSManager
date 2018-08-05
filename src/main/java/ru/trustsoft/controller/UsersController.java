@@ -36,19 +36,14 @@ public class UsersController {
         String userpassword = userform.getUserpassword();
         String description = userform.getDescription();
         boolean locked = userform.isLocked();
-        boolean admin = userform.isAdmin();
+        boolean adm = userform.isAdm();
         int contragentid = userform.getContragentid();
-        System.out.println("11111");
-        System.out.println(contragentid);
         if (contragentid > 0) {
-            System.out.println("22222");
             Contragents contragent = contragentRepo.findById(contragentid);
-
             try {
-                System.out.println("33333");
-                Users user = new Users(username, userpassword, description, locked, contragent, admin);
-                System.out.println("44444");
+                Users user = new Users(username, userpassword, description, locked, adm, contragent);
                 userRepo.save(user);
+                contragent.getUsersById().add(user);
                 return "redirect:/userslist";
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", "Error creating the user: " + ex.toString());
@@ -68,7 +63,9 @@ public class UsersController {
 
         try {
             Users user = userRepo.findById(userid);
+            Contragents contragent = user.getContragentsByContragentid();
             userRepo.delete(user);
+            contragent.getUsersById().remove(user);
             return "redirect:/userslist";
         }
         catch (Exception ex) {
@@ -85,7 +82,7 @@ public class UsersController {
         String userpassword = userform.getUserpassword();
         String description = userform.getDescription();
         boolean locked = userform.isLocked();
-        boolean admin = userform.isAdmin();
+        boolean adm = userform.isAdm();
         int contragentid = userform.getContragentid();
         findedUser = null;
 
@@ -96,7 +93,7 @@ public class UsersController {
                 user.setUserpassword(userpassword);
                 user.setDescription(description);
                 user.setLocked(locked);
-                user.setAdmin(admin);
+                user.setAdm(adm);
                 user.setContragentsByContragentid(contragentRepo.findById(contragentid));
                 userRepo.save(user);
                 return "redirect:/userslist";

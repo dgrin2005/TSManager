@@ -11,20 +11,20 @@ public class Users {
     private String userpassword;
     private String description;
     private boolean locked;
+    private boolean adm;
     private int contragentid;
     private Contragents contragentsByContragentid;
-    private boolean admin;
     private Collection<Basesofusers> basesofusersById;
 
     public Users() {
     }
 
-    public Users(String username, String userpassword, String description, boolean locked, Contragents contragentsByContragentid, boolean admin) {
+    public Users(String username, String userpassword, String description, boolean locked, boolean adm, Contragents contragentsByContragentid) {
         this.username = username;
         this.userpassword = userpassword;
         this.description = description;
         this.locked = locked;
-        this.admin = admin;
+        this.adm = adm;
         this.contragentsByContragentid = contragentsByContragentid;
         this.contragentid = contragentsByContragentid.getId();
     }
@@ -81,13 +81,13 @@ public class Users {
     }
 
     @Basic
-    @Column(name = "admin", nullable = false)
-    public boolean isAdmin() {
-        return admin;
+    @Column(name = "adm", nullable = false)
+    public boolean isAdm() {
+        return adm;
     }
 
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
+    public void setAdm(boolean adm) {
+        this.adm = adm;
     }
 
     @Override
@@ -97,7 +97,7 @@ public class Users {
         Users users = (Users) o;
         return id == users.id &&
                 locked == users.locked &&
-                admin == users.admin &&
+                adm == users.adm &&
                 Objects.equals(username, users.username) &&
                 Objects.equals(userpassword, users.userpassword) &&
                 Objects.equals(description, users.description);
@@ -106,7 +106,7 @@ public class Users {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, username, userpassword, description, locked, admin);
+        return Objects.hash(id, username, userpassword, description, locked, adm);
     }
 
     @Basic

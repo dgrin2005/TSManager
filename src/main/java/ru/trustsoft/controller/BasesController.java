@@ -41,6 +41,7 @@ public class BasesController {
             try {
                 Bases base = new Bases(basename, description, contragent);
                 baseRepo.save(base);
+                contragent.getBasesById().add(base);
                 return "redirect:/baseslist";
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", "Error creating the base: " + ex.toString());
@@ -60,7 +61,9 @@ public class BasesController {
 
         try {
             Bases base = baseRepo.findById(baseid);
+            Contragents contragent = base.getContragentsByContragentid();
             baseRepo.delete(base);
+            contragent.getBasesById().remove(base);
             return "redirect:/baseslist";
         }
         catch (Exception ex) {

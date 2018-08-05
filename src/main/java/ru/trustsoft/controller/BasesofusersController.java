@@ -44,6 +44,8 @@ public class BasesofusersController {
             try {
                 Basesofusers baseofusers = new Basesofusers(user, base);
                 baseofusersRepo.save(baseofusers);
+                user.getBasesofusersById().add(baseofusers);
+                base.getBasesofusersById().add(baseofusers);
                 return "redirect:/basesofuserslist";
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", "Error creating the record: " + ex.toString());
@@ -63,7 +65,11 @@ public class BasesofusersController {
 
         try {
             Basesofusers baseofusers = baseofusersRepo.findById(baseofusersid);
+            Users user = baseofusers.getUsersByUserid();
+            Bases base = baseofusers.getBasesByBaseid();
             baseofusersRepo.delete(baseofusers);
+            user.getBasesofusersById().remove(baseofusers);
+            base.getBasesofusersById().remove(baseofusers);
             return "redirect:/basesofuserslist";
         }
         catch (Exception ex) {
@@ -72,32 +78,6 @@ public class BasesofusersController {
         }
     }
 
-/*
-    @RequestMapping(value = { "/baseslist" }, params={"update"}, method = RequestMethod.POST)
-    public String updateBase(Model model, @ModelAttribute("baseform") Bases baseform) {
-
-        int baseid = baseform.getId();
-        String basename = baseform.getBasename();
-        String description = baseform.getDescription();
-        int contragentid = baseform.getContragentid();
-        findedBaseofusers = null;
-        if (contragentid > 0) {
-            try {
-                Bases base = baseRepo.findById(baseid);
-                base.setBasename(basename);
-                base.setDescription(description);
-                base.setContragentsByContragentid(contragentRepo.findById(contragentid));
-                baseRepo.save(base);
-                return "redirect:/baseslist";
-            } catch (Exception ex) {
-                model.addAttribute("errorMessage", "Error updating the base:" + ex.toString());
-                return basesofusersList(model);
-            }
-        } else {
-            return "redirect:/baseslist";
-        }
-    }
-*/
 
     @RequestMapping(value = { "/basesofuserslist" }, params={"findbyid"}, method = RequestMethod.POST)
     public String findByIdBase(Model model, @ModelAttribute("baseofusersform") Basesofusers baseofusersform) {
