@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
+<h1 th:inline="text">[[${#httpServletRequest.remoteUser}]]!</h1>
 <h1>Users List</h1>
 <div>
     <table border="1">
