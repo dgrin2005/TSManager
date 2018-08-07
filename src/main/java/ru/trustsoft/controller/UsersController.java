@@ -1,6 +1,8 @@
 package ru.trustsoft.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +35,8 @@ public class UsersController {
     public String addUser(Model model, @ModelAttribute("userform") Users userform) {
 
         String username = userform.getUsername();
-        String userpassword = userform.getUserpassword();
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String userpassword = passwordEncoder.encode(userform.getUserpassword());
         String description = userform.getDescription();
         boolean locked = userform.isLocked();
         boolean adm = userform.isAdm();
@@ -79,7 +82,8 @@ public class UsersController {
 
         int userid = userform.getId();
         String username = userform.getUsername();
-        String userpassword = userform.getUserpassword();
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String userpassword = passwordEncoder.encode(userform.getUserpassword());
         String description = userform.getDescription();
         boolean locked = userform.isLocked();
         boolean adm = userform.isAdm();

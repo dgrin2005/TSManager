@@ -1,3 +1,4 @@
+/*
 package ru.trustsoft.controller;
 
 import org.springframework.stereotype.Controller;
@@ -14,4 +15,4 @@ public class GreetingController {
         return "greeting";
     }
 
-}
+}*/
