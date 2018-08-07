@@ -6,11 +6,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<p th:text="'Hello, ' + ${name} + '!'" />
-<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
-<form th:action="@{/logout}" method="post">
-    <input type="submit" value="Sign Out"/>
-</form>
-<a href="/">To the main page</a>
+<!-- Include _menu.html -->
+<th:block th:include="/menu"></th:block>
+<h2>User Info Page</h2>
+<div th:if="${userInfo != null}" th:utext="${userInfo}"></div>
 </body>
 </html>

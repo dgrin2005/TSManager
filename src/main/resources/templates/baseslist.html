@@ -6,7 +6,8 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<h1 th:inline="text">[[${#httpServletRequest.remoteUser}]]!</h1>
+<!-- Include _menu.html -->
+<th:block th:include="/menu"></th:block>
 <h1>Bases List</h1>
 <div>
     <table border="1">
@@ -50,8 +51,6 @@
     <button type="submit" name="update">Update base</button>
 </form>
 <br/>
-
-<a href="/">To the main page</a>
 
 <!-- Check if errorMessage is not null and not empty -->
 <div th:if="${errorMessage}" th:utext="${errorMessage}"

@@ -6,7 +6,8 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<h1 th:inline="text">[[${#httpServletRequest.remoteUser}]]!</h1>
+<!-- Include _menu.html -->
+<th:block th:include="/menu"></th:block>
 <h1>Bases of users List</h1>
 <div>
     <table border="1">
@@ -48,9 +49,6 @@
     <button type="submit" name="add">Add base</button>
     <button type="submit" name="delete">Delete base</button>
 </form>
-
-
-<a href="/">To the main page</a>
 
 <!-- Check if errorMessage is not null and not empty -->
 <div th:if="${errorMessage}" th:utext="${errorMessage}"

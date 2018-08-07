@@ -6,17 +6,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<h1 th:inline="text">[[${#httpServletRequest.remoteUser}]]!</h1>
-<p>Get your greeting <a href="/greeting">here</a></p>
-<p>Click <a th:href="@{/greeting}">here</a> to see a greeting.</p>
-<br/>
-<p>Please select an option</p>
-<ol>
-    <li><a href="userslist" th:href="@{/userslist}">Users list</a></li>
-    <li><a href="baseslist" th:href="@{/baseslist}">Bases list</a></li>
-    <li><a href="contragentslist" th:href="@{/contragentslist}">Contragents list</a></li>
-    <li><a href="basesofuserslist" th:href="@{/basesofuserslist}">Bases of users list</a></li>
-</ol>
-
+<!-- Include _menu.html -->
+<th:block th:include="/menu"></th:block>
+<h3 th:if="${#request.userPrincipal != null}" th:utext="${message}"></h3>
 </body>
 </html>
