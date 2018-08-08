@@ -10,13 +10,13 @@
       <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 
-      <mapping resource="ru/trustsoft/Bases.hbm.xml"/>
+      <mapping resource="ru/trustsoft/hibernate/Bases.hbm.xml"/>
       <mapping class="ru.trustsoft.model.Bases"/>
-      <mapping resource="ru/trustsoft/Basesofusers.hbm.xml"/>
+      <mapping resource="ru/trustsoft/hibernate/Basesofusers.hbm.xml"/>
       <mapping class="ru.trustsoft.model.Basesofusers"/>
-      <mapping resource="ru/trustsoft/Contragents.hbm.xml"/>
+      <mapping resource="ru/trustsoft/hibernate/Contragents.hbm.xml"/>
       <mapping class="ru.trustsoft.model.Contragents"/>
-      <mapping resource="ru/trustsoft/Users.hbm.xml"/>
+      <mapping resource="ru/trustsoft/hibernate/Users.hbm.xml"/>
       <mapping class="ru.trustsoft.model.Users"/>
 
       <!-- DB schema will be updated if needed -->

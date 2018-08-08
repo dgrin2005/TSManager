@@ -6,9 +6,19 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<!-- Include _menu.html -->
 <th:block th:include="/menu"></th:block>
 <h2>User Info Page</h2>
 <div th:if="${userInfo != null}" th:utext="${userInfo}"></div>
+<div th:if="${userInfo != null}" th:utext="${contragent}"></div>
+<br/>
+<form method="POST">
+    <button type="submit" name="disconnect">Disconnect terminal session</button>
+</form>
+<br/>
+<form method="POST">
+    <button type="submit" name="reconciliation">Reconciliation act</button>
+</form>
+
+
 </body>
 </html>

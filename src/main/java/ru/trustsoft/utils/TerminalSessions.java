@@ -3,11 +3,11 @@ package ru.trustsoft.utils;
 import java.io.*;
 import java.util.ArrayList;
 
-class TerminalSessions implements TerminalSessionsConst{
+public class TerminalSessions implements UtilsConst {
 
     private final ArrayList<TerminalSession> terminalSessions = new ArrayList<>();
 
-    void getSessions() throws IOException {
+    public void getSessions() throws IOException {
 
         //   qwinsta /server:terminal.example.com
 
@@ -55,7 +55,7 @@ class TerminalSessions implements TerminalSessionsConst{
         }
     }
 
-    void  termineSession(String username) throws IOException {
+    public void  termineSession(String username) throws IOException {
 
         //  rwinsta /server:terminal.example.com <session-id>
 
@@ -68,6 +68,13 @@ class TerminalSessions implements TerminalSessionsConst{
             }
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "TerminalSessions{" +
+                "terminalSessions=" + terminalSessions +
+                '}';
     }
 }
 

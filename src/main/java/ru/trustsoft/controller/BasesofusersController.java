@@ -1,6 +1,8 @@
 package ru.trustsoft.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +13,17 @@ import ru.trustsoft.repo.BasesRepo;
 import ru.trustsoft.repo.BasesofusersRepo;
 import ru.trustsoft.repo.UsersRepo;
 
+import java.security.Principal;
+
 @Controller
 @RequestMapping(path="/")
 public class BasesofusersController {
 
     private Basesofusers findedBaseofusers = null;
 
-    @GetMapping(path="/basesofuserslist")
-    public String basesofusersList(Model model) {
+    //@GetMapping(path="/basesofuserslist")
+    @RequestMapping(value = { "/basesofuserslist" }, method = RequestMethod.GET)
+    public String basesofusersList(Model model, Principal principal) {
 
         Basesofusers baseofusers = new Basesofusers();
         if (findedBaseofusers != null) {
@@ -27,14 +32,25 @@ public class BasesofusersController {
 
         model.addAttribute("bases", baseRepo.findAll());
         model.addAttribute("users", userRepo.findAll());
-        model.addAttribute("basesofusers", baseofusersRepo.findAll());
+
+        User loginedUser = (User) ((Authentication) principal).getPrincipal();
+        Users user = userRepo.findByUsername(loginedUser.getUsername());
+        if (user.isAdm()) {
+            model.addAttribute("basesofusers", baseofusersRepo.findAll());
+            model.addAttribute("isadm", 1);
+        } else {
+            model.addAttribute("basesofusers", baseofusersRepo.findBasesByUser(user.getId()));
+            model.addAttribute("isadm", 0);
+        }
+
         model.addAttribute("baseofusersform", baseofusers);
+
 
         return "basesofuserslist";
     }
 
     @RequestMapping(value = { "/basesofuserslist" }, params={"add"}, method = RequestMethod.POST)
-    public String addBase(Model model, @ModelAttribute("baseofusersform") Basesofusers baseofusersform) {
+    public String addBase(Model model, Principal principal, @ModelAttribute("baseofusersform") Basesofusers baseofusersform) {
 
         int userid = baseofusersform.getUserid();
         int baseid = baseofusersform.getBaseid();
@@ -49,7 +65,7 @@ public class BasesofusersController {
                 return "redirect:/basesofuserslist";
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", "Error creating the record: " + ex.toString());
-                return basesofusersList(model);
+                return basesofusersList(model, principal);
             }
 
         } else {
@@ -58,7 +74,7 @@ public class BasesofusersController {
     }
 
     @RequestMapping(value = { "/basesofuserslist" }, params={"delete"}, method = RequestMethod.POST)
-    public String deleteBase(Model model, @ModelAttribute("baseofusersform") Basesofusers baseofusersform) {
+    public String deleteBase(Model model, Principal principal, @ModelAttribute("baseofusersform") Basesofusers baseofusersform) {
 
         int baseofusersid = baseofusersform.getId();
         findedBaseofusers = null;
@@ -74,13 +90,13 @@ public class BasesofusersController {
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", "Error deleting the record:" + ex.toString());
-            return basesofusersList(model);
+            return basesofusersList(model, principal);
         }
     }
 
 
     @RequestMapping(value = { "/basesofuserslist" }, params={"findbyid"}, method = RequestMethod.POST)
-    public String findByIdBase(Model model, @ModelAttribute("baseofusersform") Basesofusers baseofusersform) {
+    public String findByIdBase(Model model, Principal principal, @ModelAttribute("baseofusersform") Basesofusers baseofusersform) {
 
         int baseofusersid = baseofusersform.getId();
 
@@ -92,7 +108,7 @@ public class BasesofusersController {
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", "Error finding the record:" + ex.toString());
-            return basesofusersList(model);
+            return basesofusersList(model, principal);
         }
     }
 

@@ -6,7 +6,6 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<!-- Include _menu.html -->
 <th:block th:include="/menu"></th:block>
 <h1>Bases of users List</h1>
 <div>
@@ -24,37 +23,39 @@
     </table>
 </div>
 <br/>
-<h2>Base of users Form</h2>
-<form th:object="${baseofusersform}" method="POST">
-    Base ID:
-    <input type="text" th:field="*{id}" />
-    <button type="submit" name="findbyid">Find by ID</button>
-    <br/>
-    User:
-    <select th:field="*{userid}">
-        <option value="0"> -- </option>
-        <option th:each="user : ${users}"
+<div th:if="${isadm != 0}">
+    <h2>Base of users Form</h2>
+    <form th:object="${baseofusersform}" method="POST">
+        Base ID:
+        <input type="text" th:field="*{id}" />
+        <button type="submit" name="findbyid">Find by ID</button>
+        <br/>
+        User:
+        <select th:field="*{userid}">
+            <option value="0"> -- </option>
+            <option th:each="user : ${users}"
                 th:value="${user.getId()}"
                 th:text="${user.getUsername()}"></option>
-    </select>
-    <br/>
-    Base:
-    <select th:field="*{baseid}">
-        <option value="0"> -- </option>
-        <option th:each="base : ${bases}"
+        </select>
+        <br/>
+        Base:
+        <select th:field="*{baseid}">
+            <option value="0"> -- </option>
+            <option th:each="base : ${bases}"
                 th:value="${base.getId()}"
                 th:text="${base.getBasename()}"></option>
-    </select>
-    <br/>
-    <button type="submit" name="add">Add base</button>
-    <button type="submit" name="delete">Delete base</button>
-</form>
+        </select>
+        <br/>
+        <button type="submit" name="add">Add base</button>
+        <button type="submit" name="delete">Delete base</button>
+    </form>
 
-<!-- Check if errorMessage is not null and not empty -->
-<div th:if="${errorMessage}" th:utext="${errorMessage}"
+    <!-- Check if errorMessage is not null and not empty -->
+    <div th:if="${errorMessage}" th:utext="${errorMessage}"
      style="color:red;font-style:italic;">
     ...
-</div>
+    </div>
 
+</div>
 </body>
 </html>
