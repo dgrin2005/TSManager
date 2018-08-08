@@ -31,9 +31,10 @@ public class ContragentsController {
 
         String contragentname = contragentform.getContragentname();
         String description = contragentform.getDescription();
+        String inn = contragentform.getInn();
 
         try {
-            Contragents contragent = new Contragents(contragentname, description);
+            Contragents contragent = new Contragents(contragentname, description, inn);
             contragentRepo.save(contragent);
             return "redirect:/contragentslist";
         }
@@ -66,12 +67,14 @@ public class ContragentsController {
         int contragentid = contragentform.getId();
         String contragentname = contragentform.getContragentname();
         String description = contragentform.getDescription();
+        String inn = contragentform.getInn();
         findedContragent = null;
 
         try {
             Contragents contragent = contragentRepo.findById(contragentid);
             contragent.setContragentname(contragentname);
             contragent.setDescription(description);
+            contragent.setInn(inn);
             contragentRepo.save(contragent);
             return "redirect:/contragentslist";
         }
@@ -88,6 +91,21 @@ public class ContragentsController {
 
         try {
             findedContragent = contragentRepo.findById(contragentid);
+            return "redirect:/contragentslist";
+        }
+        catch (Exception ex) {
+            model.addAttribute("errorMessage", "Error finding the contragent:" + ex.toString());
+            return contragentsList(model);
+        }
+    }
+
+    @RequestMapping(value = { "/contragentslist" }, params={"findbyinn"}, method = RequestMethod.POST)
+    public String findByINNContragent(Model model, @ModelAttribute("contragentform") Contragents contragentform) {
+
+        String inn = contragentform.getInn();
+
+        try {
+            findedContragent = contragentRepo.findByInn(inn);
             return "redirect:/contragentslist";
         }
         catch (Exception ex) {

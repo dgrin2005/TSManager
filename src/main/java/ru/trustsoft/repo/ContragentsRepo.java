@@ -9,6 +9,8 @@ public interface ContragentsRepo extends CrudRepository<Contragents, Long> {
 
     Contragents findByContragentname(String contragentname);
 
+    Contragents findByInn(String inn);
+
     Contragents findById(int id);
 
 }

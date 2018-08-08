@@ -14,20 +14,20 @@
         <tr>
             <th>User ID</th>
             <th>User Name</th>
-            <th>User Password</th>
             <th>Description</th>
             <th>Is Locked</th>
             <th>Is Admin</th>
             <th>Contragent</th>
+            <th>Contragent INN</th>
         </tr>
         <tr th:each ="user : ${users}">
             <td th:utext="${user.id}">...</td>
             <td th:utext="${user.username}">...</td>
-            <td th:utext="${user.userpassword}">...</td>
             <td th:utext="${user.description}">...</td>
             <td th:utext="${user.locked}">...</td>
             <td th:utext="${user.adm}">...</td>
             <td th:utext="${user.contragentsByContragentid.getContragentname()}">...</td>
+            <td th:utext="${user.contragentsByContragentid.getInn()}">...</td>
         </tr>
     </table>
 </div>

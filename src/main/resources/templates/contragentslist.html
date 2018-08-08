@@ -14,11 +14,13 @@
             <th>Contragent ID</th>
             <th>Contragent Name</th>
             <th>Description</th>
+            <th>INN</th>
         </tr>
         <tr th:each ="contragent : ${contragents}">
             <td th:utext="${contragent.id}">...</td>
             <td th:utext="${contragent.contragentname}">...</td>
             <td th:utext="${contragent.description}">...</td>
+            <td th:utext="${contragent.inn}">...</td>
         </tr>
     </table>
 </div>
@@ -34,6 +36,10 @@
     <br/>
     Description:
     <input type="text" th:field="*{description}" />
+    <br/>
+    INN:
+    <input type="text" th:field="*{inn}" />
+    <button type="submit" name="findbyinn">Find by INN</button>
     <br/>
     <button type="submit" name="add">Add contragent</button>
     <button type="submit" name="delete">Delete contragent</button>

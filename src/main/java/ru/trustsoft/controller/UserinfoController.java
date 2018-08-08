@@ -29,7 +29,7 @@ public class UserinfoController {
 
         String userInfo = WebUtils.toString(loginedUser);
         model.addAttribute("userInfo", userInfo);
-        model.addAttribute("contragent", "Contragent:" + contragent.getContragentname());
+        model.addAttribute("contragent", "Contragent:" + contragent.getContragentname() + " (" + contragent.getInn() + ")");
 
         return "userinfo";
     }

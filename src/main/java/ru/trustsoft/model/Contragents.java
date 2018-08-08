@@ -9,15 +9,17 @@ public class Contragents {
     private int id;
     private String contragentname;
     private String description;
+    private String inn;
     private Collection<Bases> basesById;
     private Collection<Users> usersById;
 
     public Contragents() {
     }
 
-    public Contragents(String contragentname, String description) {
+    public Contragents(String contragentname, String description, String inn) {
         this.contragentname = contragentname;
         this.description = description;
+        this.inn = inn;
     }
 
     @Id
@@ -51,6 +53,16 @@ public class Contragents {
         this.description = description;
     }
 
+    @Basic
+    @Column(name = "inn", nullable = false, length = -1)
+    public String getInn() {
+        return inn;
+    }
+
+    public void setInn(String inn) {
+        this.inn = inn;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,13 +70,14 @@ public class Contragents {
         Contragents that = (Contragents) o;
         return id == that.id &&
                 Objects.equals(contragentname, that.contragentname) &&
+                Objects.equals(inn, that.inn) &&
                 Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, contragentname, description);
+        return Objects.hash(id, contragentname, description, inn);
     }
 
     @OneToMany(mappedBy = "contragentsByContragentid")

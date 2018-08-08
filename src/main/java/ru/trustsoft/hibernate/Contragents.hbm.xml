@@ -14,6 +14,9 @@
         <property name="description">
             <column name="description" sql-type="text" not-null="true"/>
         </property>
+        <property name="inn">
+            <column name="inn" sql-type="text"/>
+        </property>
         <set name="basesById" inverse="true">
             <key>
                 <column name="contragentid"/>
