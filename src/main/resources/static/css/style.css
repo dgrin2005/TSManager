@@ -1,0 +1,36 @@
+body {
+    background: #f8f8f8;
+}
+
+h1 {
+    color:#0000FF;
+}
+
+h2 {
+    color:#0077FF;
+}
+
+h3 {
+    color:#00AAFF;
+}
+
+table {
+    border : 3px solid gray;
+}
+
+td {
+    border : 1px dashed gray;
+    text-align: center;
+}
+
+tr:first-child {
+    height: 50px;
+}
+
+.image {
+    outline: 4px double blue;
+}
+
+.image:hover {
+    outline: none;
+}

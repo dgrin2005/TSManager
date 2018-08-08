@@ -24,12 +24,20 @@ public class UserinfoController {
     public String userInfo(Model model, Principal principal) {
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
-        Users user = userRepo.findByUsername(loginedUser.getUsername());
-        Contragents contragent = user.getContragentsByContragentid();
-
         String userInfo = WebUtils.toString(loginedUser);
+        Contragents contragent = null;
+        try {
+            Users user = userRepo.findByUsername(loginedUser.getUsername());
+            contragent = user.getContragentsByContragentid();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         model.addAttribute("userInfo", userInfo);
-        model.addAttribute("contragent", "Contragent:" + contragent.getContragentname() + " (" + contragent.getInn() + ")");
+        if (contragent != null) {
+            model.addAttribute("contragent", "Contragent:" + contragent.getContragentname() + " (" + contragent.getInn() + ")");
+        } else {
+            model.addAttribute("contragent", "Contragent: Not found");
+        }
 
         return "userinfo";
     }
@@ -37,7 +45,6 @@ public class UserinfoController {
     @RequestMapping(value = { "/userinfo" }, params={"disconnect"}, method = RequestMethod.POST)
     public String disconnectTS(Model model, Principal principal) {
 
-        System.out.println("Key pressed");
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
         String userInfo = WebUtils.toString(loginedUser);
 
