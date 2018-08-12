@@ -16,10 +16,24 @@
     <button type="submit" name="disconnect">Disconnect terminal session</button>
 </form>
 <br/>
-<form method="POST">
-    <button type="submit" name="reconciliation">Reconciliation act</button>
+<form th:object="${season}" method="POST">
+    Start date (yyyy-mm-dd):
+    <input type="text" th:field="*{startDate}"/>
+    <br/>
+    End date (yyyy-mm-dd):
+    <input type="text" th:field="*{endDate}"/>
+    <br/>
+    <button type="submit" name="orderreconciliation">Order reconciliation act</button>
+    <br/>
+    <button type="submit" name="getreconciliation">Get reconciliation act</button>
 </form>
-<th:block th:include="/footer"></th:block>
+<br/>
 
+<!-- Check if errorMessage is not null and not empty -->
+<div th:if="${errorMessage}" th:utext="${errorMessage}"
+     style="color:red;font-style:italic;">
+    ...
+</div>
+<th:block th:include="/footer"></th:block>
 </body>
 </html>

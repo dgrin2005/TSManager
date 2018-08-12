@@ -3,6 +3,7 @@ package ru.trustsoft.utils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import java.time.LocalDate;
 import java.util.Collection;
 
 public class WebUtils {
@@ -27,6 +28,20 @@ public class WebUtils {
             }
             sb.append("</p>");
         }
+        return sb.toString();
+    }
+
+    public static String toString(LocalDate date) {
+        StringBuilder sb = new StringBuilder();
+
+        int day = date.getDayOfMonth();
+        int month = date.getMonthValue();
+        int year = date.getYear();
+
+        sb.append(day < 10 ? "0" : "").append(day);
+        sb.append(month < 10 ? "0" : "").append(month);
+        sb.append(year);
+
         return sb.toString();
     }
 }
