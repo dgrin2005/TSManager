@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<th:block th:include="/menu"></th:block>
+<div th:insert="menu :: mainmenu"></div>
 <h2>User Info Page</h2>
 <div th:if="${userInfo != null}" th:utext="${userInfo}"></div>
 <div th:if="${userInfo != null}" th:utext="${contragent}"></div>
@@ -34,6 +34,6 @@
      style="color:red;font-style:italic;">
     ...
 </div>
-<th:block th:include="/footer"></th:block>
+<div th:insert="footer :: copyright"></div>
 </body>
 </html>

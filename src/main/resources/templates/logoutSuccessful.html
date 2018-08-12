@@ -7,9 +7,9 @@
 </head>
 
 <body>
-<th:block th:include="/menu"></th:block>
+<div th:insert="menu :: mainmenu"></div>
 <h2>Logout Successful!</h2>
-<th:block th:include="/footer"></th:block>
+<div th:insert="footer :: copyright"></div>
 </body>
 
 </html>

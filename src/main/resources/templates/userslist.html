@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<th:block th:include="/menu"></th:block>
+<div th:insert="menu :: mainmenu"></div>
 <h1>Users List</h1>
 <div>
     <table border="1">
@@ -71,6 +71,6 @@
      style="color:red;font-style:italic;">
     ...
 </div>
-<th:block th:include="/footer"></th:block>
+<div th:insert="footer :: copyright"></div>
 </body>
 </html>

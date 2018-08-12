@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<th:block th:include="/menu"></th:block>
+<div th:insert="menu :: mainmenu"></div>
 <h2>Login</h2>
 <!-- /login?error=true -->
 <div th:if="${#request.getParameter('error') == 'true'}"
@@ -35,7 +35,7 @@
     <br/>
     <input name="submit" type="submit" value="submit" />
 </form>
-<th:block th:include="/footer"></th:block>
+<div th:insert="footer :: copyright"></div>
 </body>
 
 </html>

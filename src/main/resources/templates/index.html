@@ -7,8 +7,8 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<th:block th:include="/menu"></th:block>
+<div th:insert="menu :: mainmenu"></div>
 <h2 th:if="${#request.userPrincipal != null}" th:utext="${message}"></h2>
-<th:block th:include="/footer"></th:block>
+<div th:insert="footer :: copyright"></div>
 </body>
 </html>

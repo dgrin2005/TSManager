@@ -9,6 +9,14 @@
     <artifactId>TerminalServerManager</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <name>TSM</name>
+    <description>TerminalServerManager</description>
+    <developers>
+        <developer>
+            <name>Dmitry Grinshteyn</name>
+        </developer>
+    </developers>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -57,6 +65,7 @@
 
 
     <build>
+        <finalName>${project.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
