@@ -15,8 +15,8 @@ public class ReconciliationAct implements UtilsConst {
         // /FС:\путь к базе /N»ИмяПользователя» /P»ПарольПользователя» /Execute с:\путь к обработке\самаобработка.epf
 
         Runtime r = Runtime.getRuntime();
-        String cmd = "\"C:\\Program Files (x86)\\1cv8\\common\\1cestart.exe\" ENTERPRISE /DisableStartupMessages" +
-                " /F\"D:\\1S-Bases\\Траст-Софт\\TrSoft\\\" /NАдминистратор /Execute \"D:\\СоздатьАктСверки.epf\"" +
+        String cmd = PATH_1C + " ENTERPRISE /DisableStartupMessages" +
+                " /F" + PATH_1C_BASE + " /NАдминистратор /Execute "+ PATH_EPF +
                 " /C\"" + parameters1C + ";" + ACT_CATALOG + "\"" ;
         r.exec(cmd);
 

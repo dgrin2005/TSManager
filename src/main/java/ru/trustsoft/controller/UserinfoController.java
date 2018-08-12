@@ -76,10 +76,6 @@ public class UserinfoController {
     @RequestMapping(value = { "/userinfo" }, params={"orderreconciliation"}, method = RequestMethod.POST)
     public String orderReconciliation(Model model, Principal principal, @ModelAttribute("season") Season season) {
 
-
-        System.out.println("+++");
-        System.out.println(season.getStartDate());
-        System.out.println("---");
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
         String userInfo = WebUtils.toString(loginedUser);
 
