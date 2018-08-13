@@ -2,31 +2,36 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <body>
     <div th:fragment="mainmenu" style="border: 1px solid #ccc;padding:5px;margin-bottom:20px;">
-    <a th:href="@{/}">Home</a>
+    <a th:href="@{/}" target="_blank"><img src = "/img/logo.png" border = "0" alt = "Logo" /></a>
 
-    | &nbsp;
+    &nbsp;
 
-    <a th:href="@{/userinfo}">User info</a>
+    <a th:href="@{/}"><span th:utext="#{menu.home}"></span></a>
+    
 
-    | &nbsp;
+    &nbsp;
 
-    <a th:href="@{/userslist}">Users list</a>
+    <a th:href="@{/userinfo}"><span th:utext="#{menu.userinfo}"></span></a>
 
-    | &nbsp;
+    &nbsp;
 
-    <a th:href="@{/baseslist}">Bases list</a>
+    <a th:href="@{/userslist}"><span th:utext="#{menu.userslist}"></span></a>
 
-    | &nbsp;
+    &nbsp;
 
-    <a th:href="@{/contragentslist}">Contragents list</a>
+    <a th:href="@{/baseslist}"><span th:utext="#{menu.baseslist}"></span></a>
 
-    | &nbsp;
+    &nbsp;
 
-    <a th:href="@{/basesofuserslist}">Bases of users list</a>
+    <a th:href="@{/contragentslist}"><span th:utext="#{menu.contragentslist}"></span></a>
 
-    | &nbsp;
+    &nbsp;
 
-    <a th:if="${#request.userPrincipal != null}" th:href="@{/logout}">Logout</a>
+    <a th:href="@{/basesofuserslist}"><span th:utext="#{menu.basesofuserslist}"></span></a>
+
+    &nbsp;
+
+    <a th:if="${#request.userPrincipal != null}" th:href="@{/logout}"><span th:utext="#{menu.logout}"></span></a>
     </div>
   </body>
 </html>

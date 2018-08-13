@@ -7,7 +7,7 @@
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
-<h3 th:if="${message != null}" th:utext="${message}" style="color: red;"></h3>
+<h3 th:if="${#request.userPrincipal != null}" th:utext="#{menu.p403(${#request.userPrincipal.getName()})}" style="color: red";></h3>
 <div th:insert="footer :: copyright"></div>
 </body>
 </html>

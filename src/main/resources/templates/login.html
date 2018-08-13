@@ -7,33 +7,33 @@
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
-<h2>Login</h2>
+<h2 th:utext="#{menu.login}"></h2>
 <!-- /login?error=true -->
 <div th:if="${#request.getParameter('error') == 'true'}"
      style="color:red;margin:10px 0px;">
-    Login Failed!!!<br />
-    Reason :
+    <span th:utext="#{login.failed}"></span><br />
+    <span th:utext="#{login.reason}"></span> :
     <span th:if="${#session!= null and #session.getAttribute('SPRING_SECURITY_LAST_EXCEPTION') != null}"
           th:utext="${#session.getAttribute('SPRING_SECURITY_LAST_EXCEPTION').message}">
                 Static summary
          </span>
 
 </div>
-<h3>Enter user name and password:</h3>
+<h3 th:utext="#{login.credentials}"></h3>
 <form name='f' th:action="@{/j_spring_security_check}" method='POST'>
-    User:
+    <span th:utext="#{login.username}"></span>:
     <input type='text' name='username' value=''>
     <br/>
     <br/>
-    Password:
+    <span th:utext="#{login.password}"></span>:
     <input type='password' name='password' />
     <br/>
     <br/>
-    Remember Me
+    <span th:utext="#{login.rememberme}"></span>:
     <input type="checkbox" name="remember-me" />
     <br/>
     <br/>
-    <input name="submit" type="submit" value="submit" />
+    <input name="submit" type="submit" th:value="#{button.submit}"/>
 </form>
 <div th:insert="footer :: copyright"></div>
 </body>

@@ -23,17 +23,18 @@ import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Locale;
 
 @Controller
 @RequestMapping(path="/")
 public class UserinfoController {
 
     @RequestMapping(value = "/userinfo", method = RequestMethod.GET)
-    public String userInfo(Model model, Principal principal) {
+    public String userInfo(Model model, Principal principal, Locale locale) {
 
         //Calendar date1 = Calendar.getInstance();
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
-        String userInfo = WebUtils.toString(loginedUser);
+        String userInfo = WebUtils.toString(loginedUser, locale);
         Contragents contragent = null;
         try {
             Users user = userRepo.findByUsername(loginedUser.getUsername());
@@ -41,43 +42,41 @@ public class UserinfoController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        String contragentInfo = WebUtils.toString(contragent, locale);
+
         model.addAttribute("userInfo", userInfo);
-        if (contragent != null) {
-            model.addAttribute("contragent", "Contragent:" + contragent.getContragentname() + " (" + contragent.getInn() + ")");
-        } else {
-            model.addAttribute("contragent", "Contragent: Not found");
-        }
+        model.addAttribute("contragent", contragentInfo);
         model.addAttribute("season", season);
 
         return "userinfo";
     }
 
     @RequestMapping(value = { "/userinfo" }, params={"disconnect"}, method = RequestMethod.POST)
-    public String disconnectTS(Model model, Principal principal) {
+    public String disconnectTS(Model model, Principal principal, Locale locale) {
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
-        String userInfo = WebUtils.toString(loginedUser);
+        //String userInfo = WebUtils.toString(loginedUser);
 
         TerminalSessions ts = new TerminalSessions();
         try {
             ts.getSessions();
             System.out.println("We have sessions");
-            System.out.println(ts);
-            ts.termineSession(principal.getName());
+            //System.out.println(ts);
+            ts.termineSession(loginedUser.getUsername());
             System.out.println("Disconnecting");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return userInfo(model, principal);
+        return userInfo(model, principal, locale);
         //return "redirect:/userinfo";
     }
 
     @RequestMapping(value = { "/userinfo" }, params={"orderreconciliation"}, method = RequestMethod.POST)
-    public String orderReconciliation(Model model, Principal principal, @ModelAttribute("season") Season season) {
+    public String orderReconciliation(Model model, Principal principal, @ModelAttribute("season") Season season, Locale locale) {
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
-        String userInfo = WebUtils.toString(loginedUser);
+        //String userInfo = WebUtils.toString(loginedUser);
 
         try {
 
@@ -105,9 +104,9 @@ public class UserinfoController {
             }
         } catch (Exception ex) {
             model.addAttribute("errorMessage", "Error:" + ex.toString());
-            return userInfo(model, principal);
+            return userInfo(model, principal, locale);
         }
-        return userInfo(model, principal);
+        return userInfo(model, principal, locale);
         //return "redirect:/userinfo";
     }
 
@@ -115,7 +114,7 @@ public class UserinfoController {
     public void getReconciliation(HttpServletResponse response, Model model, Principal principal, @ModelAttribute("season") Season season) {
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
-        String userInfo = WebUtils.toString(loginedUser);
+        //String userInfo = WebUtils.toString(loginedUser);
 
         Contragents contragent = null;
         try {

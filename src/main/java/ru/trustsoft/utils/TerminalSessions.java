@@ -14,6 +14,7 @@ public class TerminalSessions implements UtilsConst {
         Runtime r = Runtime.getRuntime();
         Process p;
         String cmd = "qwinsta /server:" + SERVER_ADDRESS;
+        System.out.println(cmd);
         p = r.exec(cmd);
         String s;
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -50,9 +51,11 @@ public class TerminalSessions implements UtilsConst {
         }
         br.close();
 
+/*
         for (TerminalSession terminalSession : terminalSessions) {
             System.out.println(terminalSession.getUsername() + "\\" + terminalSession.getId());
         }
+*/
     }
 
     public void  termineSession(String username) throws IOException {
@@ -60,10 +63,13 @@ public class TerminalSessions implements UtilsConst {
         //  rwinsta /server:terminal.example.com <session-id>
 
         for (TerminalSession ts: terminalSessions) {
+            System.out.println(ts.getUsername() + "\\" + ts.getId());
             if (ts.getUsername().equals(username)) {
-
+                System.out.println("!!!");
                 Runtime r = Runtime.getRuntime();
-                String cmd = "rwinsta /server:" + SERVER_ADDRESS + " " + ts.getId();
+                //String cmd = "rwinsta /server:" + SERVER_ADDRESS + " " + ts.getId();
+                String cmd = "rwinsta " + ts.getId() +" /server:" + SERVER_ADDRESS;
+                System.out.println(cmd);
                 r.exec(cmd);
             }
         }

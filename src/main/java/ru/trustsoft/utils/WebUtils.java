@@ -2,31 +2,71 @@ package ru.trustsoft.utils;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import ru.trustsoft.model.Contragents;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Locale;
 
 public class WebUtils {
 
-    public static String toString(User user) {
+    public static String toString(User user, Locale locale) {
         StringBuilder sb = new StringBuilder();
-
-        sb.append("<p>Username: ").append(user.getUsername()).append("</p>");
-        sb.append("<p>Is non locked: ").append(user.isAccountNonLocked()).append("</p>");
-
         Collection<GrantedAuthority> authorities = user.getAuthorities();
-        if (authorities != null && !authorities.isEmpty()) {
-            sb.append("<p>Authority: ");
-            boolean first = true;
-            for (GrantedAuthority a : authorities) {
-                if (first) {
-                    sb.append(a.getAuthority());
-                    first = false;
-                } else {
-                    sb.append(", ").append(a.getAuthority());
+        if (locale == Locale.ENGLISH) {
+            sb.append("<p>Username: ").append(user.getUsername()).append("</p>");
+            sb.append("<p>Is non locked: ").append(user.isAccountNonLocked()).append("</p>");
+            if (authorities != null && !authorities.isEmpty()) {
+                sb.append("<p>Authority: ");
+                boolean first = true;
+                for (GrantedAuthority a : authorities) {
+                    if (first) {
+                        sb.append(a.getAuthority());
+                        first = false;
+                    } else {
+                        sb.append(", ").append(a.getAuthority());
+                    }
                 }
+                sb.append("</p>");
             }
-            sb.append("</p>");
+        } else {
+            sb.append("<p>Пользователь: ").append(user.getUsername()).append("</p>");
+            sb.append("<p>Не заблокирован: ").append(user.isAccountNonLocked()).append("</p>");
+            if (authorities != null && !authorities.isEmpty()) {
+                sb.append("<p>Права: ");
+                boolean first = true;
+                for (GrantedAuthority a : authorities) {
+                    if (first) {
+                        sb.append(a.getAuthority());
+                        first = false;
+                    } else {
+                        sb.append(", ").append(a.getAuthority());
+                    }
+                }
+                sb.append("</p>");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public static String toString(Contragents contragent, Locale locale) {
+        StringBuilder sb = new StringBuilder();
+        if (locale == Locale.ENGLISH) {
+            if (contragent != null) {
+                sb.append("Contragent:").append(contragent.getContragentname()).
+                        append("(INN ").append(contragent.getInn()).append(")");
+            } else {
+                sb.append("Contragent: Not found");
+            }
+        } else {
+            if (contragent != null) {
+                sb.append("Контрагент:").append(contragent.getContragentname()).
+                        append("(ИНН ").append(contragent.getInn()).append(")");
+            } else {
+                sb.append("Контрагент: Не найден");
+            }
         }
         return sb.toString();
     }

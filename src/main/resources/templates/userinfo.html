@@ -8,24 +8,24 @@
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
-<h2>User Info Page</h2>
+<h2 th:utext="#{menu.userinfo}"></h2>
 <div th:if="${userInfo != null}" th:utext="${userInfo}"></div>
 <div th:if="${userInfo != null}" th:utext="${contragent}"></div>
 <br/>
 <form method="POST">
-    <button type="submit" name="disconnect">Disconnect terminal session</button>
+    <button type="submit" name="disconnect"><span th:utext="#{button.disconnect}"></span></button>
 </form>
 <br/>
 <form th:object="${season}" method="POST">
-    Start date (yyyy-mm-dd):
+    <span th:utext="#{userinfo.startdate}"></span>:
     <input type="text" th:field="*{startDate}"/>
     <br/>
-    End date (yyyy-mm-dd):
+    <span th:utext="#{userinfo.enddate}"></span>:
     <input type="text" th:field="*{endDate}"/>
     <br/>
-    <button type="submit" name="orderreconciliation">Order reconciliation act</button>
+    <button type="submit" name="orderreconciliation"><span th:utext="#{button.orderreconciliation}"></span></button>
     <br/>
-    <button type="submit" name="getreconciliation">Get reconciliation act</button>
+    <button type="submit" name="getreconciliation"><span th:utext="#{button.getreconciliation}"></span></button>
 </form>
 <br/>
 
