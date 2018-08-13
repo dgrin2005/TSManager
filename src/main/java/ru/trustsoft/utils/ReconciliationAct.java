@@ -44,7 +44,7 @@ public class ReconciliationAct implements UtilsConst {
         BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
 
         byte[] buffer = new byte[1024];
-        int bytesRead = 0;
+        int bytesRead;
         while ((bytesRead = inStream.read(buffer)) != -1) {
             outStream.write(buffer, 0, bytesRead);
         }

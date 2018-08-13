@@ -10,7 +10,7 @@
 <h2 th:utext="#{menu.login}"></h2>
 <!-- /login?error=true -->
 <div th:if="${#request.getParameter('error') == 'true'}"
-     style="color:red;margin:10px 0px;">
+     style="color:red;margin:10px 0;">
     <span th:utext="#{login.failed}"></span><br />
     <span th:utext="#{login.reason}"></span> :
     <span th:if="${#session!= null and #session.getAttribute('SPRING_SECURITY_LAST_EXCEPTION') != null}"

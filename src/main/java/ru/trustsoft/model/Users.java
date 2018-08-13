@@ -61,7 +61,7 @@ public class Users {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = -1)
+    @Column(name = "description", length = -1)
     public String getDescription() {
         return description;
     }

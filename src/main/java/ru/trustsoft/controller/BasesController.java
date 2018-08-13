@@ -121,6 +121,4 @@ public class BasesController {
     @Autowired
     private ContragentsRepo contragentRepo;
 
-    private String errorMessage;
-
 }

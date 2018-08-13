@@ -126,7 +126,7 @@ public class UserinfoController {
     @Autowired
     private ServletContext servletContext;
 
-    private Season season = new Season();
+    private final Season season = new Season();
 
     private String errorMessage;
 
