@@ -20,9 +20,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Locale;
 
 @Controller
@@ -39,8 +37,8 @@ public class UserinfoController {
         try {
             Users user = userRepo.findByUsername(loginedUser.getUsername());
             contragent = user.getContragentsByContragentid();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            model.addAttribute("errorMessage", "Error:" + ex.toString());
         }
         String contragentInfo = WebUtils.toString(contragent, locale);
 
@@ -60,12 +58,9 @@ public class UserinfoController {
         TerminalSessions ts = new TerminalSessions();
         try {
             ts.getSessions();
-            System.out.println("We have sessions");
-            //System.out.println(ts);
             ts.termineSession(loginedUser.getUsername());
-            System.out.println("Disconnecting");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            model.addAttribute("errorMessage", "Error:" + ex.toString());
         }
 
         return userInfo(model, principal, locale);
@@ -79,14 +74,8 @@ public class UserinfoController {
         //String userInfo = WebUtils.toString(loginedUser);
 
         try {
-
-            Contragents contragent = null;
-            try {
-                Users user = userRepo.findByUsername(loginedUser.getUsername());
-                contragent = user.getContragentsByContragentid();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Users user = userRepo.findByUsername(loginedUser.getUsername());
+            Contragents contragent = user.getContragentsByContragentid();
             if (contragent != null) {
                 String parameters1C = contragent.getInn() + ";" + LocalDate.now().toString() + ";" +
                         LocalDate.parse(season.getStartDate()) + ";" + LocalDate.parse(season.getEndDate()) + ";" +
@@ -95,65 +84,40 @@ public class UserinfoController {
                 System.out.println(parameters1C);
 
                 ReconciliationAct ra = new ReconciliationAct();
-                try {
-                    ra.orderReconciliationAct(parameters1C);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                ra.orderReconciliationAct(parameters1C);
             }
         } catch (Exception ex) {
             model.addAttribute("errorMessage", "Error:" + ex.toString());
-            return userInfo(model, principal, locale);
         }
         return userInfo(model, principal, locale);
         //return "redirect:/userinfo";
     }
 
     @RequestMapping(value = { "/userinfo" }, params={"getreconciliation"}, method = RequestMethod.POST)
-    public void getReconciliation(HttpServletResponse response, Model model, Principal principal, @ModelAttribute("season") Season season) {
+    public String getReconciliation(HttpServletResponse response, Model model, Principal principal, @ModelAttribute("season") Season season, Locale locale) {
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
         //String userInfo = WebUtils.toString(loginedUser);
 
-        Contragents contragent = null;
         try {
             Users user = userRepo.findByUsername(loginedUser.getUsername());
-            contragent = user.getContragentsByContragentid();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (contragent != null) {
-            String filename = contragent.getInn() + "_" + WebUtils.toString(LocalDate.now()) + "_" +
+            Contragents contragent = user.getContragentsByContragentid();
+            if (contragent != null) {
+                String filename = contragent.getInn() + "_" + WebUtils.toString(LocalDate.now()) + "_" +
                     WebUtils.toString(LocalDate.parse(season.getStartDate())) + "_" +
                     WebUtils.toString(LocalDate.parse(season.getEndDate())) + "_" +
                     loginedUser.getUsername() + ".pdf";
 
-            System.out.println(filename);
+                System.out.println(filename);
 
-            ReconciliationAct ra = new ReconciliationAct();
-            try {
+                ReconciliationAct ra = new ReconciliationAct();
                 ra.getReconciliationAct(filename, response, this.servletContext);
-
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (Exception ex) {
+            model.addAttribute("errorMessage", "Error:" + ex.toString());
+            return userInfo(model, principal, locale);
         }
-
-/*
-        model.addAttribute("userInfo", userInfo);
-        if (contragent != null) {
-            model.addAttribute("contragent", "Contragent:" + contragent.getContragentname() + " (" + contragent.getInn() + ")");
-        } else {
-            model.addAttribute("contragent", "Contragent: Not found");
-        }
-        model.addAttribute("season", season);
-
-        return "userinfo";
-        return userInfo(model, principal);
-*/
-        //return "redirect:/userinfo";
+        return "";
     }
 
     @Autowired

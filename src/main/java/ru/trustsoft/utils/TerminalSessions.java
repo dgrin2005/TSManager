@@ -51,11 +51,6 @@ public class TerminalSessions implements UtilsConst {
         }
         br.close();
 
-/*
-        for (TerminalSession terminalSession : terminalSessions) {
-            System.out.println(terminalSession.getUsername() + "\\" + terminalSession.getId());
-        }
-*/
     }
 
     public void  termineSession(String username) throws IOException {

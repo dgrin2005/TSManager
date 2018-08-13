@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>404 Not Found</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<h2 th:utext="#{menu.p400}" style="color: red";></h2>
+<a href="/" th:href="@{/}">Back to Home Page</a>
+<div th:insert="footer :: copyright"></div>
+</body>
+</html>
