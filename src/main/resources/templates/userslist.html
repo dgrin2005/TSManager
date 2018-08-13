@@ -7,17 +7,17 @@
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
-<h1>Users List</h1>
+<h1 th:utext="#{menu.userslist}"></h1>
 <div>
     <table border="1">
         <tr>
-            <th>User ID</th>
-            <th>User Name</th>
-            <th>Description</th>
-            <th>Is Locked</th>
-            <th>Is Admin</th>
-            <th>Contragent</th>
-            <th>Contragent INN</th>
+            <th th:utext="#{userslist.userid}"></th>
+            <th th:utext="#{userslist.username}"></th>
+            <th th:utext="#{userslist.description}"></th>
+            <th th:utext="#{userslist.islocked}"></th>
+            <th th:utext="#{userslist.isadmin}"></th>
+            <th th:utext="#{userslist.contragent}"></th>
+            <th th:utext="#{userslist.contragentinn}"></th>
         </tr>
         <tr th:each ="user : ${users}">
             <td th:utext="${user.id}">...</td>
@@ -31,28 +31,28 @@
     </table>
 </div>
 <br/>
-<h2>User Form</h2>
+<h2 th:utext="#{userslist.form}"></h2>
 <form th:object="${userform}" method="POST">
-    User ID:
+    <span th:utext="#{userslist.userid}"></span>:
     <input type="text" th:field="*{id}" />
-    <button type="submit" name="findbyid">Find by ID</button>
+    <button type="submit" name="findbyid"><span th:utext="#{button.findByID}"></span></button>
     <br/>
-    User Name:
+    <span th:utext="#{userslist.username}"></span>:
     <input type="text" th:field="*{username}" />
     <br/>
-    User Password:
+    <span th:utext="#{userslist.userpassword}"></span>:
     <input type="password" th:field="*{userpassword}" />
     <br/>
-    Description:
+    <span th:utext="#{userslist.description}"></span>:
     <input type="text" th:field="*{description}" />
     <br/>
-    Is Locked:
+    <span th:utext="#{userslist.islocked}"></span>:
     <input type="checkbox" th:field="*{locked}" />
     <br/>
-    Is Admin:
+    <span th:utext="#{userslist.isadmin}"></span>:
     <input type="checkbox" th:field="*{adm}" />
     <br/>
-    Contragent:
+    <span th:utext="#{userslist.contragent}"></span>:
     <select th:field="*{contragentid}">
         <option value="0"> -- </option>
         <option th:each="contragent : ${contragents}"
@@ -60,9 +60,9 @@
                 th:text="${contragent.getContragentname()}"></option>
     </select>
     <br/>
-    <button type="submit" name="add">Add user</button>
-    <button type="submit" name="delete">Delete user</button>
-    <button type="submit" name="update">Update user</button>
+    <button type="submit" name="add"><span th:utext="#{button.add}"></span></button>
+    <button type="submit" name="delete"><span th:utext="#{button.delete}"></span></button>
+    <button type="submit" name="update"><span th:utext="#{button.update}"></span></button>
 </form>
 <br/>
 

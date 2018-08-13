@@ -7,13 +7,13 @@
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
-<h1>Bases of users List</h1>
+<h1 th:utext="#{menu.basesofuserslist}"></h1>
 <div>
     <table border="1">
         <tr>
-            <th>Record ID</th>
-            <th>User</th>
-            <th>Base</th>
+            <th th:utext="#{basesofuserslist.recordid}"></th>
+            <th th:utext="#{basesofuserslist.user}"></th>
+            <th th:utext="#{basesofuserslist.base}"></th>
         </tr>
         <tr th:each ="baseofusers : ${basesofusers}">
             <td th:utext="${baseofusers.id}">...</td>
@@ -24,13 +24,13 @@
 </div>
 <br/>
 <div th:if="${isadm != 0}">
-    <h2>Base of users Form</h2>
+    <h2  th:utext="#{basesofuserslist.form}"></h2>
     <form th:object="${baseofusersform}" method="POST">
-        Base ID:
+        <span th:utext="#{basesofuserslist.recordid}"></span>:
         <input type="text" th:field="*{id}" />
-        <button type="submit" name="findbyid">Find by ID</button>
+        <button type="submit" name="findbyid"><span th:utext="#{button.findByID}"></span></button>
         <br/>
-        User:
+        <span th:utext="#{basesofuserslist.user}"></span>:
         <select th:field="*{userid}">
             <option value="0"> -- </option>
             <option th:each="user : ${users}"
@@ -38,7 +38,7 @@
                 th:text="${user.getUsername()}"></option>
         </select>
         <br/>
-        Base:
+        <span th:utext="#{basesofuserslist.base}"></span>:
         <select th:field="*{baseid}">
             <option value="0"> -- </option>
             <option th:each="base : ${bases}"
@@ -46,8 +46,8 @@
                 th:text="${base.getBasename()}"></option>
         </select>
         <br/>
-        <button type="submit" name="add">Add base</button>
-        <button type="submit" name="delete">Delete base</button>
+        <button type="submit" name="add"><span th:utext="#{button.add}"></span></button>
+        <button type="submit" name="delete"><span th:utext="#{button.delete}"></span></button>
     </form>
 </div>
 <!-- Check if errorMessage is not null and not empty -->

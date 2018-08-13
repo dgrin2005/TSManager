@@ -7,14 +7,14 @@
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
-<h1>Contragents List</h1>
+<h1 th:utext="#{menu.contragentslist}"></h1>
 <div>
     <table border="1">
         <tr>
-            <th>Contragent ID</th>
-            <th>Contragent Name</th>
-            <th>Description</th>
-            <th>INN</th>
+            <th th:utext="#{contragentslist.contragentid}"></th>
+            <th th:utext="#{contragentslist.contragentname}"></th>
+            <th th:utext="#{contragentslist.description}"></th>
+            <th th:utext="#{contragentslist.inn}"></th>
         </tr>
         <tr th:each ="contragent : ${contragents}">
             <td th:utext="${contragent.id}">...</td>
@@ -25,25 +25,25 @@
     </table>
 </div>
 <br/>
-<h2>Contragent Form</h2>
+<h2 th:utext="#{contragentslist.form}"></h2>
 <form th:object="${contragentform}" method="POST">
-    Contragent ID:
+    <span th:utext="#{contragentslist.contragentid}"></span>:
     <input type="text" th:field="*{id}" />
-    <button type="submit" name="findbyid">Find by ID</button>
+    <button type="submit" name="findbyid"><span th:utext="#{button.findByID}"></span></button>
     <br/>
-    Contragent Name:
+    <span th:utext="#{contragentslist.contragentname}"></span>:
     <input type="text" th:field="*{contragentname}" />
     <br/>
-    Description:
+    <span th:utext="#{contragentslist.description}"></span>:
     <input type="text" th:field="*{description}" />
     <br/>
-    INN:
+    <span th:utext="#{contragentslist.inn}"></span>:
     <input type="text" th:field="*{inn}" />
-    <button type="submit" name="findbyinn">Find by INN</button>
+    <button type="submit" name="findbyinn"><span th:utext="#{button.findByINN}"></span></button>
     <br/>
-    <button type="submit" name="add">Add contragent</button>
-    <button type="submit" name="delete">Delete contragent</button>
-    <button type="submit" name="update">Update contragent</button>
+    <button type="submit" name="add"><span th:utext="#{button.add}"></span></button>
+    <button type="submit" name="delete"><span th:utext="#{button.delete}"></span></button>
+    <button type="submit" name="update"><span th:utext="#{button.update}"></span></button>
 </form>
 <br/>
 
