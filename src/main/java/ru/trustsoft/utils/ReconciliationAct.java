@@ -28,28 +28,33 @@ public class ReconciliationAct implements UtilsConst {
 
         MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(servletContext, fileName);
 
-        File file = new File(fileName);
+        if (new File(fileName).exists()) {
 
-        // Content-Type
-        // application/pdf
-        response.setContentType(mediaType.getType());
+            File file = new File(fileName);
 
-        // Content-Disposition
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName());
+            // Content-Type
+            // application/pdf
+            response.setContentType(mediaType.getType());
 
-        // Content-Length
-        response.setContentLength((int) file.length());
+            // Content-Disposition
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName());
 
-        BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(file));
-        BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
+            // Content-Length
+            response.setContentLength((int) file.length());
 
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = inStream.read(buffer)) != -1) {
-            outStream.write(buffer, 0, bytesRead);
+            BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(file));
+            BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
+            outStream.flush();
+            inStream.close();
+        } else {
+            throw new IOException("File not found");
         }
-        outStream.flush();
-        inStream.close();
     }
 
 }

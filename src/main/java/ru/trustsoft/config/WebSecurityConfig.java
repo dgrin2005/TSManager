@@ -1,5 +1,6 @@
 package ru.trustsoft.config;
 
+import org.apache.catalina.connector.Connector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -75,4 +76,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PersistentTokenRepository persistentTokenRepository() {
         return new InMemoryTokenRepositoryImpl();
     }
+
 }
