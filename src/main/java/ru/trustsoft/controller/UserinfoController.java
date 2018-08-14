@@ -106,8 +106,7 @@ public class UserinfoController {
             if (contragent != null) {
                 String filename = contragent.getInn() + "_" + WebUtils.toString(LocalDate.now()) + "_" +
                     WebUtils.toString(LocalDate.parse(season.getStartDate())) + "_" +
-                    WebUtils.toString(LocalDate.parse(season.getEndDate())) + "_" +
-                    loginedUser.getUsername() + ".pdf";
+                    WebUtils.toString(LocalDate.parse(season.getEndDate())) + ".pdf";
 
                 System.out.println(filename);
 
