@@ -7,24 +7,26 @@ import org.springframework.http.MediaType;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
-public class ReconciliationAct implements UtilsConst {
+public class ReconciliationAct {
 
-    public void orderReconciliationAct(String parameters1C) throws IOException {
+    public void orderReconciliationAct(String path_1c, String path_1c_base, String path_epf,
+                                       String act_catalog, String parameters1C) throws IOException {
 
         // «C:\Program Files (x86)\1cv8\8.3.5.хххх\bin\1cv8.exe» ENTERPRISE /DisableStartupMessages
         // /FС:\путь к базе /N»ИмяПользователя» /P»ПарольПользователя» /Execute с:\путь к обработке\самаобработка.epf
 
         Runtime r = Runtime.getRuntime();
-        String cmd = PATH_1C + " ENTERPRISE /DisableStartupMessages" +
-                " /F" + PATH_1C_BASE + " /NАдминистратор /Execute "+ PATH_EPF +
-                " /C\"" + parameters1C + ";" + ACT_CATALOG + "\"" ;
+        String cmd = path_1c + " ENTERPRISE /DisableStartupMessages" +
+                " /F" + path_1c_base + " /NАдминистратор /Execute "+ path_epf +
+                " /C\"" + parameters1C + ";" + act_catalog + "\"" ;
+        System.out.println(cmd);
         r.exec(cmd);
 
     }
 
-    public void getReconciliationAct(String fileName, HttpServletResponse response, ServletContext servletContext) throws IOException {
+    public void getReconciliationAct(String act_catalog, String fileName, HttpServletResponse response, ServletContext servletContext) throws IOException {
 
-        fileName = ACT_CATALOG + fileName;
+        fileName = act_catalog + fileName;
 
         MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(servletContext, fileName);
 

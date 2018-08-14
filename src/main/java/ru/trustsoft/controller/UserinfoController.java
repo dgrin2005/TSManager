@@ -1,6 +1,7 @@
 package ru.trustsoft.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -30,7 +31,6 @@ public class UserinfoController {
     @RequestMapping(value = "/userinfo", method = RequestMethod.GET)
     public String userInfo(Model model, Principal principal, Locale locale) {
 
-        //Calendar date1 = Calendar.getInstance();
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
         String userInfo = WebUtils.toString(loginedUser, locale);
         Contragents contragent = null;
@@ -57,8 +57,8 @@ public class UserinfoController {
 
         TerminalSessions ts = new TerminalSessions();
         try {
-            ts.getSessions();
-            ts.termineSession(loginedUser.getUsername());
+            ts.getSessions(env.getProperty("tsmserveraddress"));
+            ts.termineSession(env.getProperty("tsmserveraddress"), loginedUser.getUsername());
         } catch (IOException ex) {
             model.addAttribute("errorMessage", "Error:" + ex.toString());
         }
@@ -84,7 +84,8 @@ public class UserinfoController {
                 System.out.println(parameters1C);
 
                 ReconciliationAct ra = new ReconciliationAct();
-                ra.orderReconciliationAct(parameters1C);
+                ra.orderReconciliationAct(env.getProperty("path_1c"), env.getProperty("path_1c_base"),
+                        env.getProperty("path_epf"), env.getProperty("act_catalog"), parameters1C);
             }
         } catch (Exception ex) {
             model.addAttribute("errorMessage", "Error:" + ex.toString());
@@ -111,7 +112,7 @@ public class UserinfoController {
                 System.out.println(filename);
 
                 ReconciliationAct ra = new ReconciliationAct();
-                ra.getReconciliationAct(filename, response, this.servletContext);
+                ra.getReconciliationAct(env.getProperty("act_catalog"), filename, response, this.servletContext);
             }
         } catch (Exception ex) {
             model.addAttribute("errorMessage", "Error:" + ex.toString());
@@ -127,6 +128,9 @@ public class UserinfoController {
     private ServletContext servletContext;
 
     private final Season season = new Season();
+
+    @Autowired
+    private Environment env;
 
     private String errorMessage;
 

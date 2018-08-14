@@ -3,17 +3,18 @@ package ru.trustsoft.utils;
 import java.io.*;
 import java.util.ArrayList;
 
-public class TerminalSessions implements UtilsConst {
+public class TerminalSessions {
 
     private final ArrayList<TerminalSession> terminalSessions = new ArrayList<>();
 
-    public void getSessions() throws IOException {
+    public void getSessions(String tsmserveraddress) throws IOException {
 
         //   qwinsta /server:terminal.example.com
 
         Runtime r = Runtime.getRuntime();
         Process p;
-        String cmd = "qwinsta /server:" + SERVER_ADDRESS;
+        //String cmd = "qwinsta /server:" + SERVER_ADDRESS;
+        String cmd = "qwinsta /server:" + tsmserveraddress;
         System.out.println(cmd);
         p = r.exec(cmd);
         String s;
@@ -53,7 +54,7 @@ public class TerminalSessions implements UtilsConst {
 
     }
 
-    public void  termineSession(String username) throws IOException {
+    public void  termineSession(String tsmserveraddress, String username) throws IOException {
 
         //  rwinsta /server:terminal.example.com <session-id>
 
@@ -62,8 +63,9 @@ public class TerminalSessions implements UtilsConst {
             if (ts.getUsername().equals(username)) {
                 System.out.println("!!!");
                 Runtime r = Runtime.getRuntime();
-                //String cmd = "rwinsta /server:" + SERVER_ADDRESS + " " + ts.getId();
-                String cmd = "rwinsta " + ts.getId() +" /server:" + SERVER_ADDRESS;
+                ////String cmd = "rwinsta /server:" + SERVER_ADDRESS + " " + ts.getId();
+                //String cmd = "rwinsta " + ts.getId() +" /server:" + SERVER_ADDRESS;
+                String cmd = "rwinsta " + ts.getId() +" /server:" + tsmserveraddress;
                 System.out.println(cmd);
                 r.exec(cmd);
             }
