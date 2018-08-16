@@ -10,12 +10,11 @@ import ru.trustsoft.model.Contragents;
 import ru.trustsoft.model.Users;
 import ru.trustsoft.repo.ContragentsRepo;
 import ru.trustsoft.repo.UsersRepo;
+import ru.trustsoft.service.MessageByLocaleService;
 
 @Controller
 @RequestMapping(path="/")
 public class UsersController {
-
-    private Users findedUser = null;
 
     @GetMapping(path="/userslist")
     public String usersList(Model model) {
@@ -47,13 +46,15 @@ public class UsersController {
                 Users user = new Users(username, userpassword, description, locked, adm, contragent);
                 userRepo.save(user);
                 contragent.getUsersById().add(user);
-                return "redirect:/userslist";
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.add.user"));
+                return usersList(model);
             } catch (Exception ex) {
-                model.addAttribute("errorMessage", "Error creating the user: " + ex.toString());
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.add.user") + ": " + ex.toString());
                 return usersList(model);
             }
         } else {
-                return "redirect:/userslist";
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
+            return usersList(model);
         }
 
     }
@@ -69,10 +70,11 @@ public class UsersController {
             Contragents contragent = user.getContragentsByContragentid();
             userRepo.delete(user);
             contragent.getUsersById().remove(user);
-            return "redirect:/userslist";
+            model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.user"));
+            return usersList(model);
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", "Error deleting the user:" + ex.toString());
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.user") + ": " + ex.toString());
             return usersList(model);
         }
     }
@@ -100,13 +102,15 @@ public class UsersController {
                 user.setAdm(adm);
                 user.setContragentsByContragentid(contragentRepo.findById(contragentid));
                 userRepo.save(user);
-                return "redirect:/userslist";
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.update.user"));
+                return usersList(model);
             } catch (Exception ex) {
-                model.addAttribute("errorMessage", "Error updating the user:" + ex.toString());
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.update.user") + ": " + ex.toString());
                 return usersList(model);
             }
         } else {
-            return "redirect:/userslist";
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
+            return usersList(model);
         }
     }
 
@@ -118,10 +122,15 @@ public class UsersController {
         try {
             findedUser = userRepo.findById(userid);
             findedUser.setContragentid(findedUser.getContragentsByContragentid().getId());
-            return "redirect:/userslist";
+            if (findedUser == null) {
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.user"));
+                return usersList(model);
+            } else {
+                return "redirect:/userslist";
+            }
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", "Error finding the user:" + ex.toString());
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.user") + ": " + ex.toString());
             return usersList(model);
         }
     }
@@ -129,11 +138,15 @@ public class UsersController {
     // Private fields
 
     @Autowired
+    private Users findedUser;
+
+    @Autowired
     private UsersRepo userRepo;
 
     @Autowired
     private ContragentsRepo contragentRepo;
 
-    private String errorMessage;
+    @Autowired
+    MessageByLocaleService messageByLocaleService;
 
 }

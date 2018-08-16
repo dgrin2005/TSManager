@@ -3,6 +3,9 @@ package ru.trustsoft.utils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import ru.trustsoft.model.Contragents;
+import ru.trustsoft.model.ReconActParameters;
+import ru.trustsoft.model.Users;
+import ru.trustsoft.repo.UsersRepo;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -82,5 +85,22 @@ public class WebUtils {
         sb.append(year);
 
         return sb.toString();
+    }
+
+    public static String getActFileName(User loginedUser, UsersRepo userRepo, ReconActParameters reconActParameters) throws Exception {
+        String filename = "";
+
+        if (loginedUser.getAuthorities().contains((GrantedAuthority) () -> "DEMO")) {
+            filename = "DemoAct.pdf";
+        } else {
+            Users user = userRepo.findByUsername(loginedUser.getUsername());
+            Contragents contragent = user.getContragentsByContragentid();
+            if (contragent != null) {
+                filename = contragent.getInn() + "_" + WebUtils.toString(LocalDate.now()) + "_" +
+                        WebUtils.toString(LocalDate.parse(reconActParameters.getStartDate())) + "_" +
+                        WebUtils.toString(LocalDate.parse(reconActParameters.getEndDate())) + ".pdf";
+            }
+        }
+        return filename;
     }
 }

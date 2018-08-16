@@ -9,27 +9,55 @@
 <body>
 <div th:insert="menu :: mainmenu"></div>
 <h2 th:utext="#{menu.userinfo}"></h2>
-<div th:if="${userInfo != null}" th:utext="${userInfo}"></div>
-<div th:if="${userInfo != null}" th:utext="${contragent}"></div>
-<br/>
-<form method="POST">
-    <button type="submit" name="disconnect"><span th:utext="#{button.disconnect}"></span></button>
+<div>
+<table  border="1" width = 420px>
+    <tr>
+        <td colspan = "2" ><span th:utext="#{table.terminalsession}"></span></td>
+    </tr>
+    <tr>
+        <td><div th:if="${userInfo != null}" th:utext="${userInfo}"></div></td>
+    </tr>
+    <tr>
+        <td><div th:if="${userInfo != null}" th:utext="${contragent}"></div></td>
+    </tr>
+    <tr>
+        <td><form method="POST">
+            <button type="submit" name="disconnect" style="width: 360px;"><span th:utext="#{button.disconnect}"></span></button>
+        </form></td>
+    </tr>
+</table>
+</div>
+</br>
+<form th:object="${raParameters}" method="POST">
+    <table  border="1" width = 420px>
+        <tr>
+            <td colspan = "2" ><span th:utext="#{table.reconciliation}"></span></td>
+        </tr>
+        <tr>
+            <td style="width: 210px;"><span th:utext="#{userinfo.startdate}" style="width: 200px;"></span>:</td>
+            <td style="width: 210px;"><span th:utext="#{userinfo.enddate}" style="width: 200px;"></span>:</td>
+        </tr>
+        <tr>
+            <td><input type="text" th:field="*{startDate}" style="width: 150px;"/></td>
+            <td><input type="text" th:field="*{endDate}" style="width: 150px;"/></td>
+        </tr>
+        <tr>
+            <td colspan = "2" ><button type="submit" name="orderreconciliation" style="width: 360px"><span th:utext="#{button.orderreconciliation}"></span></button></td>
+        </tr>
+        <tr>
+            <td colspan = "2" ><button type="submit" name="getreconciliation" style="width: 360px;"><span th:utext="#{button.getreconciliation}"></span></button></td>
+        </tr>
+        <tr>
+            <td><button type="submit" name="sendreconciliation" style="width: 150px;"><span th:utext="#{button.sendreconciliation}"></span></button></td>
+            <td><input type="text" th:field="*{email}" style="width: 150px;"/></td>
+        </tr>
+    </table>
 </form>
 <br/>
-<form th:object="${season}" method="POST">
-    <span th:utext="#{userinfo.startdate}"></span>:
-    <input type="text" th:field="*{startDate}"/>
-    <br/>
-    <span th:utext="#{userinfo.enddate}"></span>:
-    <input type="text" th:field="*{endDate}"/>
-    <br/>
-    <button type="submit" name="orderreconciliation"><span th:utext="#{button.orderreconciliation}"></span></button>
-    <br/>
-    <button type="submit" name="getreconciliation"><span th:utext="#{button.getreconciliation}"></span></button>
-</form>
-<br/>
-
-<!-- Check if errorMessage is not null and not empty -->
+<div th:if="${infoMessage}" th:utext="${infoMessage}"
+     style="color:blue;font-style:italic;">
+    ...
+</div>
 <div th:if="${errorMessage}" th:utext="${errorMessage}"
      style="color:red;font-style:italic;">
     ...

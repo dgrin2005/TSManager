@@ -1,5 +1,5 @@
 body {
-    background: #f8f8f8;
+    background: #FFFFFF;
 }
 
 h1 {
@@ -33,4 +33,18 @@ tr:first-child {
 
 .image:hover {
     outline: none;
+}
+
+img.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+h2.center {
+    text-align: center
+}
+
+h3.center {
+    text-align: center
 }

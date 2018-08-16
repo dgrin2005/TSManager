@@ -1,10 +1,13 @@
 package ru.trustsoft.model;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
 
 @Entity
+@Component
 public class Bases {
     private int id;
     private String basename;

@@ -6,12 +6,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.trustsoft.model.Contragents;
 import ru.trustsoft.repo.ContragentsRepo;
+import ru.trustsoft.service.MessageByLocaleService;
 
 @Controller
 @RequestMapping(path="/")
 public class ContragentsController {
-
-    private Contragents findedContragent = null;
 
     @GetMapping(path="/contragentslist")
     public String contragentsList(Model model) {
@@ -36,10 +35,11 @@ public class ContragentsController {
         try {
             Contragents contragent = new Contragents(contragentname, description, inn);
             contragentRepo.save(contragent);
-            return "redirect:/contragentslist";
+            model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.add.contragent"));
+            return contragentsList(model);
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", "Error creating the contragent: " + ex.toString());
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.add.contragent") + ": " + ex.toString());
             return contragentsList(model);
         }
     }
@@ -53,10 +53,11 @@ public class ContragentsController {
         try {
             Contragents contragent = contragentRepo.findById(contragentid);
             contragentRepo.delete(contragent);
-            return "redirect:/contragentslist";
+            model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.contragent"));
+            return contragentsList(model);
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", "Error deleting the contragent:" + ex.toString());
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.contragent") + ": " + ex.toString());
             return contragentsList(model);
         }
     }
@@ -76,10 +77,11 @@ public class ContragentsController {
             contragent.setDescription(description);
             contragent.setInn(inn);
             contragentRepo.save(contragent);
-            return "redirect:/contragentslist";
+            model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.update.contragent"));
+            return contragentsList(model);
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", "Error updating the contragent:" + ex.toString());
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.update.contragent") + ": " + ex.toString());
             return contragentsList(model);
         }
     }
@@ -91,10 +93,15 @@ public class ContragentsController {
 
         try {
             findedContragent = contragentRepo.findById(contragentid);
-            return "redirect:/contragentslist";
+            if (findedContragent == null) {
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.contragent"));
+                return contragentsList(model);
+            } else {
+                return "redirect:/contragentslist";
+            }
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", "Error finding the contragent:" + ex.toString());
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.contragent") + ": " + ex.toString());
             return contragentsList(model);
         }
     }
@@ -106,10 +113,15 @@ public class ContragentsController {
 
         try {
             findedContragent = contragentRepo.findByInn(inn);
-            return "redirect:/contragentslist";
+            if (findedContragent == null) {
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.contragent"));
+                return contragentsList(model);
+            } else {
+                return "redirect:/contragentslist";
+            }
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", "Error finding the contragent:" + ex.toString());
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.contragent") + ": " + ex.toString());
             return contragentsList(model);
         }
     }
@@ -117,8 +129,12 @@ public class ContragentsController {
     // Private fields
 
     @Autowired
+    private Contragents findedContragent;
+
+    @Autowired
     private ContragentsRepo contragentRepo;
 
-    private String errorMessage;
+    @Autowired
+    MessageByLocaleService messageByLocaleService;
 
 }

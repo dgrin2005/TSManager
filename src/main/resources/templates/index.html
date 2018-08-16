@@ -7,7 +7,7 @@
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
-<h2 th:if="${#request.userPrincipal != null}" th:utext="#{login.welcome(${#request.userPrincipal.getName()})}"></h2>
+<h2 class="center" th:if="${#request.userPrincipal != null}" th:utext="#{login.welcome(${#request.userPrincipal.getName()})}"></h2>
 <div th:insert="footer :: copyright"></div>
 </body>
 </html>

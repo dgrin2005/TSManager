@@ -1,9 +1,12 @@
 package ru.trustsoft.model;
 
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 
-public class Season {
+@Component
+public class ReconActParameters {
 
     @Id
     private int id;
@@ -12,7 +15,9 @@ public class Season {
 
     private String endDate;
 
-    public Season() {
+    private String email;
+
+    public ReconActParameters() {
     }
 
     public int getId() {
@@ -37,5 +42,13 @@ public class Season {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

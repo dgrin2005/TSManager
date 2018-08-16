@@ -12,6 +12,7 @@ import ru.trustsoft.model.Users;
 import ru.trustsoft.repo.BasesRepo;
 import ru.trustsoft.repo.BasesofusersRepo;
 import ru.trustsoft.repo.UsersRepo;
+import ru.trustsoft.service.MessageByLocaleService;
 
 import java.security.Principal;
 
@@ -21,7 +22,6 @@ public class BasesofusersController {
 
     private Basesofusers findedBaseofusers = null;
 
-    //@GetMapping(path="/basesofuserslist")
     @RequestMapping(value = { "/basesofuserslist" }, method = RequestMethod.GET)
     public String basesofusersList(Model model, Principal principal) {
 
@@ -62,15 +62,21 @@ public class BasesofusersController {
                 baseofusersRepo.save(baseofusers);
                 user.getBasesofusersById().add(baseofusers);
                 base.getBasesofusersById().add(baseofusers);
-                return "redirect:/basesofuserslist";
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.add.record"));
+                return basesofusersList(model, principal);
             } catch (Exception ex) {
-                model.addAttribute("errorMessage", "Error creating the record: " + ex.toString());
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.add.record") + ": " + ex.toString());
                 return basesofusersList(model, principal);
             }
 
         } else {
-            return "redirect:/basesofuserslist";
+            if (baseid > 0) {
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.user"));
+            } else {
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.base"));
+            }
         }
+        return basesofusersList(model, principal);
     }
 
     @RequestMapping(value = { "/basesofuserslist" }, params={"delete"}, method = RequestMethod.POST)
@@ -86,10 +92,11 @@ public class BasesofusersController {
             baseofusersRepo.delete(baseofusers);
             user.getBasesofusersById().remove(baseofusers);
             base.getBasesofusersById().remove(baseofusers);
-            return "redirect:/basesofuserslist";
+            model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.record"));
+            return basesofusersList(model, principal);
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", "Error deleting the record:" + ex.toString());
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.record") + ": " + ex.toString());
             return basesofusersList(model, principal);
         }
     }
@@ -104,10 +111,15 @@ public class BasesofusersController {
             findedBaseofusers = baseofusersRepo.findById(baseofusersid);
             findedBaseofusers.setBaseid(findedBaseofusers.getBasesByBaseid().getId());
             findedBaseofusers.setUserid(findedBaseofusers.getUsersByUserid().getId());
-            return "redirect:/basesofuserslist";
+            if (findedBaseofusers == null) {
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.record"));
+                return basesofusersList(model, principal);
+            } else {
+                return "redirect:/basesofuserslist";
+            }
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", "Error finding the record:" + ex.toString());
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.record") + ": " + ex.toString());
             return basesofusersList(model, principal);
         }
     }
@@ -123,6 +135,7 @@ public class BasesofusersController {
     @Autowired
     private UsersRepo userRepo;
 
-    private String errorMessage;
+    @Autowired
+    MessageByLocaleService messageByLocaleService;
 
 }

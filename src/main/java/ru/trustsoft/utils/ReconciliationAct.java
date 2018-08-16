@@ -1,16 +1,21 @@
 package ru.trustsoft.utils;
 
 import java.io.*;
+
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
+import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 public class ReconciliationAct {
 
     public void orderReconciliationAct(String path_1c, String path_1c_base, String path_epf,
-                                       String act_catalog, String parameters1C) throws IOException {
+                                       String act_catalog, String parameters1C) throws IOException, InterruptedException {
 
         // «C:\Program Files (x86)\1cv8\8.3.5.хххх\bin\1cv8.exe» ENTERPRISE /DisableStartupMessages
         // /FС:\путь к базе /N»ИмяПользователя» /P»ПарольПользователя» /Execute с:\путь к обработке\самаобработка.epf
@@ -20,7 +25,8 @@ public class ReconciliationAct {
                 " /F" + path_1c_base + " /NАдминистратор /Execute "+ path_epf +
                 " /C\"" + parameters1C + ";" + act_catalog + "\"" ;
         System.out.println(cmd);
-        r.exec(cmd);
+        Process p = r.exec(cmd);
+        //int exitVal = p.waitFor();
 
     }
 
@@ -33,7 +39,6 @@ public class ReconciliationAct {
         if (new File(fileName).exists()) {
 
             File file = new File(fileName);
-
             // Content-Type
             // application/pdf
             response.setContentType(mediaType.getType());
@@ -41,19 +46,31 @@ public class ReconciliationAct {
             // Content-Disposition
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName());
 
-            // Content-Length
-            response.setContentLength((int) file.length());
-
-            BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(file));
-            BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
-
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, bytesRead);
+            InputStream inputStream = new FileInputStream(file);
+            int nRead;
+            while ((nRead = inputStream.read()) != -1) {
+                response.getWriter().write(nRead);
             }
-            outStream.flush();
-            inStream.close();
+        } else {
+            throw new IOException("File not found");
+        }
+    }
+
+    public void sendEmail(JavaMailSender sender, String tsmemailaddress, String act_catalog, String fileName, String email) throws Exception {
+
+        fileName = act_catalog + fileName;
+        if (new File(fileName).exists()) {
+            MimeMessage message = sender.createMimeMessage();
+            // Enable the multipart flag!
+            MimeMessageHelper helper = new MimeMessageHelper(message,true);
+            helper.setTo(email);
+            helper.setReplyTo(tsmemailaddress);
+            helper.setFrom(tsmemailaddress);
+            helper.setText("Акт сверки");
+            helper.setSubject("Акт сверки");
+            FileSystemResource file = new FileSystemResource(fileName);
+            helper.addAttachment(file.getFilename(), file);
+            sender.send(message);
         } else {
             throw new IOException("File not found");
         }

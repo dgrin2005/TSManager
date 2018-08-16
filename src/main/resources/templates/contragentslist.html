@@ -46,8 +46,10 @@
     <button type="submit" name="update"><span th:utext="#{button.update}"></span></button>
 </form>
 <br/>
-
-<!-- Check if errorMessage is not null and not empty -->
+<div th:if="${infoMessage}" th:utext="${infoMessage}"
+     style="color:blue;font-style:italic;">
+    ...
+</div>
 <div th:if="${errorMessage}" th:utext="${errorMessage}"
      style="color:red;font-style:italic;">
     ...

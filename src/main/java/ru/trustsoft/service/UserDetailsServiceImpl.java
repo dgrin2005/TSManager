@@ -41,7 +41,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (userEntity.isAdm()) {
             authorities.add((GrantedAuthority) () -> "ADMIN");
         } else {
-            authorities.add((GrantedAuthority) () -> "USER");
+            if (username.toUpperCase().startsWith("DEMO")) {
+                authorities.add((GrantedAuthority) () -> "DEMO");
+            } else {
+                authorities.add((GrantedAuthority) () -> "USER");
+            }
         }
 
         return new User(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);

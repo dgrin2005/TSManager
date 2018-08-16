@@ -8,12 +8,11 @@ import ru.trustsoft.model.Bases;
 import ru.trustsoft.model.Contragents;
 import ru.trustsoft.repo.BasesRepo;
 import ru.trustsoft.repo.ContragentsRepo;
+import ru.trustsoft.service.MessageByLocaleService;
 
 @Controller
 @RequestMapping(path="/")
 public class BasesController {
-
-    private Bases findedBase = null;
 
     @GetMapping(path="/baseslist")
     public String basesList(Model model) {
@@ -42,14 +41,16 @@ public class BasesController {
                 Bases base = new Bases(basename, description, contragent);
                 baseRepo.save(base);
                 contragent.getBasesById().add(base);
-                return "redirect:/baseslist";
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.add.base"));
+                return basesList(model);
             } catch (Exception ex) {
-                model.addAttribute("errorMessage", "Error creating the base: " + ex.toString());
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.add.base") + ": " + ex.toString());
                 return basesList(model);
             }
 
         } else {
-            return "redirect:/baseslist";
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
+            return basesList(model);
         }
     }
 
@@ -64,10 +65,11 @@ public class BasesController {
             Contragents contragent = base.getContragentsByContragentid();
             baseRepo.delete(base);
             contragent.getBasesById().remove(base);
-            return "redirect:/baseslist";
+            model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.base"));
+            return basesList(model);
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", "Error deleting the base:" + ex.toString());
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.base") + ": " + ex.toString());
             return basesList(model);
         }
     }
@@ -87,13 +89,15 @@ public class BasesController {
                 base.setDescription(description);
                 base.setContragentsByContragentid(contragentRepo.findById(contragentid));
                 baseRepo.save(base);
-                return "redirect:/baseslist";
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.update.base"));
+                return basesList(model);
             } catch (Exception ex) {
-                model.addAttribute("errorMessage", "Error updating the base:" + ex.toString());
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.update.base") + ": " + ex.toString());
                 return basesList(model);
             }
         } else {
-            return "redirect:/baseslist";
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
+            return basesList(model);
         }
     }
 
@@ -105,10 +109,15 @@ public class BasesController {
         try {
             findedBase = baseRepo.findById(baseid);
             findedBase.setContragentid(findedBase.getContragentsByContragentid().getId());
-            return "redirect:/baseslist";
+            if (findedBase == null) {
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.base"));
+                return basesList(model);
+            } else {
+                return "redirect:/baseslist";
+            }
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", "Error finding the base:" + ex.toString());
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.base") + ": " + ex.toString());
             return basesList(model);
         }
     }
@@ -116,9 +125,15 @@ public class BasesController {
     // Private fields
 
     @Autowired
+    private Bases findedBase;
+
+    @Autowired
     private BasesRepo baseRepo;
 
     @Autowired
     private ContragentsRepo contragentRepo;
+
+    @Autowired
+    MessageByLocaleService messageByLocaleService;
 
 }
