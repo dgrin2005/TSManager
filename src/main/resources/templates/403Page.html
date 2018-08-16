@@ -7,7 +7,8 @@
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
-<h3 th:if="${#request.userPrincipal != null}" th:utext="#{menu.p403(${#request.userPrincipal.getName()})}" style="color: red"></h3>
+<h3 class="center" th:if="${#request.userPrincipal != null}" th:utext="#{menu.p403(${#request.userPrincipal.getName()})}" style="color: red"></h3>
+<img class="center" src="/img/oops.png" alt="oops">
 <div th:insert="footer :: copyright"></div>
 </body>
 </html>
