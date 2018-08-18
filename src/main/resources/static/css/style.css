@@ -14,17 +14,12 @@ h3 {
     color:#00AAFF;
 }
 
-table {
-    border : 3px solid gray;
+h4 {
+    font-weight: bold;
 }
 
-td {
-    border : 1px dashed gray;
-    text-align: center;
-}
-
-tr:first-child {
-    height: 50px;
+.active {
+    font-weight: bold;
 }
 
 .image {

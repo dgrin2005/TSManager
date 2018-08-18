@@ -23,22 +23,22 @@
 <form name='f' th:action="@{/j_spring_security_check}" method='POST'>
     <table  border="1">
         <tr>
-            <td colspan = "2" ><h3 th:utext="#{login.credentials}"></h3></td>
+            <td colspan = "2" align="center"><h3 th:utext="#{login.credentials}"></h3></td>
         </tr>
         <tr>
-            <td><span th:utext="#{login.username}"></span>:</td>
-            <td><input type='text' name='username' value=''></td>
+            <td align="center"><span th:utext="#{login.username}"></span>:</td>
+            <td align="center"><input type='text' name='username' value='' width = 150px></td>
         </tr>
         <tr>
-            <td><span th:utext="#{login.password}"></span>:</td>
-            <td><input type='password' name='password' /></td>
+            <td align="center"><span th:utext="#{login.password}"></span>:</td>
+            <td align="center"><input type='password' name='password'  width = 150px></td>
         </tr>
         <tr>
-            <td><span th:utext="#{login.rememberme}"></span>:</td>
-            <td><input type="checkbox" name="remember-me" /></td>
+            <td align="center"><span th:utext="#{login.rememberme}"></span>:</td>
+            <td align="center"><input type="checkbox" name="remember-me"></td>
         </tr>
         <tr>
-            <td colspan = "2" ><input name="submit" type="submit" th:value="#{button.submit}"/></td>
+            <td colspan = "2" align="center"><input name="submit" type="submit" th:value="#{button.submit}"/></td>
         </tr>
     </table>
 

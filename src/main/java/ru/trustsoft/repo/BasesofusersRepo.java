@@ -1,5 +1,6 @@
 package ru.trustsoft.repo;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +17,12 @@ public interface BasesofusersRepo extends CrudRepository<Basesofusers, Long> {
     @Query(value = "SELECT * FROM Basesofusers u WHERE u.userid=:userid", nativeQuery = true)
     List<Basesofusers> findBasesByUser(@Param("userid") Integer userid);
 
+    @Query(getAllRecordsByRank)
+    List<Basesofusers> findPaginated(Pageable pageable);
 
+    String getAllRecordsByRank= "from Basesofusers order by id ASC";
+
+    @Query(value = "SELECT * FROM Basesofusers u WHERE u.userid=:userid ORDER BY id ASC", nativeQuery = true)
+    List<Basesofusers> findBasesByUserPaginated(Pageable pageable, @Param("userid") Integer userid);
 
 }

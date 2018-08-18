@@ -100,6 +100,8 @@ public class UserinfoController {
                     ra.orderReconciliationAct(env.getProperty("path_1c"), env.getProperty("path_1c_base"),
                             env.getProperty("path_epf"), env.getProperty("act_catalog"), parameters1C);
                     model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.utils.orderreconact"));
+                } else {
+                    model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
                 }
             } catch (DateTimeException ex) {
                 model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.utils.dateformat")+ ": " + ex.toString());

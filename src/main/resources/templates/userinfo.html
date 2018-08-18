@@ -11,17 +11,17 @@
 <h2 th:utext="#{menu.userinfo}"></h2>
 <div>
 <table  border="1" width = 420px>
-    <tr>
-        <td colspan = "2" ><span th:utext="#{table.terminalsession}"></span></td>
+    <tr th:height="40px">
+        <td colspan = "2" align="center"><h4 th:utext="#{table.terminalsession}"></h4></td>
     </tr>
     <tr>
-        <td><div th:if="${userInfo != null}" th:utext="${userInfo}"></div></td>
+        <td align="center"><div th:if="${userInfo != null}" th:utext="${userInfo}"></div></td>
     </tr>
     <tr>
-        <td><div th:if="${userInfo != null}" th:utext="${contragent}"></div></td>
+        <td align="center"><div th:if="${userInfo != null}" th:utext="${contragent}"></div></td>
     </tr>
     <tr>
-        <td><form method="POST">
+        <td align="center"><form method="POST">
             <button type="submit" name="disconnect" style="width: 360px;"><span th:utext="#{button.disconnect}"></span></button>
         </form></td>
     </tr>
@@ -30,26 +30,26 @@
 </br>
 <form th:object="${raParameters}" method="POST">
     <table  border="1" width = 420px>
-        <tr>
-            <td colspan = "2" ><span th:utext="#{table.reconciliation}"></span></td>
+        <tr th:height="40px">
+            <td colspan = "2" align="center"><h4 th:utext="#{table.reconciliation}"></h4></td>
         </tr>
         <tr>
-            <td style="width: 210px;"><span th:utext="#{userinfo.startdate}" style="width: 200px;"></span>:</td>
-            <td style="width: 210px;"><span th:utext="#{userinfo.enddate}" style="width: 200px;"></span>:</td>
+            <td style="width: 210px;" align="center"><span th:utext="#{userinfo.startdate}" style="width: 200px;"></span>:</td>
+            <td style="width: 210px;" align="center"><span th:utext="#{userinfo.enddate}" style="width: 200px;"></span>:</td>
         </tr>
         <tr>
-            <td><input type="text" th:field="*{startDate}" style="width: 150px;"/></td>
-            <td><input type="text" th:field="*{endDate}" style="width: 150px;"/></td>
+            <td align="center"><input type="text" th:field="*{startDate}" style="width: 150px;"></td>
+            <td align="center"><input type="text" th:field="*{endDate}" style="width: 150px;"></td>
         </tr>
         <tr>
-            <td colspan = "2" ><button type="submit" name="orderreconciliation" style="width: 360px"><span th:utext="#{button.orderreconciliation}"></span></button></td>
+            <td colspan = "2" align="center"><button type="submit" name="orderreconciliation" style="width: 360px"><span th:utext="#{button.orderreconciliation}"></span></button></td>
         </tr>
         <tr>
-            <td colspan = "2" ><button type="submit" name="getreconciliation" style="width: 360px;"><span th:utext="#{button.getreconciliation}"></span></button></td>
+            <td colspan = "2" align="center"><button type="submit" name="getreconciliation" style="width: 360px;"><span th:utext="#{button.getreconciliation}"></span></button></td>
         </tr>
         <tr>
-            <td><button type="submit" name="sendreconciliation" style="width: 150px;"><span th:utext="#{button.sendreconciliation}"></span></button></td>
-            <td><input type="text" th:field="*{email}" style="width: 150px;"/></td>
+            <td align="center"><button type="submit" name="sendreconciliation" style="width: 150px;"><span th:utext="#{button.sendreconciliation}"></span></button></td>
+            <td align="center"><input type="text" th:field="*{email}" style="width: 150px;"></td>
         </tr>
     </table>
 </form>

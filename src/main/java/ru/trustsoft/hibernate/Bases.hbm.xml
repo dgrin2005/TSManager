@@ -17,6 +17,12 @@
         <many-to-one name="contragentsByContragentid" class="ru.trustsoft.model.Contragents">
             <column name="contragentid"/>
         </many-to-one>
+        <property name="path">
+            <column name="path" sql-type="text"/>
+        </property>
+        <property name="ipaddress">
+            <column name="ipaddress" sql-type="text"/>
+        </property>
         <set name="basesofusersById" inverse="true">
             <key>
                 <column name="baseid"/>

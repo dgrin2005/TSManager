@@ -13,17 +13,21 @@ public class Bases {
     private String basename;
     private String description;
     private int contragentid;
+    private String path;
+    private String ipaddress;
     private Contragents contragentsByContragentid;
     private Collection<Basesofusers> basesofusersById;
 
     public Bases() {
     }
 
-    public Bases(String basename, String description, Contragents contragentsByContragentid) {
+    public Bases(String basename, String description, Contragents contragentsByContragentid, String path, String ipaddress) {
         this.basename = basename;
         this.description = description;
         this.contragentsByContragentid = contragentsByContragentid;
         this.contragentid = contragentsByContragentid.getId();
+        this.path = path;
+        this.ipaddress = ipaddress;
     }
 
     @Id
@@ -58,19 +62,23 @@ public class Bases {
     }
 
     @Override
+
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Bases bases = (Bases) o;
         return id == bases.id &&
                 Objects.equals(basename, bases.basename) &&
-                Objects.equals(description, bases.description);
+                Objects.equals(description, bases.description) &&
+                Objects.equals(contragentid, bases.contragentid) &&
+                Objects.equals(path, bases.path) &&
+                Objects.equals(ipaddress, bases.ipaddress);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, basename, description);
+        return Objects.hash(id, basename, description, contragentid, path, ipaddress);
     }
 
     @Basic
@@ -91,6 +99,26 @@ public class Bases {
 
     public void setContragentsByContragentid(Contragents contragentsByContragentid) {
         this.contragentsByContragentid = contragentsByContragentid;
+    }
+
+    @Basic
+    @Column(name = "path", length = -1)
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    @Basic
+    @Column(name = "path", length = -1)
+    public String getIpaddress() {
+        return ipaddress;
+    }
+
+    public void setIpaddress(String ipaddress) {
+        this.ipaddress = ipaddress;
     }
 
     @OneToMany(mappedBy = "basesByBaseid")

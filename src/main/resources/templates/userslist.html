@@ -10,25 +10,40 @@
 <h1 th:utext="#{menu.userslist}"></h1>
 <div>
     <table border="1">
-        <tr>
-            <th th:utext="#{userslist.userid}"></th>
-            <th th:utext="#{userslist.username}"></th>
-            <th th:utext="#{userslist.description}"></th>
-            <th th:utext="#{userslist.islocked}"></th>
-            <th th:utext="#{userslist.isadmin}"></th>
-            <th th:utext="#{userslist.contragent}"></th>
-            <th th:utext="#{userslist.contragentinn}"></th>
+        <tr th:height="50px">
+            <th th:utext="#{userslist.userid}" align="center"></th>
+            <th th:utext="#{userslist.username}" align="center"></th>
+            <th th:utext="#{userslist.description}" align="center"></th>
+            <th th:utext="#{userslist.islocked}" align="center"></th>
+            <th th:utext="#{userslist.isadmin}" align="center"></th>
+            <th th:utext="#{userslist.contragent}" align="center"></th>
+            <th th:utext="#{userslist.contragentinn}" align="center"></th>
         </tr>
         <tr th:each ="user : ${users}">
-            <td th:utext="${user.id}">...</td>
+            <td th:utext="${user.id}" align="center">...</td>
             <td th:utext="${user.username}">...</td>
             <td th:utext="${user.description}">...</td>
-            <td th:utext="${user.locked}">...</td>
-            <td th:utext="${user.adm}">...</td>
+            <td th:utext="${user.locked}" align="center">...</td>
+            <td th:utext="${user.adm}" align="center">...</td>
             <td th:utext="${user.contragentsByContragentid.getContragentname()}">...</td>
-            <td th:utext="${user.contragentsByContragentid.getInn()}">...</td>
+            <td th:utext="${user.contragentsByContragentid.getInn()}" align="center">...</td>
         </tr>
     </table>
+</div>
+<div th:if="${totalPages > 1}">
+<table border="0">
+    <tr  height = 20px>
+        <div class="pagination"
+             th:each="pageNumber : ${pageNumbers}">
+            <td>
+                <a th:href="@{/userslist(size=${pageSize}, page=${pageNumber})}"
+                   th:text="${pageNumber}"
+                   th:class="${pageNumber==currentPage} ? active">
+                </a>
+            </td>
+        </div>
+    </tr>
+</table>
 </div>
 <br/>
 <h2 th:utext="#{userslist.form}"></h2>

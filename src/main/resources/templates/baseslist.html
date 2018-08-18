@@ -10,21 +10,40 @@
 <h1 th:utext="#{menu.baseslist}"></h1>
 <div>
     <table border="1">
-        <tr>
-            <th th:utext="#{baseslist.baseid}"></th>
-            <th th:utext="#{baseslist.basename}"></th>
-            <th th:utext="#{baseslist.description}"></th>
-            <th th:utext="#{baseslist.contragent}"></th>
-            <th th:utext="#{baseslist.contragentinn}"></th>
+        <tr th:height="50px">
+            <th th:utext="#{baseslist.baseid}" align="center"></th>
+            <th th:utext="#{baseslist.basename}" align="center"></th>
+            <th th:utext="#{baseslist.description}" align="center"></th>
+            <th th:utext="#{baseslist.path}" align="center"></th>
+            <th th:utext="#{baseslist.ipaddress}" align="center"></th>
+            <th th:utext="#{baseslist.contragent}" align="center"></th>
+            <th th:utext="#{baseslist.contragentinn}" align="center"></th>
         </tr>
         <tr th:each ="base : ${bases}">
-            <td th:utext="${base.id}">...</td>
+            <td th:utext="${base.id}" align="center">...</td>
             <td th:utext="${base.basename}">...</td>
             <td th:utext="${base.description}">...</td>
+            <td th:utext="${base.path}">...</td>
+            <td><a th:href="${base.ipaddress}" th:text="${base.ipaddress}" align="center">...</a></td>
             <td th:utext="${base.contragentsByContragentid.getContragentname()}">...</td>
-            <td th:utext="${base.contragentsByContragentid.getInn()}">...</td>
+            <td th:utext="${base.contragentsByContragentid.getInn()}" align="center">...</td>
         </tr>
     </table>
+</div>
+<div th:if="${totalPages > 1}">
+<table border="0">
+    <tr  height = 20px>
+        <div class="pagination"
+            th:each="pageNumber : ${pageNumbers}">
+            <td>
+                <a th:href="@{/baseslist(size=${pageSize}, page=${pageNumber})}"
+                   th:text="${pageNumber}"
+                   th:class="${pageNumber==currentPage} ? active">
+                </a>
+            </td>
+        </div>
+    </tr>
+</table>
 </div>
 <br/>
 <h2 th:utext="#{baseslist.form}"></h2>
@@ -38,6 +57,12 @@
     <br/>
     <span th:utext="#{baseslist.description}"></span>:
     <input type="text" th:field="*{description}" />
+    <br/>
+    <span th:utext="#{baseslist.path}"></span>:
+    <input type="text" th:field="*{path}" />
+    <br/>
+    <span th:utext="#{baseslist.ipaddress}"></span>:
+    <input type="text" th:field="*{ipaddress}" />
     <br/>
     <span th:utext="#{baseslist.contragent}"></span>:
     <select th:field="*{contragentid}">

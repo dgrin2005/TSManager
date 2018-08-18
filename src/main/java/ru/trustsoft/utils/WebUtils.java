@@ -1,12 +1,21 @@
 package ru.trustsoft.utils;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import ru.trustsoft.model.Bases;
 import ru.trustsoft.model.Contragents;
 import ru.trustsoft.model.ReconActParameters;
 import ru.trustsoft.model.Users;
 import ru.trustsoft.repo.UsersRepo;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Locale;
@@ -102,5 +111,40 @@ public class WebUtils {
             }
         }
         return filename;
+    }
+
+    public static String getArcBasename(User loginedUser, UsersRepo userRepo, Bases base)  throws Exception {
+        String filename = "";
+        {
+            Users user = userRepo.findByUsername(loginedUser.getUsername());
+            Contragents contragent = user.getContragentsByContragentid();
+            if (contragent != null) {
+                filename = contragent.getInn() + "_" + base.getId() + ".dt";
+            }
+        }
+        return filename;
+    }
+
+    public static void downloadFile (String fileName, HttpServletResponse response, ServletContext servletContext) throws IOException {
+        MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(servletContext, fileName);
+
+        if (new File(fileName).exists()) {
+
+            File file = new File(fileName);
+            // Content-Type
+            // application/pdf
+            response.setContentType(mediaType.getType());
+
+            // Content-Disposition
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName());
+
+            InputStream inputStream = new FileInputStream(file);
+            int nRead;
+            while ((nRead = inputStream.read()) != -1) {
+                response.getWriter().write(nRead);
+            }
+        } else {
+            throw new IOException("File not found");
+        }
     }
 }

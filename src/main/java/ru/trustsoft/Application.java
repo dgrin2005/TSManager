@@ -1,6 +1,5 @@
 package ru.trustsoft;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,6 +20,7 @@ public class Application {
     TODO 5) buttons in every row of tables
     TODO 6) favicon
     TODO 7) formatting text and tables
+    TODO 8) Sorting and filtering at tables
 
     */
 

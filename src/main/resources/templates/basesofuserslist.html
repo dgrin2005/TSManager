@@ -10,15 +10,38 @@
 <h1 th:utext="#{menu.basesofuserslist}"></h1>
 <div>
     <table border="1">
-        <tr>
-            <th th:utext="#{basesofuserslist.recordid}"></th>
-            <th th:utext="#{basesofuserslist.user}"></th>
-            <th th:utext="#{basesofuserslist.base}"></th>
+        <tr th:height="50px">
+            <th th:utext="#{basesofuserslist.recordid}" align="center"></th>
+            <th th:utext="#{basesofuserslist.user}" align="center"></th>
+            <th th:utext="#{basesofuserslist.base}" align="center"></th>
+            <th th:utext="#{baseslist.description}" align="center"></th>
+            <th th:utext="#{baseslist.baseid}" align="center"></th>
+            <th th:utext="#{baseslist.path}" align="center"></th>
+            <th th:utext="#{baseslist.ipaddress}" align="center"></th>
         </tr>
         <tr th:each ="baseofusers : ${basesofusers}">
-            <td th:utext="${baseofusers.id}">...</td>
+            <td th:utext="${baseofusers.id}" align="center">...</td>
             <td th:utext="${baseofusers.usersByUserid.getUsername()}">...</td>
             <td th:utext="${baseofusers.basesByBaseid.getBasename()}">...</td>
+            <td th:utext="${baseofusers.basesByBaseid.getDescription()}">...</td>
+            <td th:utext="${baseofusers.basesByBaseid.getId()}" align="center">...</td>
+            <td th:utext="${baseofusers.basesByBaseid.getPath()}">...</td>
+            <td><a th:href="${baseofusers.basesByBaseid.getIpaddress()}" th:text="${baseofusers.basesByBaseid.getIpaddress()}">...</a></td>
+        </tr>
+    </table>
+</div>
+<div th:if="${totalPages > 1}">
+    <table border="0">
+        <tr  height = 20px>
+            <div class="pagination"
+                 th:each="pageNumber : ${pageNumbers}">
+                <td>
+                    <a th:href="@{/basesofuserslist(size=${pageSize}, page=${pageNumber})}"
+                       th:text="${pageNumber}"
+                       th:class="${pageNumber==currentPage} ? active">
+                    </a>
+                </td>
+            </div>
         </tr>
     </table>
 </div>
@@ -49,7 +72,37 @@
         <button type="submit" name="add"><span th:utext="#{button.add}"></span></button>
         <button type="submit" name="delete"><span th:utext="#{button.delete}"></span></button>
     </form>
+    <br/>
 </div>
+
+<form th:object="${baseofusersarc}" method="POST">
+    <table  border="1" width = 420px>
+        <tr th:height="40px">
+            <td colspan = "2" align="center"><h4 th:utext="#{table.archive}"></h4></td>
+        </tr>
+        <tr>
+            <td colspan = "2" align="center">
+                <span th:utext="#{basesofuserslist.selectbase}"></span>
+                <select th:field="*{baseid}" style="width: 260px;">
+                <option value="0"> -- </option>
+                <option th:each="base : ${basesarc}"
+                        th:value="${base.getId()}"
+                        th:text="${base.getBasename()}"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <button type="submit" name="archivebase" style="width: 200px;"><span th:utext="#{button.archivebase}"></span></button>
+            </td>
+            <td align="center">
+                <button type="submit" name="getarchive" style="width: 200px;"><span th:utext="#{button.getarchivebase}"></span></button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+
 <div th:if="${infoMessage}" th:utext="${infoMessage}"
      style="color:blue;font-style:italic;">
     ...

@@ -1,6 +1,7 @@
 package ru.trustsoft.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -12,20 +13,47 @@ import ru.trustsoft.repo.ContragentsRepo;
 import ru.trustsoft.repo.UsersRepo;
 import ru.trustsoft.service.MessageByLocaleService;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 @Controller
 @RequestMapping(path="/")
 public class UsersController {
 
+    private static int currentPage = 1;
+    private static int pageSize = 5;
+
     @GetMapping(path="/userslist")
-    public String usersList(Model model) {
+    public String usersList(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
+
+        page.ifPresent(p -> currentPage = p);
+        size.ifPresent(s -> pageSize = s);
 
         Users user = new Users();
         if (findedUser != null) {
             user = findedUser;
         }
-        model.addAttribute("users", userRepo.findAll());
+        //model.addAttribute("users", userRepo.findAll());
+        List<Users> userPage = userRepo.findPaginated(PageRequest.of(currentPage - 1, pageSize));
+        model.addAttribute("users", userPage);
         model.addAttribute("contragents", contragentRepo.findAll());
         model.addAttribute("userform", user);
+
+        int totalPages = (((List<Users>)userRepo.findAll()).size() - 1) / pageSize + 1;
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("totalPages", totalPages);
+            model.addAttribute("pageNumbers", pageNumbers);
+            model.addAttribute("currentPage", currentPage);
+            model.addAttribute("pageSize", pageSize);
+        }
 
         return "userslist";
     }
@@ -47,14 +75,14 @@ public class UsersController {
                 userRepo.save(user);
                 contragent.getUsersById().add(user);
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.add.user"));
-                return usersList(model);
+                return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.add.user") + ": " + ex.toString());
-                return usersList(model);
+                return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
             }
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
-            return usersList(model);
+            return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
         }
 
     }
@@ -71,11 +99,11 @@ public class UsersController {
             userRepo.delete(user);
             contragent.getUsersById().remove(user);
             model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.user"));
-            return usersList(model);
+            return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.user") + ": " + ex.toString());
-            return usersList(model);
+            return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
         }
     }
 
@@ -103,14 +131,14 @@ public class UsersController {
                 user.setContragentsByContragentid(contragentRepo.findById(contragentid));
                 userRepo.save(user);
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.update.user"));
-                return usersList(model);
+                return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.update.user") + ": " + ex.toString());
-                return usersList(model);
+                return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
             }
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
-            return usersList(model);
+            return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
         }
     }
 
@@ -124,14 +152,14 @@ public class UsersController {
             findedUser.setContragentid(findedUser.getContragentsByContragentid().getId());
             if (findedUser == null) {
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.user"));
-                return usersList(model);
+                return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
             } else {
                 return "redirect:/userslist";
             }
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.user") + ": " + ex.toString());
-            return usersList(model);
+            return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
         }
     }
 

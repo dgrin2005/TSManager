@@ -10,19 +10,34 @@
 <h1 th:utext="#{menu.contragentslist}"></h1>
 <div>
     <table border="1">
-        <tr>
-            <th th:utext="#{contragentslist.contragentid}"></th>
-            <th th:utext="#{contragentslist.contragentname}"></th>
-            <th th:utext="#{contragentslist.description}"></th>
-            <th th:utext="#{contragentslist.inn}"></th>
+        <tr th:height="50px">
+            <th th:utext="#{contragentslist.contragentid}" align="center"></th>
+            <th th:utext="#{contragentslist.contragentname}" align="center"></th>
+            <th th:utext="#{contragentslist.description}" align="center"></th>
+            <th th:utext="#{contragentslist.inn}" align="center"></th>
         </tr>
         <tr th:each ="contragent : ${contragents}">
-            <td th:utext="${contragent.id}">...</td>
+            <td th:utext="${contragent.id}" align="center">...</td>
             <td th:utext="${contragent.contragentname}">...</td>
             <td th:utext="${contragent.description}">...</td>
-            <td th:utext="${contragent.inn}">...</td>
+            <td th:utext="${contragent.inn}" align="center">...</td>
         </tr>
     </table>
+</div>
+<div th:if="${totalPages > 1}">
+<table border="0">
+    <tr  height = 20px>
+        <div class="pagination"
+             th:each="pageNumber : ${pageNumbers}">
+            <td>
+                <a th:href="@{/contragentslist(size=${pageSize}, page=${pageNumber})}"
+                   th:text="${pageNumber}"
+                   th:class="${pageNumber==currentPage} ? active">
+                </a>
+            </td>
+        </div>
+    </tr>
+</table>
 </div>
 <br/>
 <h2 th:utext="#{contragentslist.form}"></h2>

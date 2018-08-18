@@ -31,29 +31,8 @@ public class ReconciliationAct {
     }
 
     public void getReconciliationAct(String act_catalog, String fileName, HttpServletResponse response, ServletContext servletContext) throws IOException {
-
         fileName = act_catalog + fileName;
-
-        MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(servletContext, fileName);
-
-        if (new File(fileName).exists()) {
-
-            File file = new File(fileName);
-            // Content-Type
-            // application/pdf
-            response.setContentType(mediaType.getType());
-
-            // Content-Disposition
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName());
-
-            InputStream inputStream = new FileInputStream(file);
-            int nRead;
-            while ((nRead = inputStream.read()) != -1) {
-                response.getWriter().write(nRead);
-            }
-        } else {
-            throw new IOException("File not found");
-        }
+        WebUtils.downloadFile (fileName, response, servletContext);
     }
 
     public void sendEmail(JavaMailSender sender, String tsmemailaddress, String act_catalog, String fileName, String email) throws Exception {
