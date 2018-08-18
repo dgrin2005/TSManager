@@ -50,7 +50,7 @@ public class Basesofusers {
     }
 
     @Basic
-    @Column(name = "userid", nullable = false, length = -1)
+    @Column(name = "userid", nullable = false, length = -1, insertable=false, updatable=false)
     public int getUserid() {
         return userid;
     }
@@ -60,7 +60,7 @@ public class Basesofusers {
     }
 
     @Basic
-    @Column(name = "baseid", nullable = false, length = -1)
+    @Column(name = "baseid", nullable = false, length = -1, insertable=false, updatable=false)
     public int getBaseid() {
         return baseid;
     }

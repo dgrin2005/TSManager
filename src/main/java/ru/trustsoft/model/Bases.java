@@ -82,7 +82,7 @@ public class Bases {
     }
 
     @Basic
-    @Column(name = "contragentid", nullable = false, length = -1)
+    @Column(name = "contragentid", nullable = false, length = -1, insertable=false, updatable=false)
     public int getContragentid() {
         return contragentid;
     }
@@ -112,7 +112,7 @@ public class Bases {
     }
 
     @Basic
-    @Column(name = "path", length = -1)
+    @Column(name = "ipaddress", length = -1)
     public String getIpaddress() {
         return ipaddress;
     }

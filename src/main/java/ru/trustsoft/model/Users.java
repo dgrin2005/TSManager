@@ -113,7 +113,7 @@ public class Users {
     }
 
     @Basic
-    @Column(name = "contragentid", nullable = false, length = -1)
+    @Column(name = "contragentid", nullable = false, length = -1, insertable=false, updatable=false)
     public int getContragentid() {
         return contragentid;
     }
