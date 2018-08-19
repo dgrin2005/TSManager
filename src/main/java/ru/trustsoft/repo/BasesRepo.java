@@ -16,12 +16,29 @@ public interface BasesRepo extends CrudRepository<Bases, Long> {
 
     Bases findById(int id);
 
-    @Query(value = "SELECT * FROM Bases a INNER JOIN basesofusers b ON a.id = b.baseid WHERE b.userid=:userid", nativeQuery = true)
+    @Query(value = "SELECT * FROM Bases a INNER JOIN basesofusers b ON a.id = b.baseid WHERE b.userid=:userid",
+            nativeQuery = true)
     List<Bases> findByUser(@Param("userid") Integer userid);
 
-    @Query(getAllBasesByRank)
-    List<Bases> findPaginated(Pageable pageable);
+    @Query(value = "select * from Bases a order by basename asc" , nativeQuery = true)
+    List<Bases> findAllBaseAsc();
 
-    String getAllBasesByRank= "from Bases order by basename ASC";
+    @Query(value = "SELECT * FROM Bases a INNER JOIN basesofusers b ON a.id = b.baseid WHERE b.userid=:userid" +
+            " ORDER BY basename ASC", nativeQuery = true)
+    List<Bases> findAllBaseAscByUser(@Param("userid") Integer userid);
+
+    @Query(value = "select * from Bases a order by basename asc" , nativeQuery = true)
+    List<Bases> findPaginatedBaseAsc(Pageable pageable);
+
+    @Query(value = "select * from Bases a order by basename desc" , nativeQuery = true)
+    List<Bases> findPaginatedBaseDesc(Pageable pageable);
+
+    @Query(value = "select * from Bases a  inner join contragents b on a.contragentid = b.id" +
+            " order by b.contragentname asc" , nativeQuery = true)
+    List<Bases> findPaginatedContragentAsc(Pageable pageable);
+
+    @Query(value = "select * from Bases a  inner join contragents b on a.contragentid = b.id" +
+            " order by b.contragentname desc" , nativeQuery = true)
+    List<Bases> findPaginatedContragentDesc(Pageable pageable);
 
 }

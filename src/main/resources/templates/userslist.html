@@ -12,11 +12,23 @@
     <table border="1">
         <tr th:height="50px">
             <th th:utext="#{userslist.userid}" align="center"></th>
-            <th th:utext="#{userslist.username}" align="center"></th>
+            <th align="center">
+                <a th:href="@{/userslist(order='username_d')}" style="text-decoration: none;" th:utext="'^'">
+                </a>
+                <span th:text="#{userslist.username}"></span>
+                <a th:href="@{/userslist(order='username_a')}" style="text-decoration: none;" th:utext="'v'">
+                </a>
+            </th>
             <th th:utext="#{userslist.description}" align="center"></th>
             <th th:utext="#{userslist.islocked}" align="center"></th>
             <th th:utext="#{userslist.isadmin}" align="center"></th>
-            <th th:utext="#{userslist.contragent}" align="center"></th>
+            <th align="center">
+                <a th:href="@{/userslist(order='contragentname_d')}" style="text-decoration: none;" th:utext="'^'">
+                </a>
+                <span th:text="#{userslist.contragent}"></span>
+                <a th:href="@{/userslist(order='contragentname_a')}" style="text-decoration: none;" th:utext="'v'">
+                </a>
+            </th>
             <th th:utext="#{userslist.contragentinn}" align="center"></th>
         </tr>
         <tr th:each ="user : ${users}">

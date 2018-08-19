@@ -12,8 +12,20 @@
     <table border="1">
         <tr th:height="50px">
             <th th:utext="#{basesofuserslist.recordid}" align="center"></th>
-            <th th:utext="#{basesofuserslist.user}" align="center"></th>
-            <th th:utext="#{basesofuserslist.base}" align="center"></th>
+            <th align="center">
+                <a th:href="@{/basesofuserslist(order='username_d')}" style="text-decoration: none;" th:utext="'^'">
+                </a>
+                <span th:text="#{basesofuserslist.user}"></span>
+                <a th:href="@{/basesofuserslist(order='username_a')}" style="text-decoration: none;" th:utext="'v'">
+                </a>
+            </th>
+            <th align="center">
+                <a th:href="@{/basesofuserslist(order='basename_d')}" style="text-decoration: none;" th:utext="'^'">
+                </a>
+                <span th:text="#{basesofuserslist.base}"></span>
+                <a th:href="@{/basesofuserslist(order='basename_a')}" style="text-decoration: none;" th:utext="'v'">
+                </a>
+            </th>
             <th th:utext="#{baseslist.description}" align="center"></th>
             <th th:utext="#{baseslist.baseid}" align="center"></th>
             <th th:utext="#{baseslist.path}" align="center"></th>

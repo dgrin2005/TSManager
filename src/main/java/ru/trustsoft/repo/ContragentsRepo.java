@@ -17,8 +17,13 @@ public interface ContragentsRepo extends CrudRepository<Contragents, Long> {
 
     Contragents findById(int id);
 
-    @Query(getAllContragentsByRank)
-    List<Contragents> findPaginated(Pageable pageable);
+    @Query(value = "select * from Contragents a order by contragentname asc" , nativeQuery = true)
+    List<Contragents> findAllContragentAsc();
 
-    String getAllContragentsByRank= "from Contragents order by contragentname ASC";
+    @Query(value = "select * from Contragents a order by contragentname asc" , nativeQuery = true)
+    List<Contragents> findPaginatedContragentAsc(Pageable pageable);
+
+    @Query(value = "select * from Contragents a order by contragentname desc" , nativeQuery = true)
+    List<Contragents> findPaginatedContragentDesc(Pageable pageable);
+
 }

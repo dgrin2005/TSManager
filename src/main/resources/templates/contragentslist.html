@@ -12,7 +12,13 @@
     <table border="1">
         <tr th:height="50px">
             <th th:utext="#{contragentslist.contragentid}" align="center"></th>
-            <th th:utext="#{contragentslist.contragentname}" align="center"></th>
+            <th align="center">
+                <a th:href="@{/contragentslist(order='contragentname_d')}" style="text-decoration: none;" th:utext="'^'">
+                </a>
+                <span th:text="#{contragentslist.contragentname}"></span>
+                <a th:href="@{/contragentslist(order='contragentname_a')}" style="text-decoration: none;" th:utext="'v'">
+                </a>
+            </th>
             <th th:utext="#{contragentslist.description}" align="center"></th>
             <th th:utext="#{contragentslist.inn}" align="center"></th>
         </tr>

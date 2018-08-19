@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:text-decoration="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
     <title>Bases List</title>
@@ -12,11 +12,23 @@
     <table border="1">
         <tr th:height="50px">
             <th th:utext="#{baseslist.baseid}" align="center"></th>
-            <th th:utext="#{baseslist.basename}" align="center"></th>
+            <th align="center">
+                <a th:href="@{/baseslist(order='basename_d')}" style="text-decoration: none;" th:utext="'^'">
+                </a>
+                <span th:text="#{baseslist.basename}"></span>
+                <a th:href="@{/baseslist(order='basename_a')}" style="text-decoration: none;" th:utext="'v'">
+                </a>
+            </th>
             <th th:utext="#{baseslist.description}" align="center"></th>
             <th th:utext="#{baseslist.path}" align="center"></th>
             <th th:utext="#{baseslist.ipaddress}" align="center"></th>
-            <th th:utext="#{baseslist.contragent}" align="center"></th>
+            <th align="center">
+                <a th:href="@{/baseslist(order='contragentname_d')}" style="text-decoration: none;" th:utext="'^'">
+                </a>
+                <span th:text="#{baseslist.contragent}"></span>
+                <a th:href="@{/baseslist(order='contragentname_a')}" style="text-decoration: none;" th:utext="'v'">
+                </a>
+            </th>
             <th th:utext="#{baseslist.contragentinn}" align="center"></th>
         </tr>
         <tr th:each ="base : ${bases}">

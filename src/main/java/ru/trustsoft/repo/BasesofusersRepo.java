@@ -17,12 +17,28 @@ public interface BasesofusersRepo extends CrudRepository<Basesofusers, Long> {
     @Query(value = "SELECT * FROM Basesofusers u WHERE u.userid=:userid", nativeQuery = true)
     List<Basesofusers> findBasesByUser(@Param("userid") Integer userid);
 
-    @Query(getAllRecordsByRank)
-    List<Basesofusers> findPaginated(Pageable pageable);
+    @Query(value = "select * from basesofusers a inner  join bases b on a.baseid = b.id order by basename asc",
+            nativeQuery = true)
+    List<Basesofusers> findPaginatedBaseAsc(Pageable pageable);
 
-    String getAllRecordsByRank= "from Basesofusers order by id ASC";
+    @Query(value = "select * from basesofusers a inner  join bases b on a.baseid = b.id order by basename desc",
+            nativeQuery = true)
+    List<Basesofusers> findPaginatedBaseDesc(Pageable pageable);
 
-    @Query(value = "SELECT * FROM Basesofusers u WHERE u.userid=:userid ORDER BY id ASC", nativeQuery = true)
-    List<Basesofusers> findBasesByUserPaginated(Pageable pageable, @Param("userid") Integer userid);
+    @Query(value = "select * from basesofusers a inner join users u on a.userid = u.id order by username asc",
+            nativeQuery = true)
+    List<Basesofusers> findPaginatedUserAsc(Pageable pageable);
+
+    @Query(value = "select * from basesofusers a inner join users u on a.userid = u.id order by username desc",
+            nativeQuery = true)
+    List<Basesofusers> findPaginatedUserDesc(Pageable pageable);
+
+    @Query(value = "SELECT * FROM Basesofusers a inner  join bases b on a.baseid = b.id WHERE a.userid=:userid" +
+            " order by basename asc", nativeQuery = true)
+    List<Basesofusers> findBasesByUserPaginatedBaseAsc(Pageable pageable, @Param("userid") Integer userid);
+
+    @Query(value = "SELECT * FROM Basesofusers a inner  join bases b on a.baseid = b.id WHERE a.userid=:userid" +
+            " order by basename desc", nativeQuery = true)
+    List<Basesofusers> findBasesByUserPaginatedBaseDesc(Pageable pageable, @Param("userid") Integer userid);
 
 }

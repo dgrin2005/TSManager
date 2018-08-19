@@ -12,48 +12,57 @@ import ru.trustsoft.model.Users;
 import ru.trustsoft.repo.ContragentsRepo;
 import ru.trustsoft.repo.UsersRepo;
 import ru.trustsoft.service.MessageByLocaleService;
+import ru.trustsoft.utils.ControllerUtils;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping(path="/")
 public class UsersController {
 
-    private static int currentPage = 1;
+    private static Integer currentPage = 1;
     private static int pageSize = 5;
+    private static String currentOrder = "username_a";
 
     @GetMapping(path="/userslist")
-    public String usersList(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
+    public String usersList(Model model, @RequestParam("page") Optional<Integer> page,
+                            @RequestParam("size") Optional<Integer> size,
+                            @RequestParam("order") Optional<String> order) {
 
         page.ifPresent(p -> currentPage = p);
         size.ifPresent(s -> pageSize = s);
+        order.ifPresent(o -> currentOrder = o);
 
         Users user = new Users();
         if (findedUser != null) {
             user = findedUser;
         }
-        //model.addAttribute("users", userRepo.findAll());
-        List<Users> userPage = userRepo.findPaginated(PageRequest.of(currentPage - 1, pageSize));
+
+        List<Users> userPage;
+
+        switch (currentOrder) {
+            case "contragentname_d" : {
+                userPage = userRepo.findPaginatedContragentDesc(PageRequest.of(currentPage - 1, pageSize));
+                break;
+            }
+            case "contragentname_a" : {
+                userPage = userRepo.findPaginatedContragentAsc(PageRequest.of(currentPage - 1, pageSize));
+                break;
+            }
+            case "username_d" : {
+                userPage = userRepo.findPaginatedUserDesc(PageRequest.of(currentPage - 1, pageSize));
+                break;
+            }
+            default: {
+                userPage = userRepo.findPaginatedUserAsc(PageRequest.of(currentPage - 1, pageSize));
+            }
+        }
         model.addAttribute("users", userPage);
-        model.addAttribute("contragents", contragentRepo.findAll());
+        model.addAttribute("contragents", contragentRepo.findAllContragentAsc());
         model.addAttribute("userform", user);
 
-        int totalPages = (((List<Users>)userRepo.findAll()).size() - 1) / pageSize + 1;
-        if (currentPage > totalPages) {
-            currentPage = totalPages;
-        }
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("totalPages", totalPages);
-            model.addAttribute("pageNumbers", pageNumbers);
-            model.addAttribute("currentPage", currentPage);
-            model.addAttribute("pageSize", pageSize);
-        }
+        ControllerUtils.addPageAttributes(model, ((List<Users>)userRepo.findAll()).size(), currentPage, pageSize);
 
         return "userslist";
     }
@@ -75,14 +84,14 @@ public class UsersController {
                 userRepo.save(user);
                 contragent.getUsersById().add(user);
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.add.user"));
-                return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
+                return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.add.user") + ": " + ex.toString());
-                return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
+                return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
             }
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
-            return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
+            return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
         }
 
     }
@@ -99,11 +108,11 @@ public class UsersController {
             userRepo.delete(user);
             contragent.getUsersById().remove(user);
             model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.user"));
-            return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
+            return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.user") + ": " + ex.toString());
-            return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
+            return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
         }
     }
 
@@ -131,14 +140,14 @@ public class UsersController {
                 user.setContragentsByContragentid(contragentRepo.findById(contragentid));
                 userRepo.save(user);
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.update.user"));
-                return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
+                return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.update.user") + ": " + ex.toString());
-                return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
+                return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
             }
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
-            return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
+            return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
         }
     }
 
@@ -152,14 +161,14 @@ public class UsersController {
             findedUser.setContragentid(findedUser.getContragentsByContragentid().getId());
             if (findedUser == null) {
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.user"));
-                return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
+                return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
             } else {
                 return "redirect:/userslist";
             }
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.user") + ": " + ex.toString());
-            return usersList(model, Optional.of(currentPage), Optional.of(pageSize));
+            return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
         }
     }
 
