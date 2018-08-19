@@ -3,8 +3,47 @@
 >
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>User info</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $( function() {
+            var dateFormat = "yy-mm-dd",
+                from = $( "#from" )
+                    .datepicker({
+                        defaultDate: "+1w",
+                        changeMonth: true,
+                        numberOfMonths: 3
+                    })
+                    .on( "change", function() {
+                        from.datepicker( "option", "dateFormat", dateFormat );
+                        to.datepicker( "option", "minDate", getDate( this ) );
+                    }),
+                to = $( "#to" ).datepicker({
+                    defaultDate: "+1w",
+                    changeMonth: true,
+                    numberOfMonths: 3
+                })
+                    .on( "change", function() {
+                        to.datepicker( "option", "dateFormat", dateFormat );
+                        from.datepicker( "option", "maxDate", getDate( this ) );
+                    });
+
+            function getDate( element ) {
+                var date;
+                try {
+                    date = $.datepicker.parseDate( dateFormat, element.value );
+                } catch( error ) {
+                    date = null;
+                }
+
+                return date;
+            }
+        } );
+    </script>
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
@@ -38,8 +77,8 @@
             <td style="width: 210px;" align="center"><span th:utext="#{userinfo.enddate}" style="width: 200px;"></span>:</td>
         </tr>
         <tr>
-            <td align="center"><input type="text" th:field="*{startDate}" style="width: 150px;"></td>
-            <td align="center"><input type="text" th:field="*{endDate}" style="width: 150px;"></td>
+            <td align="center"><input type="text" id = "from" th:field="*{startDate}" style="width: 150px;"></td>
+            <td align="center"><input type="text" id = "to" th:field="*{endDate}" style="width: 150px;"></td>
         </tr>
         <tr>
             <td colspan = "2" align="center"><button type="submit" name="orderreconciliation" style="width: 360px"><span th:utext="#{button.orderreconciliation}"></span></button></td>
