@@ -8,25 +8,34 @@
 <body>
 <div th:insert="menu :: mainmenu"></div>
 <h1 th:utext="#{menu.userslist}"></h1>
+<form action="userslist" th:object="${tablePageSize}" method="get">
+    <select th:field="*{size}">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+    </select>
+    <button type="submit" name="change"><span th:utext="#{button.changetablepagesize}"></span></button>
+</form>
+
 <div>
     <table border="1">
         <tr th:height="50px">
             <th th:utext="#{userslist.userid}" align="center"></th>
             <th align="center">
-                <a th:href="@{/userslist(order='username_d')}" style="text-decoration: none;" th:utext="'^'">
+                <a th:href="@{/userslist(order='username_d', size=${currentPageSize})}" style="text-decoration: none;" th:utext="'^'">
                 </a>
                 <span th:text="#{userslist.username}"></span>
-                <a th:href="@{/userslist(order='username_a')}" style="text-decoration: none;" th:utext="'v'">
+                <a th:href="@{/userslist(order='username_a', size=${currentPageSize})}" style="text-decoration: none;" th:utext="'v'">
                 </a>
             </th>
             <th th:utext="#{userslist.description}" align="center"></th>
             <th th:utext="#{userslist.islocked}" align="center"></th>
             <th th:utext="#{userslist.isadmin}" align="center"></th>
             <th align="center">
-                <a th:href="@{/userslist(order='contragentname_d')}" style="text-decoration: none;" th:utext="'^'">
+                <a th:href="@{/userslist(order='contragentname_d', size=${currentPageSize})}" style="text-decoration: none;" th:utext="'^'">
                 </a>
                 <span th:text="#{userslist.contragent}"></span>
-                <a th:href="@{/userslist(order='contragentname_a')}" style="text-decoration: none;" th:utext="'v'">
+                <a th:href="@{/userslist(order='contragentname_a', size=${currentPageSize})}" style="text-decoration: none;" th:utext="'v'">
                 </a>
             </th>
             <th th:utext="#{userslist.contragentinn}" align="center"></th>

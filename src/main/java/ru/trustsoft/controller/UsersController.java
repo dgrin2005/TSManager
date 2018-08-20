@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.trustsoft.model.Contragents;
+import ru.trustsoft.model.TablePageSize;
 import ru.trustsoft.model.Users;
 import ru.trustsoft.repo.ContragentsRepo;
 import ru.trustsoft.repo.UsersRepo;
@@ -22,53 +23,53 @@ import java.util.Optional;
 public class UsersController {
 
     private static Integer currentPage = 1;
-    private static int pageSize = 5;
+    private static Integer currentPageSize = 5;
     private static String currentOrder = "username_a";
 
     @GetMapping(path="/userslist")
-    public String usersList(Model model, @RequestParam("page") Optional<Integer> page,
+    public String usersList(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                            @RequestParam("page") Optional<Integer> page,
                             @RequestParam("size") Optional<Integer> size,
                             @RequestParam("order") Optional<String> order) {
 
         page.ifPresent(p -> currentPage = p);
-        size.ifPresent(s -> pageSize = s);
+        size.ifPresent(s -> currentPageSize = s);
         order.ifPresent(o -> currentOrder = o);
 
         Users user = new Users();
         if (findedUser != null) {
             user = findedUser;
         }
-
+        model.addAttribute("tablePageSize", tablePageSize);
+        model.addAttribute("currentPageSize", currentPageSize);
+        currentPage = ControllerUtils.addPageAttributes(model, ((List<Users>)userRepo.findAll()).size(), currentPage, currentPageSize);
         List<Users> userPage;
-
         switch (currentOrder) {
             case "contragentname_d" : {
-                userPage = userRepo.findPaginatedContragentDesc(PageRequest.of(currentPage - 1, pageSize));
+                userPage = userRepo.findPaginatedContragentDesc(PageRequest.of(currentPage - 1, currentPageSize));
                 break;
             }
             case "contragentname_a" : {
-                userPage = userRepo.findPaginatedContragentAsc(PageRequest.of(currentPage - 1, pageSize));
+                userPage = userRepo.findPaginatedContragentAsc(PageRequest.of(currentPage - 1, currentPageSize));
                 break;
             }
             case "username_d" : {
-                userPage = userRepo.findPaginatedUserDesc(PageRequest.of(currentPage - 1, pageSize));
+                userPage = userRepo.findPaginatedUserDesc(PageRequest.of(currentPage - 1, currentPageSize));
                 break;
             }
             default: {
-                userPage = userRepo.findPaginatedUserAsc(PageRequest.of(currentPage - 1, pageSize));
+                userPage = userRepo.findPaginatedUserAsc(PageRequest.of(currentPage - 1, currentPageSize));
             }
         }
         model.addAttribute("users", userPage);
         model.addAttribute("contragents", contragentRepo.findAllContragentAsc());
         model.addAttribute("userform", user);
 
-        ControllerUtils.addPageAttributes(model, ((List<Users>)userRepo.findAll()).size(), currentPage, pageSize);
-
         return "userslist";
     }
 
     @RequestMapping(value = { "/userslist" }, params={"add"}, method = RequestMethod.POST)
-    public String addUser(Model model, @ModelAttribute("userform") Users userform) {
+    public String addUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize, @ModelAttribute("userform") Users userform) {
 
         String username = userform.getUsername();
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -84,20 +85,20 @@ public class UsersController {
                 userRepo.save(user);
                 contragent.getUsersById().add(user);
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.add.user"));
-                return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
+                return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.add.user") + ": " + ex.toString());
-                return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
+                return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
             }
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
-            return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
+            return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
         }
 
     }
 
     @RequestMapping(value = { "/userslist" }, params={"delete"}, method = RequestMethod.POST)
-    public String deleteUser(Model model, @ModelAttribute("userform") Users userform) {
+    public String deleteUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize, @ModelAttribute("userform") Users userform) {
 
         int userid = userform.getId();
         findedUser = null;
@@ -108,16 +109,16 @@ public class UsersController {
             userRepo.delete(user);
             contragent.getUsersById().remove(user);
             model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.user"));
-            return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
+            return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.user") + ": " + ex.toString());
-            return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
+            return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
         }
     }
 
     @RequestMapping(value = { "/userslist" }, params={"update"}, method = RequestMethod.POST)
-    public String updateUser(Model model, @ModelAttribute("userform") Users userform) {
+    public String updateUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize, @ModelAttribute("userform") Users userform) {
 
         int userid = userform.getId();
         String username = userform.getUsername();
@@ -140,19 +141,19 @@ public class UsersController {
                 user.setContragentsByContragentid(contragentRepo.findById(contragentid));
                 userRepo.save(user);
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.update.user"));
-                return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
+                return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.update.user") + ": " + ex.toString());
-                return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
+                return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
             }
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
-            return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
+            return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
         }
     }
 
     @RequestMapping(value = { "/userslist" }, params={"findbyid"}, method = RequestMethod.POST)
-    public String findByIdContragent(Model model, @ModelAttribute("userform") Users userform) {
+    public String findByIdContragent(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize, @ModelAttribute("userform") Users userform) {
 
         int userid = userform.getId();
 
@@ -161,14 +162,14 @@ public class UsersController {
             findedUser.setContragentid(findedUser.getContragentsByContragentid().getId());
             if (findedUser == null) {
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.user"));
-                return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
+                return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
             } else {
                 return "redirect:/userslist";
             }
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.user") + ": " + ex.toString());
-            return usersList(model, Optional.of(currentPage), Optional.of(pageSize), Optional.of(currentOrder));
+            return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
         }
     }
 

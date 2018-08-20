@@ -8,25 +8,33 @@
 <body>
 <div th:insert="menu :: mainmenu"></div>
 <h1 th:utext="#{menu.baseslist}"></h1>
+<form action="baseslist" th:object="${tablePageSize}" method="get">
+    <select th:field="*{size}">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+    </select>
+    <button type="submit" name="change"><span th:utext="#{button.changetablepagesize}"></span></button>
+</form>
 <div>
     <table border="1">
         <tr th:height="50px">
             <th th:utext="#{baseslist.baseid}" align="center"></th>
             <th align="center">
-                <a th:href="@{/baseslist(order='basename_d')}" style="text-decoration: none;" th:utext="'^'">
+                <a th:href="@{/baseslist(order='basename_d', size=${currentPageSize})}" style="text-decoration: none;" th:utext="'^'">
                 </a>
                 <span th:text="#{baseslist.basename}"></span>
-                <a th:href="@{/baseslist(order='basename_a')}" style="text-decoration: none;" th:utext="'v'">
+                <a th:href="@{/baseslist(order='basename_a', size=${currentPageSize})}" style="text-decoration: none;" th:utext="'v'">
                 </a>
             </th>
             <th th:utext="#{baseslist.description}" align="center"></th>
             <th th:utext="#{baseslist.path}" align="center"></th>
             <th th:utext="#{baseslist.ipaddress}" align="center"></th>
             <th align="center">
-                <a th:href="@{/baseslist(order='contragentname_d')}" style="text-decoration: none;" th:utext="'^'">
+                <a th:href="@{/baseslist(order='contragentname_d', size=${currentPageSize})}" style="text-decoration: none;" th:utext="'^'">
                 </a>
                 <span th:text="#{baseslist.contragent}"></span>
-                <a th:href="@{/baseslist(order='contragentname_a')}" style="text-decoration: none;" th:utext="'v'">
+                <a th:href="@{/baseslist(order='contragentname_a', size=${currentPageSize})}" style="text-decoration: none;" th:utext="'v'">
                 </a>
             </th>
             <th th:utext="#{baseslist.contragentinn}" align="center"></th>

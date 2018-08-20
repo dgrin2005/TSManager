@@ -8,15 +8,23 @@
 <body>
 <div th:insert="menu :: mainmenu"></div>
 <h1 th:utext="#{menu.contragentslist}"></h1>
+<form action="contragentslist" th:object="${tablePageSize}" method="get">
+    <select th:field="*{size}">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+    </select>
+    <button type="submit" name="change"><span th:utext="#{button.changetablepagesize}"></span></button>
+</form>
 <div>
     <table border="1">
         <tr th:height="50px">
             <th th:utext="#{contragentslist.contragentid}" align="center"></th>
             <th align="center">
-                <a th:href="@{/contragentslist(order='contragentname_d')}" style="text-decoration: none;" th:utext="'^'">
+                <a th:href="@{/contragentslist(order='contragentname_d', size=${currentPageSize})}" style="text-decoration: none;" th:utext="'^'">
                 </a>
                 <span th:text="#{contragentslist.contragentname}"></span>
-                <a th:href="@{/contragentslist(order='contragentname_a')}" style="text-decoration: none;" th:utext="'v'">
+                <a th:href="@{/contragentslist(order='contragentname_a', size=${currentPageSize})}" style="text-decoration: none;" th:utext="'v'">
                 </a>
             </th>
             <th th:utext="#{contragentslist.description}" align="center"></th>

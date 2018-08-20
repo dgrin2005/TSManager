@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 
 public class ControllerUtils {
 
-    public static void addPageAttributes(Model model, int totalSize, Integer currentPage, int pageSize) {
+    public static Integer addPageAttributes(Model model, int totalSize, Integer currentPage, int pageSize) {
         int totalPages = (totalSize - 1) / pageSize + 1;
         if (currentPage > totalPages) {
             currentPage = totalPages;
@@ -22,5 +22,6 @@ public class ControllerUtils {
             model.addAttribute("currentPage", currentPage);
             model.addAttribute("pageSize", pageSize);
         }
+        return  currentPage;
     }
 }
