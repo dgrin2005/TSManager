@@ -1,3 +1,11 @@
+/**
+ * TerminalServerManager
+ *    WebUtils.java
+ *
+ *  @author Dmitry Grinshteyn
+ *  @version 1.0 dated 2018-08-23
+ */
+
 package ru.trustsoft.utils;
 
 import org.springframework.http.HttpHeaders;
@@ -96,7 +104,8 @@ public class WebUtils {
         return sb.toString();
     }
 
-    public static String getActFileName(User loginedUser, UsersRepo userRepo, ReconActParameters reconActParameters) throws Exception {
+    public static String getActFileName(User loginedUser, UsersRepo userRepo,
+                                        ReconActParameters reconActParameters) throws Exception {
         String filename = "";
 
         if (loginedUser.getAuthorities().contains((GrantedAuthority) () -> "DEMO")) {
@@ -125,24 +134,21 @@ public class WebUtils {
         return filename;
     }
 
-    public static void downloadFile (String fileName, HttpServletResponse response, ServletContext servletContext) throws IOException {
+    public static void downloadFile (String fileName, HttpServletResponse response,
+                                     ServletContext servletContext) throws IOException {
         MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(servletContext, fileName);
 
         if (new File(fileName).exists()) {
 
             File file = new File(fileName);
-            // Content-Type
-            // application/pdf
             response.setContentType(mediaType.getType());
-
-            // Content-Disposition
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName());
-
             InputStream inputStream = new FileInputStream(file);
             int nRead;
             while ((nRead = inputStream.read()) != -1) {
                 response.getWriter().write(nRead);
             }
+            inputStream.close();
         } else {
             throw new IOException("File not found");
         }

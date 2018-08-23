@@ -1,3 +1,11 @@
+/**
+ * TerminalServerManager
+ *    MediaTypeUtils.java
+ *
+ *  @author Dmitry Grinshteyn
+ *  @version 1.0 dated 2018-08-23
+ */
+
 package ru.trustsoft.utils;
 
 import javax.servlet.ServletContext;
@@ -6,12 +14,7 @@ import org.springframework.http.MediaType;
 
 class MediaTypeUtils {
 
-    // abc.zip
-    // abc.pdf,..
     public static MediaType getMediaTypeForFileName(ServletContext servletContext, String fileName) {
-        // application/pdf
-        // application/xml
-        // image/gif, ...
         String mineType = servletContext.getMimeType(fileName);
         try {
             return MediaType.parseMediaType(mineType);

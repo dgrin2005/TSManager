@@ -1,3 +1,11 @@
+/**
+ * TerminalServerManager
+ *    TSMngrErrorController.java
+ *
+ *  @author Dmitry Grinshteyn
+ *  @version 1.0 dated 2018-08-23
+ */
+
 package ru.trustsoft.controller;
 
 import org.springframework.boot.web.servlet.error.ErrorController;

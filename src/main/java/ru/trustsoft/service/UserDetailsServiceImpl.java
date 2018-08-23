@@ -1,3 +1,11 @@
+/**
+ * TerminalServerManager
+ *    UserDetailsService.java
+ *
+ *  @author Dmitry Grinshteyn
+ *  @version 1.0 dated 2018-08-23
+ */
+
 package ru.trustsoft.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +36,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         Users userEntity = userRepo.findByUsername(userName);
         if (userEntity == null)
-            throw new UsernameNotFoundException("user not found");
+            throw new UsernameNotFoundException("User " + userName + "not found");
 
         String username = userEntity.getUsername();
         String password = userEntity.getUserpassword();
@@ -48,7 +56,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             }
         }
 
-        return new User(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+        return new User(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked,
+                authorities);
 
     }
 }

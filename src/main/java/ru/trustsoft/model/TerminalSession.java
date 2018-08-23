@@ -1,6 +1,14 @@
-package ru.trustsoft.utils;
+/**
+ * TerminalServerManager
+ *    TerminalSession.java
+ *
+ *  @author Dmitry Grinshteyn
+ *  @version 1.0 dated 2018-08-23
+ */
 
-class TerminalSession {
+package ru.trustsoft.model;
+
+public class TerminalSession {
 
     private String username;
     private String id;

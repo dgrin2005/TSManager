@@ -1,4 +1,14 @@
+/**
+ * TerminalServerManager
+ *    TerminalSessions.java
+ *
+ *  @author Dmitry Grinshteyn
+ *  @version 1.0 dated 2018-08-23
+ */
+
 package ru.trustsoft.utils;
+
+import ru.trustsoft.model.TerminalSession;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -10,10 +20,8 @@ public class TerminalSessions {
     public void getSessions(String tsmserveraddress) throws IOException {
 
         //   qwinsta /server:terminal.example.com
-
         Runtime r = Runtime.getRuntime();
         Process p;
-        //String cmd = "qwinsta /server:" + SERVER_ADDRESS;
         String cmd = "qwinsta /server:" + tsmserveraddress;
         System.out.println(cmd);
         p = r.exec(cmd);
@@ -57,20 +65,16 @@ public class TerminalSessions {
     public void  termineSession(String tsmserveraddress, String username) throws IOException {
 
         //  rwinsta /server:terminal.example.com <session-id>
-
         for (TerminalSession ts: terminalSessions) {
             System.out.println(ts.getUsername() + "\\" + ts.getId());
             if (ts.getUsername().equals(username)) {
                 System.out.println("!!!");
                 Runtime r = Runtime.getRuntime();
-                ////String cmd = "rwinsta /server:" + SERVER_ADDRESS + " " + ts.getId();
-                //String cmd = "rwinsta " + ts.getId() +" /server:" + SERVER_ADDRESS;
                 String cmd = "rwinsta " + ts.getId() +" /server:" + tsmserveraddress;
                 System.out.println(cmd);
                 r.exec(cmd);
             }
         }
-
     }
 
     @Override

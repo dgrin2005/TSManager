@@ -1,3 +1,11 @@
+/**
+ * TerminalServerManager
+ *    Users.java
+ *
+ *  @author Dmitry Grinshteyn
+ *  @version 1.0 dated 2018-08-23
+ */
+
 package ru.trustsoft.model;
 
 import org.springframework.stereotype.Component;
@@ -22,7 +30,8 @@ public class Users {
     public Users() {
     }
 
-    public Users(String username, String userpassword, String description, boolean locked, boolean adm, Contragents contragentsByContragentid) {
+    public Users(String username, String userpassword, String description, boolean locked, boolean adm,
+                 Contragents contragentsByContragentid) {
         this.username = username;
         this.userpassword = userpassword;
         this.description = description;

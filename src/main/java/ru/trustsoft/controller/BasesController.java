@@ -1,3 +1,11 @@
+/**
+ * TerminalServerManager
+ *    BasesController.java
+ *
+ *  @author Dmitry Grinshteyn
+ *  @version 1.0 dated 2018-08-23
+ */
+
 package ru.trustsoft.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +32,18 @@ public class BasesController {
     private static Integer currentPageSize = 5;
     private static String currentOrder = "basename_a";
 
+    @Autowired
+    private Bases findedBase;
+
+    @Autowired
+    private BasesRepo baseRepo;
+
+    @Autowired
+    private ContragentsRepo contragentRepo;
+
+    @Autowired
+    MessageByLocaleService messageByLocaleService;
+
     @GetMapping(path="/baseslist")
     public String basesList(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
                             @RequestParam("page") Optional<Integer> page,
@@ -34,13 +54,18 @@ public class BasesController {
         size.ifPresent(s -> currentPageSize = s);
         order.ifPresent(o -> currentOrder = o);
 
+        if (tablePageSize.getSize() == null) {
+            tablePageSize.setSize(currentPageSize);
+        }
+
         Bases base = new Bases();
         if (findedBase != null) {
             base = findedBase;
         }
         model.addAttribute("tablePageSize", tablePageSize);
         model.addAttribute("currentPageSize", currentPageSize);
-        currentPage = ControllerUtils.addPageAttributes(model, ((List<Bases>)baseRepo.findAll()).size(), currentPage, currentPageSize);
+        currentPage = ControllerUtils.addPageAttributes(model, ((List<Bases>)baseRepo.findAll()).size(),
+                currentPage, currentPageSize);
         List<Bases> basePage;
 
         switch (currentOrder) {
@@ -68,7 +93,8 @@ public class BasesController {
     }
 
     @RequestMapping(value = { "/baseslist" }, params={"add"}, method = RequestMethod.POST)
-    public String addBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize, @ModelAttribute("baseform") Bases baseform) {
+    public String addBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                          @ModelAttribute("baseform") Bases baseform) {
 
         String basename = baseform.getBasename();
         String description = baseform.getDescription();
@@ -82,20 +108,20 @@ public class BasesController {
                 baseRepo.save(base);
                 contragent.getBasesById().add(base);
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.add.base"));
-                return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
             } catch (Exception ex) {
-                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.add.base") + ": " + ex.toString());
-                return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.add.base") +
+                        ": " + ex.toString());
             }
-
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
-            return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
         }
+        return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
+                Optional.of(currentOrder));
     }
 
     @RequestMapping(value = { "/baseslist" }, params={"delete"}, method = RequestMethod.POST)
-    public String deleteBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize, @ModelAttribute("baseform") Bases baseform) {
+    public String deleteBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                             @ModelAttribute("baseform") Bases baseform) {
 
         int baseid = baseform.getId();
         findedBase = null;
@@ -106,16 +132,18 @@ public class BasesController {
             baseRepo.delete(base);
             contragent.getBasesById().remove(base);
             model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.base"));
-            return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.base") + ": " + ex.toString());
-            return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.base") +
+                    ": " + ex.toString());
         }
+        return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
+                Optional.of(currentOrder));
     }
 
     @RequestMapping(value = { "/baseslist" }, params={"update"}, method = RequestMethod.POST)
-    public String updateBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize, @ModelAttribute("baseform") Bases baseform) {
+    public String updateBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                             @ModelAttribute("baseform") Bases baseform) {
 
         int baseid = baseform.getId();
         String basename = baseform.getBasename();
@@ -134,51 +162,35 @@ public class BasesController {
                 base.setContragentsByContragentid(contragentRepo.findById(contragentid));
                 baseRepo.save(base);
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.update.base"));
-                return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
             } catch (Exception ex) {
-                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.update.base") + ": " + ex.toString());
-                return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.update.base") +
+                        ": " + ex.toString());
             }
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
-            return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
         }
+        return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
+                Optional.of(currentOrder));
     }
 
     @RequestMapping(value = { "/baseslist" }, params={"findbyid"}, method = RequestMethod.POST)
-    public String findByIdBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize, @ModelAttribute("baseform") Bases baseform) {
+    public String findByIdBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                               @ModelAttribute("baseform") Bases baseform) {
 
         int baseid = baseform.getId();
-
         try {
             findedBase = baseRepo.findById(baseid);
             findedBase.setContragentid(findedBase.getContragentsByContragentid().getId());
             if (findedBase == null) {
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.base"));
-                return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
-            } else {
-                //return "redirect:/baseslist";
-                return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
             }
         }
         catch (Exception ex) {
-            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.base") + ": " + ex.toString());
-            return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize), Optional.of(currentOrder));
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.base") +
+                    ": " + ex.toString());
         }
+        return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
+                Optional.of(currentOrder));
     }
-
-    // Private fields
-
-    @Autowired
-    private Bases findedBase;
-
-    @Autowired
-    private BasesRepo baseRepo;
-
-    @Autowired
-    private ContragentsRepo contragentRepo;
-
-    @Autowired
-    MessageByLocaleService messageByLocaleService;
 
 }
