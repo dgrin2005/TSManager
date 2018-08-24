@@ -28,9 +28,9 @@ import java.util.Optional;
 @RequestMapping(path="/")
 public class BasesController {
 
-    private static Integer currentPage = 1;
-    private static Integer currentPageSize = 5;
-    private static String currentOrder = "basename_a";
+    private static Integer defaultPage = 1;
+    private static Integer defaultPageSize = 5;
+    private static String defaultOrder = "basename_a";
 
     @Autowired
     private Bases findedBase;
@@ -50,9 +50,27 @@ public class BasesController {
                             @RequestParam("size") Optional<Integer> size,
                             @RequestParam("order") Optional<String> order) {
 
-        page.ifPresent(p -> currentPage = p);
-        size.ifPresent(s -> currentPageSize = s);
-        order.ifPresent(o -> currentOrder = o);
+        Integer currentPage;
+        Integer currentPageSize;
+        String currentOrder;
+
+        if (page.isPresent()) {
+            currentPage = page.get() > 0 ? page.get() : defaultPage;
+        } else {
+            currentPage = defaultPage;
+        }
+
+        if (size.isPresent()) {
+            currentPageSize = size.get() > 0 ? size.get() : defaultPageSize;
+        } else {
+            currentPageSize = defaultPageSize;
+        }
+
+        if (order.isPresent()) {
+            currentOrder = order.get();
+        } else {
+            currentOrder = defaultOrder;
+        }
 
         if (tablePageSize.getSize() == null) {
             tablePageSize.setSize(currentPageSize);
@@ -94,7 +112,10 @@ public class BasesController {
 
     @RequestMapping(value = { "/baseslist" }, params={"add"}, method = RequestMethod.POST)
     public String addBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                          @ModelAttribute("baseform") Bases baseform) {
+                          @ModelAttribute("baseform") Bases baseform,
+                          @RequestParam("page") Optional<Integer> page,
+                          @RequestParam("size") Optional<Integer> size,
+                          @RequestParam("order") Optional<String> order) {
 
         String basename = baseform.getBasename();
         String description = baseform.getDescription();
@@ -115,13 +136,15 @@ public class BasesController {
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
         }
-        return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return basesList(model, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/baseslist" }, params={"delete"}, method = RequestMethod.POST)
     public String deleteBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("baseform") Bases baseform) {
+                             @ModelAttribute("baseform") Bases baseform,
+                             @RequestParam("page") Optional<Integer> page,
+                             @RequestParam("size") Optional<Integer> size,
+                             @RequestParam("order") Optional<String> order) {
 
         int baseid = baseform.getId();
         findedBase = null;
@@ -137,13 +160,15 @@ public class BasesController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.base") +
                     ": " + ex.toString());
         }
-        return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return basesList(model, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/baseslist" }, params={"update"}, method = RequestMethod.POST)
     public String updateBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("baseform") Bases baseform) {
+                             @ModelAttribute("baseform") Bases baseform,
+                             @RequestParam("page") Optional<Integer> page,
+                             @RequestParam("size") Optional<Integer> size,
+                             @RequestParam("order") Optional<String> order) {
 
         int baseid = baseform.getId();
         String basename = baseform.getBasename();
@@ -169,13 +194,15 @@ public class BasesController {
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
         }
-        return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return basesList(model, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/baseslist" }, params={"findbyid"}, method = RequestMethod.POST)
     public String findByIdBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                               @ModelAttribute("baseform") Bases baseform) {
+                               @ModelAttribute("baseform") Bases baseform,
+                               @RequestParam("page") Optional<Integer> page,
+                               @RequestParam("size") Optional<Integer> size,
+                               @RequestParam("order") Optional<String> order) {
 
         int baseid = baseform.getId();
         try {
@@ -189,8 +216,7 @@ public class BasesController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.base") +
                     ": " + ex.toString());
         }
-        return basesList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return basesList(model, tablePageSize, page, size, order);
     }
 
 }

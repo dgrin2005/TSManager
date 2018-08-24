@@ -30,9 +30,9 @@ import java.util.Optional;
 @RequestMapping(path="/")
 public class UsersController {
 
-    private static Integer currentPage = 1;
-    private static Integer currentPageSize = 5;
-    private static String currentOrder = "username_a";
+    private static Integer defaultPage = 1;
+    private static Integer defaultPageSize = 5;
+    private static String defaultOrder = "username_a";
 
     @Autowired
     private Users findedUser;
@@ -52,9 +52,27 @@ public class UsersController {
                             @RequestParam("size") Optional<Integer> size,
                             @RequestParam("order") Optional<String> order) {
 
-        page.ifPresent(p -> currentPage = p);
-        size.ifPresent(s -> currentPageSize = s);
-        order.ifPresent(o -> currentOrder = o);
+        Integer currentPage;
+        Integer currentPageSize;
+        String currentOrder;
+
+        if (page.isPresent()) {
+            currentPage = page.get() > 0 ? page.get() : defaultPage;
+        } else {
+            currentPage = defaultPage;
+        }
+
+        if (size.isPresent()) {
+            currentPageSize = size.get() > 0 ? size.get() : defaultPageSize;
+        } else {
+            currentPageSize = defaultPageSize;
+        }
+
+        if (order.isPresent()) {
+            currentOrder = order.get();
+        } else {
+            currentOrder = defaultOrder;
+        }
 
         if (tablePageSize.getSize() == null) {
             tablePageSize.setSize(currentPageSize);
@@ -95,7 +113,10 @@ public class UsersController {
 
     @RequestMapping(value = { "/userslist" }, params={"add"}, method = RequestMethod.POST)
     public String addUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                          @ModelAttribute("userform") Users userform) {
+                          @ModelAttribute("userform") Users userform,
+                          @RequestParam("page") Optional<Integer> page,
+                          @RequestParam("size") Optional<Integer> size,
+                          @RequestParam("order") Optional<String> order) {
 
         String username = userform.getUsername();
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -118,13 +139,15 @@ public class UsersController {
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
         }
-        return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return usersList(model, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/userslist" }, params={"delete"}, method = RequestMethod.POST)
     public String deleteUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("userform") Users userform) {
+                             @ModelAttribute("userform") Users userform,
+                             @RequestParam("page") Optional<Integer> page,
+                             @RequestParam("size") Optional<Integer> size,
+                             @RequestParam("order") Optional<String> order) {
 
         int userid = userform.getId();
         findedUser = null;
@@ -140,13 +163,15 @@ public class UsersController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.user") +
                     ": " + ex.toString());
         }
-        return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return usersList(model, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/userslist" }, params={"update"}, method = RequestMethod.POST)
     public String updateUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("userform") Users userform) {
+                             @ModelAttribute("userform") Users userform,
+                             @RequestParam("page") Optional<Integer> page,
+                             @RequestParam("size") Optional<Integer> size,
+                             @RequestParam("order") Optional<String> order) {
 
         int userid = userform.getId();
         String username = userform.getUsername();
@@ -176,13 +201,15 @@ public class UsersController {
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
         }
-        return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return usersList(model, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/userslist" }, params={"findbyid"}, method = RequestMethod.POST)
     public String findByIdContragent(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                                     @ModelAttribute("userform") Users userform) {
+                                     @ModelAttribute("userform") Users userform,
+                                     @RequestParam("page") Optional<Integer> page,
+                                     @RequestParam("size") Optional<Integer> size,
+                                     @RequestParam("order") Optional<String> order) {
 
         int userid = userform.getId();
         try {
@@ -196,8 +223,7 @@ public class UsersController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.user") +
                     ": " + ex.toString());
         }
-        return usersList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return usersList(model, tablePageSize, page, size, order);
     }
 
 }

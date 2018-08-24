@@ -26,9 +26,9 @@ import java.util.Optional;
 @RequestMapping(path="/")
 public class ContragentsController {
 
-    private static Integer currentPage = 1;
-    private static Integer currentPageSize = 5;
-    private static String currentOrder = "contragentname_a";
+    private static Integer defaultPage = 1;
+    private static Integer defaultPageSize = 5;
+    private static String defaultOrder = "contragentname_a";
 
     @Autowired
     private Contragents findedContragent;
@@ -45,9 +45,27 @@ public class ContragentsController {
                                   @RequestParam("size") Optional<Integer> size,
                                   @RequestParam("order") Optional<String> order) {
 
-        page.ifPresent(p -> currentPage = p);
-        size.ifPresent(s -> currentPageSize = s);
-        order.ifPresent(o -> currentOrder = o);
+        Integer currentPage;
+        Integer currentPageSize;
+        String currentOrder;
+
+        if (page.isPresent()) {
+            currentPage = page.get() > 0 ? page.get() : defaultPage;
+        } else {
+            currentPage = defaultPage;
+        }
+
+        if (size.isPresent()) {
+            currentPageSize = size.get() > 0 ? size.get() : defaultPageSize;
+        } else {
+            currentPageSize = defaultPageSize;
+        }
+
+        if (order.isPresent()) {
+            currentOrder = order.get();
+        } else {
+            currentOrder = defaultOrder;
+        }
 
         if (tablePageSize.getSize() == null) {
             tablePageSize.setSize(currentPageSize);
@@ -81,7 +99,10 @@ public class ContragentsController {
 
     @RequestMapping(value = { "/contragentslist" }, params={"add"}, method = RequestMethod.POST)
     public String addContragent(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                                @ModelAttribute("contragentform") Contragents contragentform) {
+                                @ModelAttribute("contragentform") Contragents contragentform,
+                                @RequestParam("page") Optional<Integer> page,
+                                @RequestParam("size") Optional<Integer> size,
+                                @RequestParam("order") Optional<String> order) {
 
         String contragentname = contragentform.getContragentname();
         String description = contragentform.getDescription();
@@ -96,13 +117,15 @@ public class ContragentsController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.add.contragent") +
                     ": " + ex.toString());
         }
-        return contragentsList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return contragentsList(model, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/contragentslist" }, params={"delete"}, method = RequestMethod.POST)
     public String deleteContragent(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                                   @ModelAttribute("contragentform") Contragents contragentform) {
+                                   @ModelAttribute("contragentform") Contragents contragentform,
+                                   @RequestParam("page") Optional<Integer> page,
+                                   @RequestParam("size") Optional<Integer> size,
+                                   @RequestParam("order") Optional<String> order) {
 
         int contragentid = contragentform.getId();
         findedContragent = null;
@@ -116,13 +139,15 @@ public class ContragentsController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.contragent") +
                     ": " + ex.toString());
         }
-        return contragentsList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return contragentsList(model, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/contragentslist" }, params={"update"}, method = RequestMethod.POST)
     public String updateContragent(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                                   @ModelAttribute("contragentform") Contragents contragentform) {
+                                   @ModelAttribute("contragentform") Contragents contragentform,
+                                   @RequestParam("page") Optional<Integer> page,
+                                   @RequestParam("size") Optional<Integer> size,
+                                   @RequestParam("order") Optional<String> order) {
 
         int contragentid = contragentform.getId();
         String contragentname = contragentform.getContragentname();
@@ -142,13 +167,15 @@ public class ContragentsController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.update.contragent") +
                     ": " + ex.toString());
         }
-        return contragentsList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return contragentsList(model, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/contragentslist" }, params={"findbyid"}, method = RequestMethod.POST)
     public String findByIdContragent(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                                     @ModelAttribute("contragentform") Contragents contragentform) {
+                                     @ModelAttribute("contragentform") Contragents contragentform,
+                                     @RequestParam("page") Optional<Integer> page,
+                                     @RequestParam("size") Optional<Integer> size,
+                                     @RequestParam("order") Optional<String> order) {
 
         int contragentid = contragentform.getId();
         try {
@@ -161,21 +188,22 @@ public class ContragentsController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.contragent") +
                     ": " + ex.toString());
         }
-        return contragentsList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                Optional.of(currentOrder));
+        return contragentsList(model, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/contragentslist" }, params={"findbyinn"}, method = RequestMethod.POST)
     public String findByINNContragent(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                                      @ModelAttribute("contragentform") Contragents contragentform) {
+                                      @ModelAttribute("contragentform") Contragents contragentform,
+                                      @RequestParam("page") Optional<Integer> page,
+                                      @RequestParam("size") Optional<Integer> size,
+                                      @RequestParam("order") Optional<String> order) {
 
         String inn = contragentform.getInn();
         try {
             findedContragent = contragentRepo.findByInn(inn);
             if (findedContragent == null) {
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.contragent"));
-                return contragentsList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                        Optional.of(currentOrder));
+                return contragentsList(model, tablePageSize, page, size, order);
             } else {
                 return "redirect:/contragentslist";
             }
@@ -183,8 +211,7 @@ public class ContragentsController {
         catch (Exception ex) {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.contragent") +
                     ": " + ex.toString());
-            return contragentsList(model, tablePageSize, Optional.of(currentPage), Optional.of(currentPageSize),
-                    Optional.of(currentOrder));
+            return contragentsList(model, tablePageSize, page, size, order);
         }
     }
 

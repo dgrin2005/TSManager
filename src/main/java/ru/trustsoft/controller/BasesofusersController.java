@@ -39,9 +39,9 @@ import java.util.Optional;
 @RequestMapping(path="/")
 public class BasesofusersController {
 
-    private static Integer currentPage = 1;
-    private static Integer currentPageSize = 5;
-    private static String currentOrder = "basename_a";
+    private static Integer defaultPage = 1;
+    private static Integer defaultPageSize = 5;
+    private static String defaultOrder = "basename_a";
 
     @Autowired
     private BasesofusersRepo baseofusersRepo;
@@ -71,9 +71,27 @@ public class BasesofusersController {
                                    @RequestParam("size") Optional<Integer> size,
                                    @RequestParam("order") Optional<String> order) {
 
-        page.ifPresent(p -> currentPage = p);
-        size.ifPresent(s -> currentPageSize = s);
-        order.ifPresent(o -> currentOrder = o);
+        Integer currentPage;
+        Integer currentPageSize;
+        String currentOrder;
+
+        if (page.isPresent()) {
+            currentPage = page.get() > 0 ? page.get() : defaultPage;
+        } else {
+            currentPage = defaultPage;
+        }
+
+        if (size.isPresent()) {
+            currentPageSize = size.get() > 0 ? size.get() : defaultPageSize;
+        } else {
+            currentPageSize = defaultPageSize;
+        }
+
+        if (order.isPresent()) {
+            currentOrder = order.get();
+        } else {
+            currentOrder = defaultOrder;
+        }
 
         if (tablePageSize.getSize() == null) {
             tablePageSize.setSize(currentPageSize);
@@ -152,7 +170,10 @@ public class BasesofusersController {
     @RequestMapping(value = { "/basesofuserslist" }, params={"add"}, method = RequestMethod.POST)
     public String addBase(Model model, Principal principal,
                           @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                          @ModelAttribute("baseofusersform") Basesofusers baseofusersform) {
+                          @ModelAttribute("baseofusersform") Basesofusers baseofusersform,
+                          @RequestParam("page") Optional<Integer> page,
+                          @RequestParam("size") Optional<Integer> size,
+                          @RequestParam("order") Optional<String> order) {
 
         int userid = baseofusersform.getUserid();
         int baseid = baseofusersform.getBaseid();
@@ -177,14 +198,16 @@ public class BasesofusersController {
                 model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.base"));
             }
         }
-        return basesofusersList(model, principal, tablePageSize, Optional.of(currentPage),
-                Optional.of(currentPageSize), Optional.of(currentOrder));
+        return basesofusersList(model, principal, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/basesofuserslist" }, params={"delete"}, method = RequestMethod.POST)
     public String deleteBase(Model model, Principal principal,
                              @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("baseofusersform") Basesofusers baseofusersform) {
+                             @ModelAttribute("baseofusersform") Basesofusers baseofusersform,
+                             @RequestParam("page") Optional<Integer> page,
+                             @RequestParam("size") Optional<Integer> size,
+                             @RequestParam("order") Optional<String> order) {
 
         int baseofusersid = baseofusersform.getId();
         findedBaseofusers = null;
@@ -202,15 +225,17 @@ public class BasesofusersController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.record") +
                     ": " + ex.toString());
         }
-        return basesofusersList(model, principal, tablePageSize, Optional.of(currentPage),
-                Optional.of(currentPageSize), Optional.of(currentOrder));
+        return basesofusersList(model, principal, tablePageSize, page, size, order);
     }
 
 
     @RequestMapping(value = { "/basesofuserslist" }, params={"findbyid"}, method = RequestMethod.POST)
     public String findByIdBase(Model model, Principal principal,
                                @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                               @ModelAttribute("baseofusersform") Basesofusers baseofusersform) {
+                               @ModelAttribute("baseofusersform") Basesofusers baseofusersform,
+                               @RequestParam("page") Optional<Integer> page,
+                               @RequestParam("size") Optional<Integer> size,
+                               @RequestParam("order") Optional<String> order) {
 
         int baseofusersid = baseofusersform.getId();
         try {
@@ -225,14 +250,16 @@ public class BasesofusersController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.record") +
                     ": " + ex.toString());
         }
-        return basesofusersList(model, principal, tablePageSize, Optional.of(currentPage),
-                Optional.of(currentPageSize), Optional.of(currentOrder));
+        return basesofusersList(model, principal, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/basesofuserslist" }, params={"archivebase"}, method = RequestMethod.POST)
     public String archiveBase(Model model, Principal principal,
                               @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                              @ModelAttribute("baseofuserarc") Basesofusers baseofusersarc) {
+                              @ModelAttribute("baseofuserarc") Basesofusers baseofusersarc,
+                              @RequestParam("page") Optional<Integer> page,
+                              @RequestParam("size") Optional<Integer> size,
+                              @RequestParam("order") Optional<String> order) {
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
         boolean basestatus;
@@ -263,14 +290,16 @@ public class BasesofusersController {
         } else {
             model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.utils.archivebasedemo"));
         }
-        return basesofusersList(model, principal, tablePageSize, Optional.of(currentPage),
-                Optional.of(currentPageSize), Optional.of(currentOrder));
+        return basesofusersList(model, principal, tablePageSize, page, size, order);
     }
 
     @RequestMapping(value = { "/basesofuserslist" }, params={"getarchive"}, method = RequestMethod.POST)
     public String getArchive(HttpServletResponse response, Model model, Principal principal,
                              @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("baseofuserarc") Basesofusers baseofusersarc) {
+                             @ModelAttribute("baseofuserarc") Basesofusers baseofusersarc,
+                             @RequestParam("page") Optional<Integer> page,
+                             @RequestParam("size") Optional<Integer> size,
+                             @RequestParam("order") Optional<String> order) {
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
         if (!loginedUser.getAuthorities().contains((GrantedAuthority) () -> "DEMO")) {
@@ -281,8 +310,7 @@ public class BasesofusersController {
                     String basename = WebUtils.getArcBasename(loginedUser, userRepo, base);
                     if (basename.isEmpty()) {
                         model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
-                        return basesofusersList(model, principal, tablePageSize, Optional.of(currentPage),
-                                Optional.of(currentPageSize), Optional.of(currentOrder));
+                        return basesofusersList(model, principal, tablePageSize, page, size, order);
                     }
                     System.out.println(basename);
                     BaseArchive ba = new BaseArchive();
@@ -297,8 +325,7 @@ public class BasesofusersController {
         } else {
             model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.utils.archivebasedemo"));
         }
-        return basesofusersList(model, principal, tablePageSize, Optional.of(currentPage),
-                Optional.of(currentPageSize), Optional.of(currentOrder));
+        return basesofusersList(model, principal, tablePageSize, page, size, order);
     }
 
 }
