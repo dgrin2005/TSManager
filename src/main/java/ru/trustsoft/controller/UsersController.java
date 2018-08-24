@@ -22,7 +22,10 @@ import ru.trustsoft.repo.ContragentsRepo;
 import ru.trustsoft.repo.UsersRepo;
 import ru.trustsoft.service.MessageByLocaleService;
 import ru.trustsoft.utils.ControllerUtils;
+import ru.trustsoft.utils.UsersManagement;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -107,6 +110,10 @@ public class UsersController {
         model.addAttribute("users", userPage);
         model.addAttribute("contragents", contragentRepo.findAllContragentAsc());
         model.addAttribute("userform", user);
+        model.addAttribute("usermanage", userRepo.findAllUserAsc());
+
+        Users usermanage = new Users();
+        model.addAttribute("usermanageform", usermanage);
 
         return "userslist";
     }
@@ -225,5 +232,109 @@ public class UsersController {
         }
         return usersList(model, tablePageSize, page, size, order);
     }
+
+    @RequestMapping(value = { "/userslist" }, params={"enableuser"}, method = RequestMethod.POST)
+    public String enableUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                             @ModelAttribute("usermanageform") Users userform,
+                             @RequestParam("page") Optional<Integer> page,
+                             @RequestParam("size") Optional<Integer> size,
+                             @RequestParam("order") Optional<String> order) {
+
+        int userid = userform.getId();
+        if (userid> 0) {
+            Users managedUser = userRepo.findById(userid);
+            if (managedUser == null) {
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.user"));
+            } else {
+
+                UsersManagement um = new UsersManagement();
+                try {
+                    um.setEnabledToOS(managedUser.getUsername(), "yes");
+                    if (um.isDisabledFromOS(managedUser.getUsername()) == -1) {
+                        managedUser.setLocked(false);
+                        userRepo.save(managedUser);
+                        model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.update.user"));
+                    } else {
+                        model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.noenable.user"));
+                    }
+                } catch (IOException ex) {
+                    model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.noenable.user") +
+                            ": " + ex.toString());
+                }
+
+            }
+        }
+
+        return usersList(model, tablePageSize, page, size, order);
+
+    }
+
+    @RequestMapping(value = { "/userslist" }, params={"disableuser"}, method = RequestMethod.POST)
+    public String disableUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                             @ModelAttribute("usermanageform") Users userform,
+                             @RequestParam("page") Optional<Integer> page,
+                             @RequestParam("size") Optional<Integer> size,
+                             @RequestParam("order") Optional<String> order) {
+
+        int userid = userform.getId();
+        if (userid> 0) {
+            Users managedUser = userRepo.findById(userid);
+            if (managedUser == null) {
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.user"));
+            } else {
+
+                UsersManagement um = new UsersManagement();
+                try {
+                    um.setEnabledToOS(managedUser.getUsername(), "no");
+                    if (um.isDisabledFromOS(managedUser.getUsername()) == 1) {
+                        managedUser.setLocked(true);
+                        userRepo.save(managedUser);
+                        model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.update.user"));
+                    } else {
+                        model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.nodisable.user"));
+                    }
+                } catch (IOException ex) {
+                    model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.nodisable.user") +
+                            ": " + ex.toString());
+                }
+
+            }
+        }
+
+        return usersList(model, tablePageSize, page, size, order);
+
+    }
+
+    @RequestMapping(value = { "/userslist" }, params={"refreshusersstatus"}, method = RequestMethod.POST)
+    public String refreshUsersStatus(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                              @RequestParam("page") Optional<Integer> page,
+                              @RequestParam("size") Optional<Integer> size,
+                              @RequestParam("order") Optional<String> order) {
+
+        ArrayList<Users> usersArrayList = (ArrayList<Users>)userRepo.findAll();
+        UsersManagement um = new UsersManagement();
+        for (Users user: usersArrayList) {
+            int isDisabled = 0;
+            try {
+                isDisabled = um.isDisabledFromOS(user.getUsername());
+                if (isDisabled == 1) {
+                    user.setLocked(true);
+                    userRepo.save(user);
+                } else {
+                    if (isDisabled == -1) {
+                        user.setLocked(false);
+                        userRepo.save(user);
+                    }
+                }
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.refreshstatus.user"));
+            } catch (IOException ex) {
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.norefreshstatus.user") +
+                        ": " + ex.toString());
+            }
+
+        }
+        return usersList(model, tablePageSize, page, size, order);
+    }
+
 
 }

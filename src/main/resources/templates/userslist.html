@@ -101,6 +101,39 @@
     <button type="submit" name="update"><span th:utext="#{button.update}"></span></button>
 </form>
 <br/>
+<form th:object="${usermanageform}" method="POST">
+    <table  border="1" width = 420px>
+        <tr th:height="40px">
+            <td colspan = "2" align="center"><h4 th:utext="#{table.usermanagement}"></h4></td>
+        </tr>
+        <tr th:height="40px">
+            <td colspan = "2" align="center">
+                <button type="submit" name="refreshusersstatus" style="width: 400px;"><span th:utext="#{button.refreshusers}"></span></button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan = "2" align="center">
+                <span th:utext="#{userslist.selectuser}"></span>
+                <select th:field="*{id}" style="width: 200px;">
+                    <option value="0"> -- </option>
+                    <option th:each="user : ${usermanage}"
+                            th:value="${user.getId()}"
+                            th:text="${user.getUsername()}"></option>
+                </select>
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button type="submit" name="enableuser" style="width: 200px;"><span th:utext="#{button.enableuser}"></span></button>
+            </td>
+            <td>
+                <button type="submit" name="disableuser" style="width: 200px;"><span th:utext="#{button.disableuser}"></span></button>
+            </td>
+        </tr>
+    </table>
+</form>
+<br/>
 <div th:if="${infoMessage}" th:utext="${infoMessage}"
      style="color:blue;font-style:italic;">
     ...
