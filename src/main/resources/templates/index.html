@@ -8,6 +8,7 @@
 <body>
 <div th:insert="menu :: mainmenu"></div>
 <h2 class="center" th:if="${#request.userPrincipal != null}" th:utext="#{login.welcome(${#request.userPrincipal.getName()})}"></h2>
+<a th:if="${#request.userPrincipal == null}" th:href="@{/login}"><h3 th:utext="#{menu.authorize}" class="center"></h3></a>
 <div th:insert="footer :: copyright"></div>
 </body>
 </html>

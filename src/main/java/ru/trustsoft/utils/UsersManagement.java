@@ -1,10 +1,15 @@
 package ru.trustsoft.utils;
 
+import sun.util.logging.resources.logging;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.logging.Logger;
 
 public class UsersManagement {
+
+    private static final Logger logger = Logger.getLogger(String.valueOf(UsersManagement.class));
 
     public int isDisabledFromOS (String username) throws IOException{
 
@@ -13,12 +18,14 @@ public class UsersManagement {
         Process p;
         String cmd = "wmic useraccount where name='" + username + "' get Disabled";
         System.out.println(cmd);
+        logger.info(cmd);
         int isDisabled = 0;
         p = r.exec(cmd);
         String s;
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
         while ((s = br.readLine()) != null) {
             System.out.println(s);
+            logger.info(s);
             if (s.trim().toUpperCase().equals("TRUE")) {
                 isDisabled = 1;
             }
@@ -37,6 +44,7 @@ public class UsersManagement {
         Process p;
         String cmd = "net user " + username + " /active:" + enabled;
         System.out.println(cmd);
+        logger.info(cmd);
         Boolean isDisabled = false;
         p = r.exec(cmd);
     }

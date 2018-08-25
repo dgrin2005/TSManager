@@ -9,6 +9,7 @@
 package ru.trustsoft.utils;
 
 import java.io.*;
+import java.util.logging.Logger;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ReconciliationAct {
 
+    private static final Logger logger = Logger.getLogger(String.valueOf(ReconciliationAct.class));
+
     public void orderReconciliationAct(String path_1c, String path_1c_base, String path_epf,
                                        String act_catalog, String parameters1C,
                                        String username, String password) throws IOException {
@@ -34,6 +37,7 @@ public class ReconciliationAct {
                 " /F" + path_1c_base + " /N" + username + " /P" + password + " /Execute "+ path_epf +
                 " /C\"" + parameters1C + ";" + act_catalog + "\"" ;
         System.out.println(cmd);
+        logger.info(cmd);
         Process p = r.exec(cmd);
     }
 

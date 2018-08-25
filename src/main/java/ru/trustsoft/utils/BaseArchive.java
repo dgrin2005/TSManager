@@ -12,8 +12,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class BaseArchive {
+
+    private static final Logger logger = Logger.getLogger(String.valueOf(BaseArchive.class));
 
     public boolean checkBase(String path_1c_base) {
 
@@ -34,6 +37,7 @@ public class BaseArchive {
                 " /F\"" + path_1c_base + "\" /N" + username + " /P" + password +
                 " /DumpIB\"" + arc_catalog + basename + "\"";
         System.out.println(cmd);
+        logger.info(cmd);
         Process p = r.exec(cmd);
     }
 
@@ -44,8 +48,10 @@ public class BaseArchive {
 
         if (file.delete()) {
             System.out.println("Archive " + fileName + " deleted");
+            logger.info("Archive " + fileName + " deleted");
         } else {
             System.out.println("Archive " + fileName + " not found");
+            logger.info("Archive " + fileName + " not found");
         }
 
     }

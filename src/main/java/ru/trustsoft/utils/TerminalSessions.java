@@ -12,9 +12,11 @@ import ru.trustsoft.model.TerminalSession;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class TerminalSessions {
 
+    private static final Logger logger = Logger.getLogger(String.valueOf(TerminalSession.class));
     private final ArrayList<TerminalSession> terminalSessions = new ArrayList<>();
 
     public void getSessions(String tsmserveraddress) throws IOException {
@@ -24,6 +26,7 @@ public class TerminalSessions {
         Process p;
         String cmd = "qwinsta /server:" + tsmserveraddress;
         System.out.println(cmd);
+        logger.info(cmd);
         p = r.exec(cmd);
         String s;
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -67,11 +70,13 @@ public class TerminalSessions {
         //  rwinsta /server:terminal.example.com <session-id>
         for (TerminalSession ts: terminalSessions) {
             System.out.println(ts.getUsername() + "\\" + ts.getId());
+            logger.info(ts.getUsername() + "\\" + ts.getId());
             if (ts.getUsername().equals(username)) {
                 System.out.println("!!!");
                 Runtime r = Runtime.getRuntime();
                 String cmd = "rwinsta " + ts.getId() +" /server:" + tsmserveraddress;
                 System.out.println(cmd);
+                logger.info(cmd);
                 r.exec(cmd);
             }
         }

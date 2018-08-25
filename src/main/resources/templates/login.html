@@ -7,10 +7,10 @@
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
-<h2 th:utext="#{menu.login}"></h2>
+<h2 th:utext="#{menu.login}" class="center"></h2>
 <!-- /login?error=true -->
 <div th:if="${#request.getParameter('error') == 'true'}"
-     style="color:red;margin:10px 0;">
+     style="color:red;margin:10px 0;" align="center">
     <span th:utext="#{login.failed}"></span><br />
     <span th:utext="#{login.reason}"></span> :
     <span th:if="${#session!= null and #session.getAttribute('SPRING_SECURITY_LAST_EXCEPTION') != null}"
@@ -21,7 +21,7 @@
 </div>
 
 <form name='f' th:action="@{/j_spring_security_check}" method='POST'>
-    <table  border="1">
+    <table  border="1" align="center">
         <tr>
             <td colspan = "2" align="center"><h3 th:utext="#{login.credentials}"></h3></td>
         </tr>
