@@ -151,14 +151,13 @@ public class UsersController {
 
     @RequestMapping(value = { "/userslist" }, params={"delete"}, method = RequestMethod.POST)
     public String deleteUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("userform") Users userform,
+                             @ModelAttribute("delete") Integer userid,
                              @RequestParam("page") Optional<Integer> page,
                              @RequestParam("size") Optional<Integer> size,
                              @RequestParam("order") Optional<String> order) {
 
-        int userid = userform.getId();
+        System.out.println("!!!!");
         findedUser = null;
-
         try {
             Users user = userRepo.findById(userid);
             Contragents contragent = user.getContragentsByContragentid();

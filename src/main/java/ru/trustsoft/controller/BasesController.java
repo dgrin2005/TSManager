@@ -49,7 +49,6 @@ public class BasesController {
                             @RequestParam("page") Optional<Integer> page,
                             @RequestParam("size") Optional<Integer> size,
                             @RequestParam("order") Optional<String> order) {
-
         Integer currentPage;
         Integer currentPageSize;
         String currentOrder;
@@ -139,30 +138,6 @@ public class BasesController {
         return basesList(model, tablePageSize, page, size, order);
     }
 
-    @RequestMapping(value = { "/baseslist" }, params={"delete"}, method = RequestMethod.POST)
-    public String deleteBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("baseform") Bases baseform,
-                             @RequestParam("page") Optional<Integer> page,
-                             @RequestParam("size") Optional<Integer> size,
-                             @RequestParam("order") Optional<String> order) {
-
-        int baseid = baseform.getId();
-        findedBase = null;
-
-        try {
-            Bases base = baseRepo.findById(baseid);
-            Contragents contragent = base.getContragentsByContragentid();
-            baseRepo.delete(base);
-            contragent.getBasesById().remove(base);
-            model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.base"));
-        }
-        catch (Exception ex) {
-            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.base") +
-                    ": " + ex.toString());
-        }
-        return basesList(model, tablePageSize, page, size, order);
-    }
-
     @RequestMapping(value = { "/baseslist" }, params={"update"}, method = RequestMethod.POST)
     public String updateBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
                              @ModelAttribute("baseform") Bases baseform,
@@ -214,6 +189,28 @@ public class BasesController {
         }
         catch (Exception ex) {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.base") +
+                    ": " + ex.toString());
+        }
+        return basesList(model, tablePageSize, page, size, order);
+    }
+
+    @RequestMapping(value = { "/baseslist" }, params={"delete"}, method = RequestMethod.POST)
+    public String deleteBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                             @ModelAttribute("delete") Integer baseid,
+                             @RequestParam("page") Optional<Integer> page,
+                             @RequestParam("size") Optional<Integer> size,
+                             @RequestParam("order") Optional<String> order) {
+
+        findedBase = null;
+        try {
+            Bases base = baseRepo.findById(baseid);
+            Contragents contragent = base.getContragentsByContragentid();
+            baseRepo.delete(base);
+            contragent.getBasesById().remove(base);
+            model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.base"));
+        }
+        catch (Exception ex) {
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.base") +
                     ": " + ex.toString());
         }
         return basesList(model, tablePageSize, page, size, order);

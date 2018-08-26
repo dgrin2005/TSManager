@@ -204,26 +204,30 @@ public class BasesofusersController {
     @RequestMapping(value = { "/basesofuserslist" }, params={"delete"}, method = RequestMethod.POST)
     public String deleteBase(Model model, Principal principal,
                              @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("baseofusersform") Basesofusers baseofusersform,
+                             @ModelAttribute("delete") Integer baseofusersid,
                              @RequestParam("page") Optional<Integer> page,
                              @RequestParam("size") Optional<Integer> size,
                              @RequestParam("order") Optional<String> order) {
 
-        int baseofusersid = baseofusersform.getId();
-        findedBaseofusers = null;
-
-        try {
-            Basesofusers baseofusers = baseofusersRepo.findById(baseofusersid);
-            Users user = baseofusers.getUsersByUserid();
-            Bases base = baseofusers.getBasesByBaseid();
-            baseofusersRepo.delete(baseofusers);
-            user.getBasesofusersById().remove(baseofusers);
-            base.getBasesofusersById().remove(baseofusers);
-            model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.record"));
-        }
-        catch (Exception ex) {
-            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.record") +
-                    ": " + ex.toString());
+        User loginedUser = (User) ((Authentication) principal).getPrincipal();
+        Users currentUser = userRepo.findByUsername(loginedUser.getUsername());
+        if (currentUser.isAdm()) {
+            findedBaseofusers = null;
+            try {
+                Basesofusers baseofusers = baseofusersRepo.findById(baseofusersid);
+                Users user = baseofusers.getUsersByUserid();
+                Bases base = baseofusers.getBasesByBaseid();
+                baseofusersRepo.delete(baseofusers);
+                user.getBasesofusersById().remove(baseofusers);
+                base.getBasesofusersById().remove(baseofusers);
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.delete.record"));
+            }
+            catch (Exception ex) {
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.record") +
+                        ": " + ex.toString());
+            }
+        } else {
+            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.record"));
         }
         return basesofusersList(model, principal, tablePageSize, page, size, order);
     }

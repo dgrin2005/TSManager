@@ -2,11 +2,44 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Contragents List</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        function deleteClicked(value1, value2) {
+            $( "#dialog-confirm" ).dialog({
+                resizable: false,
+                height: "auto",
+                width: 400,
+                modal: true,
+                display: 'block',
+                buttons: {
+                    OK: function() {
+                        var url = 'contragentslist';
+                        var form = $('<form action="' + url + '" method="post">' +
+                            '<input type="hidden" name="delete" value="' + value1 + '" />' +
+                            '<input type="hidden" name="size" value="' + value2 + '" />' +
+                            '</form>');
+                        $('body').append(form);
+                        form.submit();
+                        $( this ).dialog( "close" );
+                    },
+                    Cancel: function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            });
+        }
+    </script>
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
+<div style="display:none;" id="dialog-confirm" title="Delete contragent?">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>This item will be permanently deleted and cannot be recovered. Are you sure?</p>
+</div>
 <h1 th:utext="#{menu.contragentslist}"></h1>
 <form action="contragentslist" th:object="${tablePageSize}" method="get">
     <select th:field="*{size}">
@@ -29,12 +62,18 @@
             </th>
             <th th:utext="#{contragentslist.description}" align="center"></th>
             <th th:utext="#{contragentslist.inn}" align="center"></th>
+            <th></th>
         </tr>
         <tr th:each ="contragent : ${contragents}">
             <td th:utext="${contragent.id}" align="center">...</td>
             <td th:utext="${contragent.contragentname}">...</td>
             <td th:utext="${contragent.description}">...</td>
             <td th:utext="${contragent.inn}" align="center">...</td>
+            <td>
+                <button type="submit" name="delete" th:onclick="'javascript:deleteClicked(\'' + ${contragent.id} +
+                                '\',\'' + ${currentPageSize} + '\');'">
+                    <span th:utext="#{button.delete}"></span></button>
+            </td>
         </tr>
     </table>
 </div>
@@ -71,7 +110,6 @@
     <button type="submit" name="findbyinn"><span th:utext="#{button.findByINN}"></span></button>
     <br/>
     <button type="submit" name="add"><span th:utext="#{button.add}"></span></button>
-    <button type="submit" name="delete"><span th:utext="#{button.delete}"></span></button>
     <button type="submit" name="update"><span th:utext="#{button.update}"></span></button>
 </form>
 <br/>

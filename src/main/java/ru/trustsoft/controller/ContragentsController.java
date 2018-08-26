@@ -122,14 +122,12 @@ public class ContragentsController {
 
     @RequestMapping(value = { "/contragentslist" }, params={"delete"}, method = RequestMethod.POST)
     public String deleteContragent(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                                   @ModelAttribute("contragentform") Contragents contragentform,
+                                   @ModelAttribute("delete") Integer contragentid,
                                    @RequestParam("page") Optional<Integer> page,
                                    @RequestParam("size") Optional<Integer> size,
                                    @RequestParam("order") Optional<String> order) {
 
-        int contragentid = contragentform.getId();
         findedContragent = null;
-
         try {
             Contragents contragent = contragentRepo.findById(contragentid);
             contragentRepo.delete(contragent);
