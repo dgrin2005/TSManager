@@ -156,7 +156,6 @@ public class UsersController {
                              @RequestParam("size") Optional<Integer> size,
                              @RequestParam("order") Optional<String> order) {
 
-        System.out.println("!!!!");
         findedUser = null;
         try {
             Users user = userRepo.findById(userid);
@@ -234,12 +233,11 @@ public class UsersController {
 
     @RequestMapping(value = { "/userslist" }, params={"enableuser"}, method = RequestMethod.POST)
     public String enableUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("usermanageform") Users userform,
+                             @ModelAttribute("enableuser") Integer userid,
                              @RequestParam("page") Optional<Integer> page,
                              @RequestParam("size") Optional<Integer> size,
                              @RequestParam("order") Optional<String> order) {
 
-        int userid = userform.getId();
         if (userid> 0) {
             Users managedUser = userRepo.findById(userid);
             if (managedUser == null) {
@@ -270,12 +268,11 @@ public class UsersController {
 
     @RequestMapping(value = { "/userslist" }, params={"disableuser"}, method = RequestMethod.POST)
     public String disableUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("usermanageform") Users userform,
-                             @RequestParam("page") Optional<Integer> page,
-                             @RequestParam("size") Optional<Integer> size,
-                             @RequestParam("order") Optional<String> order) {
+                              @ModelAttribute("disableuser") Integer userid,
+                              @RequestParam("page") Optional<Integer> page,
+                              @RequestParam("size") Optional<Integer> size,
+                              @RequestParam("order") Optional<String> order) {
 
-        int userid = userform.getId();
         if (userid> 0) {
             Users managedUser = userRepo.findById(userid);
             if (managedUser == null) {

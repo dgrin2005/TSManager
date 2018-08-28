@@ -1,11 +1,19 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Users List</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <style>
+
+        input.text { margin-bottom:12px; width:95%; padding: .4em; }
+        fieldset { padding:0; border:0; margin-top:25px; }
+
+    </style>
+
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
@@ -34,11 +42,93 @@
             });
         }
     </script>
+
+    <script>
+        function add_updateClicked(buttonname, formname, id, name, password, description, islocked, isadm, contragent) {
+            $( "#dialog-form" ).dialog({
+                resizable: true,
+                height: "auto",
+                width: 400,
+                modal: true,
+                display: 'block',
+                title: formname
+            });
+            document.getElementById('ident').value=id;
+            document.getElementById('name').value=name;
+            document.getElementById('password').value=password;
+            document.getElementById('description').value=description;
+            if (islocked.toUpperCase() == 'TRUE') {
+                document.getElementById('islocked').checked=true;
+            } else {
+                document.getElementById('islocked').checked=false;
+            }
+            if (isadm.toUpperCase() == 'TRUE') {
+                document.getElementById('isadmin').checked=true;
+            } else {
+                document.getElementById('isadmin').checked=false;
+            }
+            document.getElementById('contragent').value=contragent;
+            document.getElementById('button').name=buttonname;
+
+        }
+    </script>
+
+    <script>
+        function enable_disableClicked(id, locked, size) {
+            var url = 'userslist';
+            var form;
+            if (locked.toUpperCase() == 'TRUE') {
+                form = $('<form action="' + url + '" method="post">' +
+                    '<input type="hidden" name="enableuser" value="' + id + '" />' +
+                    '<input type="hidden" name="size" value="' + size + '" />' +
+                    '</form>');
+            } else {
+                form = $('<form action="' + url + '" method="post">' +
+                    '<input type="hidden" name="disableuser" value="' + id + '" />' +
+                    '<input type="hidden" name="size" value="' + size + '" />' +
+                    '</form>');
+            }
+            $('body').append(form);
+            form.submit();
+        }
+    </script>
+
+
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
+
 <div style="display:none;" id="dialog-confirm" title="Delete user?">
     <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>This item will be permanently deleted and cannot be recovered. Are you sure?</p>
+</div>
+
+<div style="display:none;" id="dialog-form">
+    <form th:object="${userform}" method="POST">
+        <fieldset>
+            <!--<label for="ident"><span th:utext="#{userslist.userid}"></span>:</label>-->
+            <input type="hidden" name="ident" id="ident" class="text ui-widget-content ui-corner-all" th:field="*{id}">
+            <label for="name"><span th:utext="#{userslist.username}"></span>:</label>
+            <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" th:field="*{username}">
+            <label for="password"><span th:utext="#{userslist.userpassword}"></span>:</label>
+            <input type="password" name="password" id="password" class="text ui-widget-content ui-corner-all" th:field="*{userpassword}">
+            <label for="description"><span th:utext="#{userslist.description}"></span>:</label>
+            <input type="text" name="name" id="description" class="text ui-widget-content ui-corner-all" th:field="*{description}">
+            <input type="checkbox" name="islocked" id="islocked" th:field="*{locked}" style="margin-bottom:12px;"> <label th:text="#{userslist.islocked}"style="margin-bottom:12px;">...</label>
+            <br/>
+            <input type="checkbox" name="isadmin" id="isadmin" th:field="*{adm}" style="margin-bottom:12px;"> <label th:text="#{userslist.isadmin}" style="margin-bottom:12px;">...</label>
+            <br/>
+            <label for="contragent"><span th:utext="#{userslist.contragent}"></span>:</label>
+                <select th:field="*{contragentid}" id="contragent" style="margin-bottom:12px; width:100%; padding: .4em;">
+                    <option value="0"> -- </option>
+                    <option th:each="contragent : ${contragents}"
+                            th:value="${contragent.getId()}"
+                            th:text="${contragent.getContragentname()}"></option>
+                </select>
+
+            <br/>
+            <button type="submit" id="button"><span th:utext="#{button.execute}"></span></button>
+        </fieldset>
+    </form>
 </div>
 <h1 th:utext="#{menu.userslist}"></h1>
 <form action="userslist" th:object="${tablePageSize}" method="get">
@@ -72,7 +162,7 @@
                 </a>
             </th>
             <th th:utext="#{userslist.contragentinn}" align="center"></th>
-            <th></th>
+            <th colspan = "3"></th>
         </tr>
         <tr th:each ="user : ${users}">
             <td th:utext="${user.id}" align="center">...</td>
@@ -85,8 +175,32 @@
             <td>
                 <button type="submit" name="delete" th:onclick="'javascript:deleteClicked(\'' + ${user.id} +
                                 '\',\'' + ${currentPageSize} + '\');'">
-                    <span th:utext="#{button.delete}"></span></button>
+                    <span th:utext="#{button.delete}"></span>
+                </button>
             </td>
+            <td>
+                <button type="submit"  name="updateform" th:onclick="'javascript:add_updateClicked(\''  + 'update' +
+                                '\',\'' + #{button.update} + '\',\'' + ${user.id} +
+                                '\',\'' + ${user.username} + '\',\'' + ${user.userpassword} +
+                                '\',\'' + ${user.description} + '\',\'' + ${user.locked} +
+                                '\',\'' + ${user.adm} + '\',\'' + ${user.contragentid} + '\');'">
+                    <span th:utext="#{button.update}"></span>
+                </button>
+            </td>
+            <td>
+                <button type="submit" name="enableuser" th:onclick="'javascript:enable_disableClicked(\'' + ${user.id} +
+                                '\',\'' + ${user.locked} + '\',\'' + ${currentPageSize} + '\');'" style="width: 120px;">
+                    <div th:switch="${user.locked}">
+                        <span th:case="true"
+                              th:utext="#{button.enableuser}">
+                        </span>
+                        <span th:case="false"
+                              th:utext="#{button.disableuser}">
+                        </span>
+                    </div>
+                </button>
+            </td>
+
         </tr>
     </table>
 </div>
@@ -106,71 +220,22 @@
 </table>
 </div>
 <br/>
-<h2 th:utext="#{userslist.form}"></h2>
-<form th:object="${userform}" method="POST">
-    <span th:utext="#{userslist.userid}"></span>:
-    <input type="text" th:field="*{id}" />
-    <button type="submit" name="findbyid"><span th:utext="#{button.findByID}"></span></button>
-    <br/>
-    <span th:utext="#{userslist.username}"></span>:
-    <input type="text" th:field="*{username}" />
-    <br/>
-    <span th:utext="#{userslist.userpassword}"></span>:
-    <input type="password" th:field="*{userpassword}" />
-    <br/>
-    <span th:utext="#{userslist.description}"></span>:
-    <input type="text" th:field="*{description}" />
-    <br/>
-    <span th:utext="#{userslist.islocked}"></span>:
-    <input type="checkbox" th:field="*{locked}" />
-    <br/>
-    <span th:utext="#{userslist.isadmin}"></span>:
-    <input type="checkbox" th:field="*{adm}" />
-    <br/>
-    <span th:utext="#{userslist.contragent}"></span>:
-    <select th:field="*{contragentid}">
-        <option value="0"> -- </option>
-        <option th:each="contragent : ${contragents}"
-                th:value="${contragent.getId()}"
-                th:text="${contragent.getContragentname()}"></option>
-    </select>
-    <br/>
-    <button type="submit" name="add"><span th:utext="#{button.add}"></span></button>
-    <button type="submit" name="update"><span th:utext="#{button.update}"></span></button>
-</form>
-<br/>
-<form th:object="${usermanageform}" method="POST">
-    <table  border="1" width = 420px>
-        <tr th:height="40px">
-            <td colspan = "2" align="center"><h4 th:utext="#{table.usermanagement}"></h4></td>
-        </tr>
-        <tr th:height="40px">
-            <td colspan = "2" align="center">
-                <button type="submit" name="refreshusersstatus" style="width: 400px;"><span th:utext="#{button.refreshusers}"></span></button>
-            </td>
-        </tr>
-        <tr>
-            <td colspan = "2" align="center">
-                <span th:utext="#{userslist.selectuser}"></span>
-                <select th:field="*{id}" style="width: 200px;">
-                    <option value="0"> -- </option>
-                    <option th:each="user : ${usermanage}"
-                            th:value="${user.getId()}"
-                            th:text="${user.getUsername()}"></option>
-                </select>
-                <br/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <button type="submit" name="enableuser" style="width: 200px;"><span th:utext="#{button.enableuser}"></span></button>
-            </td>
-            <td>
-                <button type="submit" name="disableuser" style="width: 200px;"><span th:utext="#{button.disableuser}"></span></button>
-            </td>
-        </tr>
-    </table>
-</form>
+<table  border="1">
+    <tr>
+        <td align="center">
+            <button type="submit" th:onclick="'javascript:add_updateClicked(\''  + 'add' +
+                                '\',\'' + #{button.add} + '\',\'' + '0' +
+                                '\',\'' + '' + '\',\'' + '' +
+                                '\',\'' + '' + '\',\'' + 'false' +
+                                '\',\'' + 'false' + '\',\'' + '0' + '\');'">
+                <span th:utext="#{button.add}"></span>
+            </button>
+        </td>
+        <td align="center">
+            <button type="submit" name="refreshusersstatus" style="width: 400px;"><span th:utext="#{button.refreshusers}"></span></button>
+        </td>
+    </tr>
+</table>
 <br/>
 <div th:if="${infoMessage}" th:utext="${infoMessage}"
      style="color:blue;font-style:italic;">
