@@ -172,28 +172,6 @@ public class BasesController {
         return basesList(model, tablePageSize, page, size, order);
     }
 
-    @RequestMapping(value = { "/baseslist" }, params={"findbyid"}, method = RequestMethod.POST)
-    public String findByIdBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                               @ModelAttribute("baseform") Bases baseform,
-                               @RequestParam("page") Optional<Integer> page,
-                               @RequestParam("size") Optional<Integer> size,
-                               @RequestParam("order") Optional<String> order) {
-
-        int baseid = baseform.getId();
-        try {
-            findedBase = baseRepo.findById(baseid);
-            findedBase.setContragentid(findedBase.getContragentsByContragentid().getId());
-            if (findedBase == null) {
-                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.base"));
-            }
-        }
-        catch (Exception ex) {
-            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.base") +
-                    ": " + ex.toString());
-        }
-        return basesList(model, tablePageSize, page, size, order);
-    }
-
     @RequestMapping(value = { "/baseslist" }, params={"delete"}, method = RequestMethod.POST)
     public String deleteBase(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
                              @ModelAttribute("delete") Integer baseid,

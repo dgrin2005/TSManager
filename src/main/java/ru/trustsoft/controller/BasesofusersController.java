@@ -104,8 +104,7 @@ public class BasesofusersController {
         model.addAttribute("tablePageSize", tablePageSize);
         model.addAttribute("currentPageSize", currentPageSize);
 
-        model.addAttribute("bases", baseRepo.findAllBaseAsc());
-        model.addAttribute("users", userRepo.findAllUserAsc());
+
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
         Users user = userRepo.findByUsername(loginedUser.getUsername());
@@ -113,6 +112,9 @@ public class BasesofusersController {
         List<Basesofusers> basesofusersPage;
 
         if (user.isAdm()) {
+            model.addAttribute("bases", baseRepo.findAllBaseAsc());
+            model.addAttribute("users", userRepo.findAllUserAsc());
+
             currentPage = ControllerUtils.addPageAttributes(model, ((List<Basesofusers>)baseofusersRepo.findAll()).size(),
                     currentPage, currentPageSize);
             switch (currentOrder) {
@@ -138,9 +140,12 @@ public class BasesofusersController {
             }
 
             model.addAttribute("basesofusers", basesofusersPage);
-            model.addAttribute("basesarc", baseRepo.findAllBaseAsc());
+            //model.addAttribute("basesarc", baseRepo.findAllBaseAsc());
             model.addAttribute("isadm", 1);
         } else {
+            model.addAttribute("bases", null);
+            model.addAttribute("users", null);
+
             currentPage = ControllerUtils.addPageAttributes(model, baseofusersRepo.findBasesByUser(user.getId()).size(),
                     currentPage, currentPageSize);
             switch (currentOrder) {
@@ -157,7 +162,7 @@ public class BasesofusersController {
 
 
             model.addAttribute("basesofusers", basesofusersPage);
-            model.addAttribute("basesarc", baseRepo.findAllBaseAscByUser(user.getId()));
+            //model.addAttribute("basesarc", baseRepo.findAllBaseAscByUser(user.getId()));
             model.addAttribute("isadm", 0);
         }
 
@@ -232,50 +237,25 @@ public class BasesofusersController {
         return basesofusersList(model, principal, tablePageSize, page, size, order);
     }
 
-
-    @RequestMapping(value = { "/basesofuserslist" }, params={"findbyid"}, method = RequestMethod.POST)
-    public String findByIdBase(Model model, Principal principal,
-                               @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                               @ModelAttribute("baseofusersform") Basesofusers baseofusersform,
-                               @RequestParam("page") Optional<Integer> page,
-                               @RequestParam("size") Optional<Integer> size,
-                               @RequestParam("order") Optional<String> order) {
-
-        int baseofusersid = baseofusersform.getId();
-        try {
-            findedBaseofusers = baseofusersRepo.findById(baseofusersid);
-            findedBaseofusers.setBaseid(findedBaseofusers.getBasesByBaseid().getId());
-            findedBaseofusers.setUserid(findedBaseofusers.getUsersByUserid().getId());
-            if (findedBaseofusers == null) {
-                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.record"));
-            }
-        }
-        catch (Exception ex) {
-            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.record") +
-                    ": " + ex.toString());
-        }
-        return basesofusersList(model, principal, tablePageSize, page, size, order);
-    }
-
     @RequestMapping(value = { "/basesofuserslist" }, params={"archivebase"}, method = RequestMethod.POST)
     public String archiveBase(Model model, Principal principal,
                               @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                              @ModelAttribute("baseofuserarc") Basesofusers baseofusersarc,
+                              @ModelAttribute("archivebase") Integer baseofusersid,
                               @RequestParam("page") Optional<Integer> page,
                               @RequestParam("size") Optional<Integer> size,
                               @RequestParam("order") Optional<String> order) {
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
-        boolean basestatus;
+        Users currentUser = userRepo.findByUsername(loginedUser.getUsername());
         if (!loginedUser.getAuthorities().contains((GrantedAuthority) () -> "DEMO")) {
             try {
-                int baseid = baseofusersarc.getBaseid();
-                if (baseid > 0) {
-                    Bases base = baseRepo.findById(baseid);
+                Basesofusers baseofusersarc = baseofusersRepo.findById(baseofusersid);
+                Bases base = baseofusersarc.getBasesByBaseid();
+                Users user = baseofusersarc.getUsersByUserid();
+                if (user == currentUser || loginedUser.getAuthorities().contains((GrantedAuthority) () -> "ADMIN")) {
                     String path_1c_base = base.getPath();
                     String basename = WebUtils.getArcBasename(loginedUser, userRepo, base);
                     BaseArchive ba = new BaseArchive();
-                    ba.checkBase(path_1c_base);
                     if (ba.checkBase(path_1c_base)) {
                         model.addAttribute("errorMessage", messageByLocaleService.getMessage("info.archive.check"));
                     } else {
@@ -285,7 +265,7 @@ public class BasesofusersController {
                         model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.archive.base"));
                     }
                 } else {
-                    model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.base"));
+                    model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.user"));
                 }
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.archive.record") +
@@ -300,17 +280,19 @@ public class BasesofusersController {
     @RequestMapping(value = { "/basesofuserslist" }, params={"getarchive"}, method = RequestMethod.POST)
     public String getArchive(HttpServletResponse response, Model model, Principal principal,
                              @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                             @ModelAttribute("baseofuserarc") Basesofusers baseofusersarc,
+                             @ModelAttribute("getarchive") Integer baseofusersid,
                              @RequestParam("page") Optional<Integer> page,
                              @RequestParam("size") Optional<Integer> size,
                              @RequestParam("order") Optional<String> order) {
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
+        Users currentUser = userRepo.findByUsername(loginedUser.getUsername());
         if (!loginedUser.getAuthorities().contains((GrantedAuthority) () -> "DEMO")) {
             try {
-                int baseid = baseofusersarc.getBaseid();
-                if (baseid > 0) {
-                    Bases base = baseRepo.findById(baseid);
+                Basesofusers baseofusersarc = baseofusersRepo.findById(baseofusersid);
+                Bases base = baseofusersarc.getBasesByBaseid();
+                Users user = baseofusersarc.getUsersByUserid();
+                if (user == currentUser || loginedUser.getAuthorities().contains((GrantedAuthority) () -> "ADMIN")) {
                     String basename = WebUtils.getArcBasename(loginedUser, userRepo, base);
                     if (basename.isEmpty()) {
                         model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
@@ -320,7 +302,7 @@ public class BasesofusersController {
                     BaseArchive ba = new BaseArchive();
                     ba.getArchive(env.getProperty("arc_catalog"), basename, response, this.servletContext);
                 } else {
-                    model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.base"));
+                    model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.user"));
                 }
             } catch (Exception ex) {
                 model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.utils.getarchive") +

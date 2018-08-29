@@ -6,6 +6,10 @@
     <title>Bases List</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        input.text { margin-bottom:12px; width:95%; padding: .4em; }
+        fieldset { padding:0; border:0; margin-top:25px; }
+    </style>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
@@ -34,11 +38,54 @@
             });
         }
     </script>
+    <script>
+        function add_updateClicked(buttonname, formname, id, name, description, path, ipaddress, contragent) {
+            $( "#dialog-form" ).dialog({
+                resizable: true,
+                height: "auto",
+                width: 400,
+                modal: true,
+                display: 'block',
+                title: formname
+            });
+            document.getElementById('ident').value=id;
+            document.getElementById('name').value=name;
+            document.getElementById('description').value=description;
+            document.getElementById('path').value=path;
+            document.getElementById('ipaddress').value=ipaddress;
+            document.getElementById('contragent').value=contragent;
+            document.getElementById('button').name=buttonname;
+        }
+    </script>
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
 <div style="display:none;" id="dialog-confirm" title="Delete base?">
     <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>This item will be permanently deleted and cannot be recovered. Are you sure?</p>
+</div>
+<div style="display:none;" id="dialog-form">
+    <form th:object="${baseform}" method="POST">
+        <fieldset>
+            <input type="hidden" name="ident" id="ident" class="text ui-widget-content ui-corner-all" th:field="*{id}">
+            <label for="name"><span th:utext="#{baseslist.basename}"></span>:</label>
+            <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" th:field="*{basename}">
+            <label for="description"><span th:utext="#{baseslist.description}"></span>:</label>
+            <input type="text" name="name" id="description" class="text ui-widget-content ui-corner-all" th:field="*{description}">
+            <label for="path"><span th:utext="#{baseslist.path}"></span>:</label>
+            <input type="text" name="name" id="path" class="text ui-widget-content ui-corner-all" th:field="*{path}">
+            <label for="ipaddress"><span th:utext="#{baseslist.ipaddress}"></span>:</label>
+            <input type="text" name="name" id="ipaddress" class="text ui-widget-content ui-corner-all" th:field="*{ipaddress}">
+            <label for="contragent"><span th:utext="#{userslist.contragent}"></span>:</label>
+            <select th:field="*{contragentid}" id="contragent" style="margin-bottom:12px; width:100%; padding: .4em;">
+                <option value="0"> -- </option>
+                <option th:each="contragent : ${contragents}"
+                        th:value="${contragent.getId()}"
+                        th:text="${contragent.getContragentname()}"></option>
+            </select>
+            <br/>
+            <button type="submit" id="button"><span th:utext="#{button.execute}"></span></button>
+        </fieldset>
+    </form>
 </div>
 <h1 th:utext="#{menu.baseslist}"></h1>
 <form action="baseslist" th:object="${tablePageSize}" method="get">
@@ -71,7 +118,7 @@
                 </a>
             </th>
             <th th:utext="#{baseslist.contragentinn}" align="center"></th>
-            <th></th>
+            <th colspan = "2"></th>
         </tr>
         <tr th:each ="base : ${bases}">
             <td th:utext="${base.id}" align="center">...</td>
@@ -85,6 +132,15 @@
                 <button type="submit" name="delete" th:onclick="'javascript:deleteClicked(\'' + ${base.id} +
                                 '\',\'' + ${currentPageSize} + '\');'">
                     <span th:utext="#{button.delete}"></span></button>
+            </td>
+            <td>
+                <button type="submit"  name="updateform" th:onclick="'javascript:add_updateClicked(\''  + 'update' +
+                                '\',\'' + #{button.update} + '\',\'' + ${base.id} +
+                                '\',\'' + ${base.basename} + '\',\'' + ${base.description} +
+                                '\',\'' + ${base.path} + '\',\'' + ${base.ipaddress} +
+                                '\',\'' + ${base.getContragentsByContragentid().getId()} + '\');'">
+                    <span th:utext="#{button.update}"></span>
+                </button>
             </td>
         </tr>
     </table>
@@ -105,35 +161,13 @@
 </table>
 </div>
 <br/>
-<h2 th:utext="#{baseslist.form}"></h2>
-<form th:object="${baseform}" method="POST">
-    <span th:utext="#{baseslist.baseid}"></span>:
-    <input type="text" th:field="*{id}" />
-    <button type="submit" name="findbyid"><span th:utext="#{button.findByID}"></span></button>
-    <br/>
-    <span th:utext="#{baseslist.basename}"></span>:
-    <input type="text" th:field="*{basename}" />
-    <br/>
-    <span th:utext="#{baseslist.description}"></span>:
-    <input type="text" th:field="*{description}" />
-    <br/>
-    <span th:utext="#{baseslist.path}"></span>:
-    <input type="text" th:field="*{path}" />
-    <br/>
-    <span th:utext="#{baseslist.ipaddress}"></span>:
-    <input type="text" th:field="*{ipaddress}" />
-    <br/>
-    <span th:utext="#{baseslist.contragent}"></span>:
-    <select th:field="*{contragentid}">
-        <option value="0"> -- </option>
-        <option th:each="contragent : ${contragents}"
-                th:value="${contragent.getId()}"
-                th:text="${contragent.getContragentname()}"></option>
-    </select>
-    <br/>
-    <button type="submit" name="add"><span th:utext="#{button.add}"></span></button>
-    <button type="submit" name="update"><span th:utext="#{button.update}"></span></button>
-</form>
+<button type="submit" th:onclick="'javascript:add_updateClicked(\''  + 'add' +
+                                '\',\'' + #{button.add} + '\',\'' + '0' +
+                                '\',\'' + '' + '\',\'' + '' +
+                                '\',\'' + '' + '\',\'' + '' +
+                                '\',\'' + '0' + '\');'">
+    <span th:utext="#{button.add}"></span>
+</button>
 <br/>
 
 <div th:if="${infoMessage}" th:utext="${infoMessage}"

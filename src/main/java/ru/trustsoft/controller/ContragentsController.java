@@ -168,49 +168,4 @@ public class ContragentsController {
         return contragentsList(model, tablePageSize, page, size, order);
     }
 
-    @RequestMapping(value = { "/contragentslist" }, params={"findbyid"}, method = RequestMethod.POST)
-    public String findByIdContragent(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                                     @ModelAttribute("contragentform") Contragents contragentform,
-                                     @RequestParam("page") Optional<Integer> page,
-                                     @RequestParam("size") Optional<Integer> size,
-                                     @RequestParam("order") Optional<String> order) {
-
-        int contragentid = contragentform.getId();
-        try {
-            findedContragent = contragentRepo.findById(contragentid);
-            if (findedContragent == null) {
-                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.contragent"));
-            }
-        }
-        catch (Exception ex) {
-            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.contragent") +
-                    ": " + ex.toString());
-        }
-        return contragentsList(model, tablePageSize, page, size, order);
-    }
-
-    @RequestMapping(value = { "/contragentslist" }, params={"findbyinn"}, method = RequestMethod.POST)
-    public String findByINNContragent(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                                      @ModelAttribute("contragentform") Contragents contragentform,
-                                      @RequestParam("page") Optional<Integer> page,
-                                      @RequestParam("size") Optional<Integer> size,
-                                      @RequestParam("order") Optional<String> order) {
-
-        String inn = contragentform.getInn();
-        try {
-            findedContragent = contragentRepo.findByInn(inn);
-            if (findedContragent == null) {
-                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.contragent"));
-                return contragentsList(model, tablePageSize, page, size, order);
-            } else {
-                return "redirect:/contragentslist";
-            }
-        }
-        catch (Exception ex) {
-            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.contragent") +
-                    ": " + ex.toString());
-            return contragentsList(model, tablePageSize, page, size, order);
-        }
-    }
-
 }

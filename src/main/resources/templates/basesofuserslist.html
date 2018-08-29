@@ -6,6 +6,10 @@
     <title>Bases of users List</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        input.text { margin-bottom:12px; width:95%; padding: .4em; }
+        fieldset { padding:0; border:0; margin-top:25px; }
+    </style>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
@@ -34,12 +38,73 @@
             });
         }
     </script>
+    <script>
+        function add_updateClicked(buttonname, formname) {
+            $( "#dialog-form" ).dialog({
+                resizable: true,
+                height: "auto",
+                width: 400,
+                modal: true,
+                display: 'block',
+                title: formname
+            });
+            document.getElementById('button').name=buttonname;
+        }
+    </script>
+    <script>
+        function archivebaseClicked(value1, value2) {
+            var url = 'basesofuserslist';
+            var form = $('<form action="' + url + '" method="post">' +
+                '<input type="hidden" name="archivebase" value="' + value1 + '" />' +
+                '<input type="hidden" name="size" value="' + value2 + '" />' +
+                '</form>');
+            $('body').append(form);
+            form.submit();
+        }
+    </script>
+    <script>
+        function getarchiveClicked(value1, value2) {
+            var url = 'basesofuserslist';
+            var form = $('<form action="' + url + '" method="post">' +
+                '<input type="hidden" name="getarchive" value="' + value1 + '" />' +
+                '<input type="hidden" name="size" value="' + value2 + '" />' +
+                '</form>');
+            $('body').append(form);
+            form.submit();
+        }
+    </script>
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
 <div style="display:none;" id="dialog-confirm" title="Delete record?">
     <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>This item will be permanently deleted and cannot be recovered. Are you sure?</p>
 </div>
+
+<div style="display:none;" id="dialog-form">
+    <form th:object="${baseofusersform}" method="POST">
+        <fieldset>
+            <input type="hidden" name="ident" id="ident" class="text ui-widget-content ui-corner-all" th:field="*{id}">
+            <label for="user"><span th:utext="#{basesofuserslist.user}"></span>:</label>
+            <select th:field="*{userid}" id="user" style="margin-bottom:12px; width:100%; padding: .4em;">
+                <option value="0"> -- </option>
+                <option th:each="user : ${users}"
+                        th:value="${user.getId()}"
+                        th:text="${user.getUsername()}"></option>
+            </select>
+            <label for="base"><span th:utext="#{basesofuserslist.base}"></span>:</label>
+            <select th:field="*{baseid}" id="base" style="margin-bottom:12px; width:100%; padding: .4em;">
+                <option value="0"> -- </option>
+                <option th:each="base : ${bases}"
+                        th:value="${base.getId()}"
+                        th:text="${base.getBasename()}"></option>
+            </select>
+            <br/>
+            <button type="submit" id="button"><span th:utext="#{button.execute}"></span></button>
+        </fieldset>
+    </form>
+</div>
+
+
 <h1 th:utext="#{menu.basesofuserslist}"></h1>
 <form action="basesofuserslist" th:object="${tablePageSize}" method="get">
     <select th:field="*{size}">
@@ -73,6 +138,7 @@
             <th th:utext="#{baseslist.path}" align="center"></th>
             <th th:utext="#{baseslist.ipaddress}" align="center"></th>
             <th th:hidden="${isadm eq 0}"></th>
+            <th colspan="2"></th>
         </tr>
         <tr th:each ="baseofusers : ${basesofusers}">
             <td th:utext="${baseofusers.id}" align="center">...</td>
@@ -87,6 +153,18 @@
                                 '\',\'' + ${currentPageSize} + '\');'">
                         <span th:utext="#{button.delete}"></span>
                     </button>
+            </td>
+            <td align="center">
+                <button type="submit" name="archivebase" th:onclick="'javascript:archivebaseClicked(\'' + ${baseofusers.id} +
+                                '\',\'' + ${currentPageSize} + '\');'">
+                    <span th:utext="#{button.archivebase}"></span>
+                </button>
+            </td>
+            <td align="center">
+                <button type="submit" name="getarchive" th:onclick="'javascript:getarchiveClicked(\'' + ${baseofusers.id} +
+                                '\',\'' + ${currentPageSize} + '\');'">
+                    <span th:utext="#{button.getarchivebase}"></span>
+                </button>
             </td>
         </tr>
     </table>
@@ -108,62 +186,12 @@
 </div>
 <br/>
 <div th:if="${isadm != 0}">
-    <h2  th:utext="#{basesofuserslist.form}"></h2>
-    <form th:object="${baseofusersform}" method="POST">
-        <span th:utext="#{basesofuserslist.recordid}"></span>:
-        <input type="text" th:field="*{id}" />
-        <button type="submit" name="findbyid"><span th:utext="#{button.findByID}"></span></button>
-        <br/>
-        <span th:utext="#{basesofuserslist.user}"></span>:
-        <select th:field="*{userid}">
-            <option value="0"> -- </option>
-            <option th:each="user : ${users}"
-                th:value="${user.getId()}"
-                th:text="${user.getUsername()}"></option>
-        </select>
-        <br/>
-        <span th:utext="#{basesofuserslist.base}"></span>:
-        <select th:field="*{baseid}">
-            <option value="0"> -- </option>
-            <option th:each="base : ${bases}"
-                th:value="${base.getId()}"
-                th:text="${base.getBasename()}"></option>
-        </select>
-        <br/>
-        <button type="submit" name="add"><span th:utext="#{button.add}"></span></button>
-    </form>
-    <br/>
+    <button type="submit" th:onclick="'javascript:add_updateClicked(\''  + 'add' +
+                                '\',\'' + #{button.add} + '\');'">
+        <span th:utext="#{button.add}"></span>
+    </button>
 </div>
-
-<form th:object="${baseofusersarc}" method="POST">
-    <table  border="1" width = 420px>
-        <tr th:height="40px">
-            <td colspan = "2" align="center"><h4 th:utext="#{table.archive}"></h4></td>
-        </tr>
-        <tr>
-            <td colspan = "2" align="center">
-                <span th:utext="#{basesofuserslist.selectbase}"></span>
-                <select th:field="*{baseid}" style="width: 260px;">
-                <option value="0"> -- </option>
-                <option th:each="base : ${basesarc}"
-                        th:value="${base.getId()}"
-                        th:text="${base.getBasename()}"></option>
-                </select>
-                <br/>
-            </td>
-        </tr>
-        <tr>
-            <td align="center">
-                <button type="submit" name="archivebase" style="width: 200px;"><span th:utext="#{button.archivebase}"></span></button>
-            </td>
-            <td align="center">
-                <button type="submit" name="getarchive" style="width: 200px;"><span th:utext="#{button.getarchivebase}"></span></button>
-            </td>
-        </tr>
-    </table>
-</form>
-
-
+<br/>
 <div th:if="${infoMessage}" th:utext="${infoMessage}"
      style="color:blue;font-style:italic;">
     ...

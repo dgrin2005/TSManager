@@ -110,10 +110,6 @@ public class UsersController {
         model.addAttribute("users", userPage);
         model.addAttribute("contragents", contragentRepo.findAllContragentAsc());
         model.addAttribute("userform", user);
-        model.addAttribute("usermanage", userRepo.findAllUserAsc());
-
-        Users usermanage = new Users();
-        model.addAttribute("usermanageform", usermanage);
 
         return "userslist";
     }
@@ -205,28 +201,6 @@ public class UsersController {
             }
         } else {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
-        }
-        return usersList(model, tablePageSize, page, size, order);
-    }
-
-    @RequestMapping(value = { "/userslist" }, params={"findbyid"}, method = RequestMethod.POST)
-    public String findByIdContragent(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                                     @ModelAttribute("userform") Users userform,
-                                     @RequestParam("page") Optional<Integer> page,
-                                     @RequestParam("size") Optional<Integer> size,
-                                     @RequestParam("order") Optional<String> order) {
-
-        int userid = userform.getId();
-        try {
-            findedUser = userRepo.findById(userid);
-            findedUser.setContragentid(findedUser.getContragentsByContragentid().getId());
-            if (findedUser == null) {
-                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.user"));
-            }
-        }
-        catch (Exception ex) {
-            model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.find.user") +
-                    ": " + ex.toString());
         }
         return usersList(model, tablePageSize, page, size, order);
     }

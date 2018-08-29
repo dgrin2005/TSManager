@@ -6,14 +6,10 @@
     <title>Users List</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
     <style>
-
         input.text { margin-bottom:12px; width:95%; padding: .4em; }
         fieldset { padding:0; border:0; margin-top:25px; }
-
     </style>
-
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
@@ -105,7 +101,6 @@
 <div style="display:none;" id="dialog-form">
     <form th:object="${userform}" method="POST">
         <fieldset>
-            <!--<label for="ident"><span th:utext="#{userslist.userid}"></span>:</label>-->
             <input type="hidden" name="ident" id="ident" class="text ui-widget-content ui-corner-all" th:field="*{id}">
             <label for="name"><span th:utext="#{userslist.username}"></span>:</label>
             <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" th:field="*{username}">
@@ -183,7 +178,7 @@
                                 '\',\'' + #{button.update} + '\',\'' + ${user.id} +
                                 '\',\'' + ${user.username} + '\',\'' + ${user.userpassword} +
                                 '\',\'' + ${user.description} + '\',\'' + ${user.locked} +
-                                '\',\'' + ${user.adm} + '\',\'' + ${user.contragentid} + '\');'">
+                                '\',\'' + ${user.adm} + '\',\'' + ${user.getContragentsByContragentid().getId()} + '\');'">
                     <span th:utext="#{button.update}"></span>
                 </button>
             </td>
@@ -232,7 +227,9 @@
             </button>
         </td>
         <td align="center">
-            <button type="submit" name="refreshusersstatus" style="width: 400px;"><span th:utext="#{button.refreshusers}"></span></button>
+            <form method="POST">
+                <button type="submit" name="refreshusersstatus" style="width: 400px;"><span th:utext="#{button.refreshusers}"></span></button>
+            </form>
         </td>
     </tr>
 </table>
