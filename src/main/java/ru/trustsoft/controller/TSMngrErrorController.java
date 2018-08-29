@@ -34,6 +34,9 @@ public class TSMngrErrorController implements ErrorController {
             if(statusCode == HttpStatus.NOT_FOUND.value()) {
                 return "404Page";
             }
+            if(statusCode == HttpStatus.METHOD_NOT_ALLOWED.value()) {
+                return "405Page";
+            }
             else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
                 return "500Page";
             }
