@@ -3,13 +3,16 @@
  *    WebUtils.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.utils;
 
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import ru.trustsoft.model.Bases;
@@ -17,7 +20,9 @@ import ru.trustsoft.model.Contragents;
 import ru.trustsoft.model.ReconActParameters;
 import ru.trustsoft.model.Users;
 import ru.trustsoft.repo.UsersRepo;
+import ru.trustsoft.service.MessageByLocaleService;
 
+import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -26,66 +31,45 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Locale;
+import java.util.logging.Logger;
 
 public class WebUtils {
 
-    public static String toString(User user, Locale locale) {
+    private static final Logger logger = Logger.getLogger(String.valueOf(WebUtils.class));
+
+    public static String toString(User user, MessageByLocaleService messageByLocaleService) {
         StringBuilder sb = new StringBuilder();
         Collection<GrantedAuthority> authorities = user.getAuthorities();
-        if (locale == Locale.ENGLISH) {
-            sb.append("<p>Username: ").append(user.getUsername()).append("</p>");
-            sb.append("<p>Is non locked: ").append(user.isAccountNonLocked()).append("</p>");
-            if (authorities != null && !authorities.isEmpty()) {
-                sb.append("<p>Authority: ");
-                boolean first = true;
-                for (GrantedAuthority a : authorities) {
-                    if (first) {
-                        sb.append(a.getAuthority());
-                        first = false;
-                    } else {
-                        sb.append(", ").append(a.getAuthority());
-                    }
-                }
-                sb.append("</p>");
-            }
-        } else {
-            sb.append("<p>Пользователь: ").append(user.getUsername()).append("</p>");
-            sb.append("<p>Не заблокирован: ").append(user.isAccountNonLocked()).append("</p>");
-            if (authorities != null && !authorities.isEmpty()) {
-                sb.append("<p>Права: ");
-                boolean first = true;
-                for (GrantedAuthority a : authorities) {
-                    if (first) {
-                        sb.append(a.getAuthority());
-                        first = false;
-                    } else {
-                        sb.append(", ").append(a.getAuthority());
-                    }
-                }
-                sb.append("</p>");
-            }
-        }
+        sb.append("<p>").append(messageByLocaleService.getMessage("info.tostring.username")).append(": ").
+                append(user.getUsername()).append("</p>");
+        sb.append("<p>").append(messageByLocaleService.getMessage("info.tostring.isnonlocked")).append(": ").
+                append(user.isAccountNonLocked()).append("</p>");
+        if (authorities != null && !authorities.isEmpty()) {
+            sb.append("<p>").append(messageByLocaleService.getMessage("info.tostring.authority")).append(": ");
+            boolean first = true;
+            for (GrantedAuthority a : authorities) {
+                if (first) {
+                    sb.append(a.getAuthority());
+                    first = false;
+                } else {
+                    sb.append(", ").append(a.getAuthority());
 
+                }
+            }
+            sb.append("</p>");
+        }
         return sb.toString();
     }
 
-    public static String toString(Contragents contragent, Locale locale) {
+    public static String toString(Contragents contragent, MessageByLocaleService messageByLocaleService) {
         StringBuilder sb = new StringBuilder();
-        if (locale == Locale.ENGLISH) {
-            if (contragent != null) {
-                sb.append("Contragent:").append(contragent.getContragentname()).
-                        append("(INN ").append(contragent.getInn()).append(")");
-            } else {
-                sb.append("Contragent: Not found");
-            }
+        if (contragent != null) {
+            sb.append(messageByLocaleService.getMessage("info.tostring.contragent")).append(": ").
+                    append(contragent.getContragentname()).append(" (").
+                    append(messageByLocaleService.getMessage("info.tostring.inn")).append(" ").
+                    append(contragent.getInn()).append(")");
         } else {
-            if (contragent != null) {
-                sb.append("Контрагент:").append(contragent.getContragentname()).
-                        append("(ИНН ").append(contragent.getInn()).append(")");
-            } else {
-                sb.append("Контрагент: Не найден");
-            }
+            sb.append(messageByLocaleService.getMessage("info.tostring.contragentnotfound"));
         }
         return sb.toString();
     }
@@ -134,7 +118,7 @@ public class WebUtils {
         return filename;
     }
 
-    public static void downloadFile (String fileName, HttpServletResponse response,
+    public static void downloadFile(User loginedUser, String fileName, HttpServletResponse response,
                                      ServletContext servletContext) throws IOException {
         MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(servletContext, fileName);
 
@@ -149,8 +133,24 @@ public class WebUtils {
                 response.getWriter().write(nRead);
             }
             inputStream.close();
+            logger.info(loginedUser.getUsername() + " : " + "Downloaded "+ fileName);
         } else {
             throw new IOException("File not found");
         }
+    }
+
+    public static void sendEmail(User loginedUser, JavaMailSender sender, String fromAddress, String textString,
+                                 String subjectString, String fileName, String toAddress) throws Exception{
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message,true);
+        helper.setTo(toAddress);
+        helper.setReplyTo(fromAddress);
+        helper.setFrom(fromAddress);
+        helper.setText(textString);
+        helper.setSubject(subjectString);
+        FileSystemResource file = new FileSystemResource(fileName);
+        helper.addAttachment(file.getFilename(), file);
+        sender.send(message);
+        logger.info(loginedUser.getUsername() + " : " + "Sended " + fileName + " to " + toAddress);
     }
 }

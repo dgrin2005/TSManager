@@ -3,10 +3,12 @@
  *    BaseArchive.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.utils;
+
+import org.springframework.security.core.userdetails.User;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +19,12 @@ import java.util.logging.Logger;
 public class BaseArchive {
 
     private static final Logger logger = Logger.getLogger(String.valueOf(BaseArchive.class));
+
+    private final User loginedUser;
+
+    public BaseArchive(User loginedUser) {
+        this.loginedUser = loginedUser;
+    }
 
     public boolean checkBase(String path_1c_base) {
 
@@ -36,8 +44,7 @@ public class BaseArchive {
         String cmd = path_1c + " CONFIG /DisableStartupMessages" +
                 " /F\"" + path_1c_base + "\" /N" + username + " /P" + password +
                 " /DumpIB\"" + arc_catalog + basename + "\"";
-        System.out.println(cmd);
-        logger.info(cmd);
+        logger.info(loginedUser.getUsername() + " : " + cmd);
         Process p = r.exec(cmd);
     }
 
@@ -47,11 +54,9 @@ public class BaseArchive {
         File file = new File(fileName);
 
         if (file.delete()) {
-            System.out.println("Archive " + fileName + " deleted");
-            logger.info("Archive " + fileName + " deleted");
+            logger.info(loginedUser.getUsername() + " : " + "Archive " + fileName + " deleted");
         } else {
-            System.out.println("Archive " + fileName + " not found");
-            logger.info("Archive " + fileName + " not found");
+            logger.info(loginedUser.getUsername() + " : " + "Archive " + fileName + " not found");
         }
 
     }
@@ -59,7 +64,7 @@ public class BaseArchive {
     public void getArchive(String arc_catalog, String basename, HttpServletResponse response,
                            ServletContext servletContext) throws IOException {
         String fileName = arc_catalog + basename;
-        WebUtils.downloadFile (fileName, response, servletContext);
+        WebUtils.downloadFile (loginedUser, fileName, response, servletContext);
     }
 
 }

@@ -3,7 +3,7 @@
  *    Users.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.model;
@@ -148,5 +148,20 @@ public class Users {
 
     public void setContragentsByContragentid(Contragents contragentsByContragentid) {
         this.contragentsByContragentid = contragentsByContragentid;
+    }
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", userpassword='" + userpassword + '\'' +
+                ", description='" + description + '\'' +
+                ", locked=" + locked +
+                ", adm=" + adm +
+                ", contragentid=" + contragentid +
+                ", contragentsByContragentid=" + contragentsByContragentid +
+                ", basesofusersById=" + basesofusersById +
+                '}';
     }
 }

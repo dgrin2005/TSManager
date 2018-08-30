@@ -89,13 +89,25 @@
         }
     </script>
 
+    <script>
+        function disconnectClicked(id, size) {
+            var url = 'userslist';
+            var form = $('<form action="' + url + '" method="post">' +
+                    '<input type="hidden" name="disconnect" value="' + id + '" />' +
+                    '<input type="hidden" name="size" value="' + size + '" />' +
+                    '</form>');
+            $('body').append(form);
+            form.submit();
+        }
+    </script>
+
 
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
-
-<div style="display:none;" id="dialog-confirm" title="Delete user?">
-    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>This item will be permanently deleted and cannot be recovered. Are you sure?</p>
+<div style="display:none;" id="dialog-confirm" th:title="#{menu.confirm.delete}">
+    <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 20px 0px 0;"></span>
+    <span th:utext="#{info.confirm.delete}"></span>
 </div>
 
 <div style="display:none;" id="dialog-form">
@@ -157,7 +169,7 @@
                 </a>
             </th>
             <th th:utext="#{userslist.contragentinn}" align="center"></th>
-            <th colspan = "3"></th>
+            <th colspan = "4"></th>
         </tr>
         <tr th:each ="user : ${users}">
             <td th:utext="${user.id}" align="center">...</td>
@@ -183,6 +195,12 @@
                 </button>
             </td>
             <td>
+                <button type="submit" name="disconnect" th:onclick="'javascript:disconnectClicked(\'' + ${user.id} +
+                                '\',\'' + ${currentPageSize} + '\');'">
+                    <span th:utext="#{button.disconnect}"></span>
+                </button>
+            </td>
+            <td>
                 <button type="submit" name="enableuser" th:onclick="'javascript:enable_disableClicked(\'' + ${user.id} +
                                 '\',\'' + ${user.locked} + '\',\'' + ${currentPageSize} + '\');'" style="width: 120px;">
                     <div th:switch="${user.locked}">
@@ -195,7 +213,6 @@
                     </div>
                 </button>
             </td>
-
         </tr>
     </table>
 </div>

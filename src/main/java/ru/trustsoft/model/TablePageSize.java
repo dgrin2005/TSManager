@@ -3,7 +3,7 @@
  *    TablePageSize.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.model;
@@ -44,4 +44,11 @@ public class TablePageSize {
         this.size = size;
     }
 
+    @Override
+    public String toString() {
+        return "TablePageSize{" +
+                "id=" + id +
+                ", size=" + size +
+                '}';
+    }
 }

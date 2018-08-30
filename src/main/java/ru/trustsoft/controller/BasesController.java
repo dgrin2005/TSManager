@@ -3,7 +3,7 @@
  *    BasesController.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.controller;
@@ -65,11 +65,7 @@ public class BasesController {
             currentPageSize = defaultPageSize;
         }
 
-        if (order.isPresent()) {
-            currentOrder = order.get();
-        } else {
-            currentOrder = defaultOrder;
-        }
+        currentOrder = order.orElseGet(() -> defaultOrder);
 
         if (tablePageSize.getSize() == null) {
             tablePageSize.setSize(currentPageSize);

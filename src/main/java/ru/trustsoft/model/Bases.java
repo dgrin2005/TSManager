@@ -3,7 +3,7 @@
  *    Bases.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.model;
@@ -136,5 +136,19 @@ public class Bases {
 
     public void setBasesofusersById(Collection<Basesofusers> basesofusersById) {
         this.basesofusersById = basesofusersById;
+    }
+
+    @Override
+    public String toString() {
+        return "Bases{" +
+                "id=" + id +
+                ", basename='" + basename + '\'' +
+                ", description='" + description + '\'' +
+                ", contragentid=" + contragentid +
+                ", path='" + path + '\'' +
+                ", ipaddress='" + ipaddress + '\'' +
+                ", contragentsByContragentid=" + contragentsByContragentid +
+                ", basesofusersById=" + basesofusersById +
+                '}';
     }
 }

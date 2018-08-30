@@ -76,8 +76,9 @@
 </head>
 <body>
 <div th:insert="menu :: mainmenu"></div>
-<div style="display:none;" id="dialog-confirm" title="Delete record?">
-    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>This item will be permanently deleted and cannot be recovered. Are you sure?</p>
+<div style="display:none;" id="dialog-confirm" th:title="#{menu.confirm.delete}">
+    <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 20px 0px 0;"></span>
+    <span th:utext="#{info.confirm.delete}"></span>
 </div>
 
 <div style="display:none;" id="dialog-form">

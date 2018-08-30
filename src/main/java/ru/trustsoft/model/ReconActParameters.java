@@ -3,7 +3,7 @@
  *    ReconActParameters.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.model;
@@ -58,5 +58,15 @@ public class ReconActParameters {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "ReconActParameters{" +
+                "id=" + id +
+                ", startDate='" + startDate + '\'' +
+                ", endDate='" + endDate + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

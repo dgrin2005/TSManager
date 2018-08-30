@@ -3,7 +3,7 @@
  *    BasesofusersController.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.controller;
@@ -87,11 +87,7 @@ public class BasesofusersController {
             currentPageSize = defaultPageSize;
         }
 
-        if (order.isPresent()) {
-            currentOrder = order.get();
-        } else {
-            currentOrder = defaultOrder;
-        }
+        currentOrder = order.orElseGet(() -> defaultOrder);
 
         if (tablePageSize.getSize() == null) {
             tablePageSize.setSize(currentPageSize);
@@ -255,7 +251,7 @@ public class BasesofusersController {
                 if (user == currentUser || loginedUser.getAuthorities().contains((GrantedAuthority) () -> "ADMIN")) {
                     String path_1c_base = base.getPath();
                     String basename = WebUtils.getArcBasename(loginedUser, userRepo, base);
-                    BaseArchive ba = new BaseArchive();
+                    BaseArchive ba = new BaseArchive(loginedUser);
                     if (ba.checkBase(path_1c_base)) {
                         model.addAttribute("errorMessage", messageByLocaleService.getMessage("info.archive.check"));
                     } else {
@@ -298,8 +294,7 @@ public class BasesofusersController {
                         model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
                         return basesofusersList(model, principal, tablePageSize, page, size, order);
                     }
-                    System.out.println(basename);
-                    BaseArchive ba = new BaseArchive();
+                    BaseArchive ba = new BaseArchive(loginedUser);
                     ba.getArchive(env.getProperty("arc_catalog"), basename, response, this.servletContext);
                 } else {
                     model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.user"));

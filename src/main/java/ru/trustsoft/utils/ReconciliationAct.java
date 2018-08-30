@@ -3,7 +3,7 @@
  *    ReconciliationAct.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.utils;
@@ -11,19 +11,21 @@ package ru.trustsoft.utils;
 import java.io.*;
 import java.util.logging.Logger;
 
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.userdetails.User;
 
-import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 public class ReconciliationAct {
 
     private static final Logger logger = Logger.getLogger(String.valueOf(ReconciliationAct.class));
+
+    private final User loginedUser;
+
+    public ReconciliationAct(User loginedUser) {
+        this.loginedUser = loginedUser;
+    }
 
     public void orderReconciliationAct(String path_1c, String path_1c_base, String path_epf,
                                        String act_catalog, String parameters1C,
@@ -36,35 +38,24 @@ public class ReconciliationAct {
         String cmd = path_1c + " ENTERPRISE /DisableStartupMessages" +
                 " /F" + path_1c_base + " /N" + username + " /P" + password + " /Execute "+ path_epf +
                 " /C\"" + parameters1C + ";" + act_catalog + "\"" ;
-        System.out.println(cmd);
-        logger.info(cmd);
+        logger.info(loginedUser.getUsername() + " : " + cmd);
         Process p = r.exec(cmd);
     }
 
     public void getReconciliationAct(String act_catalog, String fileName, HttpServletResponse response,
                                      ServletContext servletContext) throws IOException {
         fileName = act_catalog + fileName;
-        WebUtils.downloadFile (fileName, response, servletContext);
+        WebUtils.downloadFile (loginedUser, fileName, response, servletContext);
     }
 
-    public void sendEmail(JavaMailSender sender, String tsmemailaddress, String act_catalog, String fileName,
-                          String email) throws Exception {
+    public void sendActFromEmail(JavaMailSender sender, String tsmemailaddress, String act_catalog, String fileName,
+                          String email, String textString, String subjectString) throws Exception {
 
         fileName = act_catalog + fileName;
         if (new File(fileName).exists()) {
-            MimeMessage message = sender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message,true);
-            helper.setTo(email);
-            helper.setReplyTo(tsmemailaddress);
-            helper.setFrom(tsmemailaddress);
-            helper.setText("Акт сверки");
-            helper.setSubject("Акт сверки");
-            FileSystemResource file = new FileSystemResource(fileName);
-            helper.addAttachment(file.getFilename(), file);
-            sender.send(message);
+            WebUtils.sendEmail(loginedUser, sender, tsmemailaddress, textString, subjectString, fileName, email);
         } else {
             throw new IOException("File not found");
         }
     }
-
 }

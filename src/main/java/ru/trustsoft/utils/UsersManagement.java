@@ -1,6 +1,14 @@
+/**
+ * TerminalServerManager
+ *    UsersManagement.java
+ *
+ *  @author Dmitry Grinshteyn
+ *  @version 1.1 dated 2018-08-30
+ */
+
 package ru.trustsoft.utils;
 
-import sun.util.logging.resources.logging;
+import org.springframework.security.core.userdetails.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,21 +19,25 @@ public class UsersManagement {
 
     private static final Logger logger = Logger.getLogger(String.valueOf(UsersManagement.class));
 
+    private final User loginedUser;
+
+    public UsersManagement(User loginedUser) {
+        this.loginedUser = loginedUser;
+    }
+
     public int isDisabledFromOS (String username) throws IOException{
 
         //wmic useraccount where name='username' getDisabled
         Runtime r = Runtime.getRuntime();
         Process p;
         String cmd = "wmic useraccount where name='" + username + "' get Disabled";
-        System.out.println(cmd);
-        logger.info(cmd);
+        logger.info(loginedUser.getUsername() + " : " + cmd);
         int isDisabled = 0;
         p = r.exec(cmd);
         String s;
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
         while ((s = br.readLine()) != null) {
-            System.out.println(s);
-            logger.info(s);
+            logger.info(loginedUser.getUsername() + " : " + s);
             if (s.trim().toUpperCase().equals("TRUE")) {
                 isDisabled = 1;
             }
@@ -43,8 +55,7 @@ public class UsersManagement {
         Runtime r = Runtime.getRuntime();
         Process p;
         String cmd = "net user " + username + " /active:" + enabled;
-        System.out.println(cmd);
-        logger.info(cmd);
+        logger.info(loginedUser.getUsername() + " : " + cmd);
         Boolean isDisabled = false;
         p = r.exec(cmd);
     }

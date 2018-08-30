@@ -3,13 +3,16 @@
  *    UsersController.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -22,9 +25,11 @@ import ru.trustsoft.repo.ContragentsRepo;
 import ru.trustsoft.repo.UsersRepo;
 import ru.trustsoft.service.MessageByLocaleService;
 import ru.trustsoft.utils.ControllerUtils;
+import ru.trustsoft.utils.TerminalSessions;
 import ru.trustsoft.utils.UsersManagement;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +54,9 @@ public class UsersController {
     @Autowired
     MessageByLocaleService messageByLocaleService;
 
+    @Autowired
+    private Environment env;
+
     @GetMapping(path="/userslist")
     public String usersList(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
                             @RequestParam("page") Optional<Integer> page,
@@ -71,11 +79,7 @@ public class UsersController {
             currentPageSize = defaultPageSize;
         }
 
-        if (order.isPresent()) {
-            currentOrder = order.get();
-        } else {
-            currentOrder = defaultOrder;
-        }
+        currentOrder = order.orElseGet(() -> defaultOrder);
 
         if (tablePageSize.getSize() == null) {
             tablePageSize.setSize(currentPageSize);
@@ -206,19 +210,20 @@ public class UsersController {
     }
 
     @RequestMapping(value = { "/userslist" }, params={"enableuser"}, method = RequestMethod.POST)
-    public String enableUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+    public String enableUser(Model model, Principal principal,
+                             @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
                              @ModelAttribute("enableuser") Integer userid,
                              @RequestParam("page") Optional<Integer> page,
                              @RequestParam("size") Optional<Integer> size,
                              @RequestParam("order") Optional<String> order) {
-
+        User loginedUser = (User) ((Authentication) principal).getPrincipal();
         if (userid> 0) {
             Users managedUser = userRepo.findById(userid);
             if (managedUser == null) {
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.user"));
             } else {
 
-                UsersManagement um = new UsersManagement();
+                UsersManagement um = new UsersManagement(loginedUser);
                 try {
                     um.setEnabledToOS(managedUser.getUsername(), "yes");
                     if (um.isDisabledFromOS(managedUser.getUsername()) == -1) {
@@ -241,19 +246,20 @@ public class UsersController {
     }
 
     @RequestMapping(value = { "/userslist" }, params={"disableuser"}, method = RequestMethod.POST)
-    public String disableUser(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+    public String disableUser(Model model, Principal principal,
+                              @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
                               @ModelAttribute("disableuser") Integer userid,
                               @RequestParam("page") Optional<Integer> page,
                               @RequestParam("size") Optional<Integer> size,
                               @RequestParam("order") Optional<String> order) {
-
+        User loginedUser = (User) ((Authentication) principal).getPrincipal();
         if (userid> 0) {
             Users managedUser = userRepo.findById(userid);
             if (managedUser == null) {
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.user"));
             } else {
 
-                UsersManagement um = new UsersManagement();
+                UsersManagement um = new UsersManagement(loginedUser);
                 try {
                     um.setEnabledToOS(managedUser.getUsername(), "no");
                     if (um.isDisabledFromOS(managedUser.getUsername()) == 1) {
@@ -276,13 +282,14 @@ public class UsersController {
     }
 
     @RequestMapping(value = { "/userslist" }, params={"refreshusersstatus"}, method = RequestMethod.POST)
-    public String refreshUsersStatus(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
-                              @RequestParam("page") Optional<Integer> page,
-                              @RequestParam("size") Optional<Integer> size,
-                              @RequestParam("order") Optional<String> order) {
-
+    public String refreshUsersStatus(Model model, Principal principal,
+                                     @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                                     @RequestParam("page") Optional<Integer> page,
+                                     @RequestParam("size") Optional<Integer> size,
+                                     @RequestParam("order") Optional<String> order) {
+        User loginedUser = (User) ((Authentication) principal).getPrincipal();
         ArrayList<Users> usersArrayList = (ArrayList<Users>)userRepo.findAll();
-        UsersManagement um = new UsersManagement();
+        UsersManagement um = new UsersManagement(loginedUser);
         for (Users user: usersArrayList) {
             int isDisabled = 0;
             try {
@@ -302,6 +309,34 @@ public class UsersController {
                         ": " + ex.toString());
             }
 
+        }
+        return usersList(model, tablePageSize, page, size, order);
+    }
+
+    @RequestMapping(value = { "/userslist" }, params={"disconnect"}, method = RequestMethod.POST)
+    public String disconnectTS(Model model, Principal principal,
+                               @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                               @ModelAttribute("disconnect") Integer userid,
+                               @RequestParam("page") Optional<Integer> page,
+                               @RequestParam("size") Optional<Integer> size,
+                               @RequestParam("order") Optional<String> order) {
+        User loginedUser = (User) ((Authentication) principal).getPrincipal();
+        if (userid> 0) {
+            Users managedUser = userRepo.findById(userid);
+            if (managedUser == null) {
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.notfound.user"));
+            } else {
+                TerminalSessions ts = new TerminalSessions(loginedUser);
+                try {
+                    ts.getSessions(env.getProperty("tsmserveraddress"));
+                    ts.termineSession(env.getProperty("tsmserveraddress"), managedUser.getUsername());
+                    model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.utils.disconnect"));
+                } catch (IOException ex) {
+                    model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.utils.disconnect") +
+                            ": " + ex.toString());
+                }
+
+            }
         }
         return usersList(model, tablePageSize, page, size, order);
     }

@@ -3,7 +3,7 @@
  *    UserinfoController.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.controller;
@@ -62,7 +62,7 @@ public class UserinfoController {
     public String userInfo(Model model, Principal principal, Locale locale) {
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
-        String userInfo = WebUtils.toString(loginedUser, locale);
+        String userInfo = WebUtils.toString(loginedUser, messageByLocaleService);
         Contragents contragent = null;
         try {
             Users user = userRepo.findByUsername(loginedUser.getUsername());
@@ -71,7 +71,7 @@ public class UserinfoController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent") +
                     ": " + ex.toString());
         }
-        String contragentInfo = WebUtils.toString(contragent, locale);
+        String contragentInfo = WebUtils.toString(contragent, messageByLocaleService);
 
         model.addAttribute("userInfo", userInfo);
         model.addAttribute("contragent", contragentInfo);
@@ -85,7 +85,7 @@ public class UserinfoController {
 
         User loginedUser = (User) ((Authentication) principal).getPrincipal();
         if (!loginedUser.getAuthorities().contains((GrantedAuthority) () -> "DEMO")) {
-            TerminalSessions ts = new TerminalSessions();
+            TerminalSessions ts = new TerminalSessions(loginedUser);
             try {
                 ts.getSessions(env.getProperty("tsmserveraddress"));
                 ts.termineSession(env.getProperty("tsmserveraddress"), loginedUser.getUsername());
@@ -117,9 +117,7 @@ public class UserinfoController {
                             LocalDate.parse(reconActParameters.getEndDate()) + ";" +
                             loginedUser.getUsername();
 
-                    System.out.println(parameters1C);
-
-                    ReconciliationAct ra = new ReconciliationAct();
+                    ReconciliationAct ra = new ReconciliationAct(loginedUser);
                     ra.orderReconciliationAct(env.getProperty("path_1c"), env.getProperty("path_1c_base"),
                             env.getProperty("path_epf"), env.getProperty("act_catalog"), parameters1C,
                             env.getProperty("username_1c_admin"), env.getProperty("password_1c_admin"));
@@ -163,8 +161,7 @@ public class UserinfoController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
             return userInfo(model, principal, locale);
         }
-        System.out.println(filename);
-        ReconciliationAct ra = new ReconciliationAct();
+        ReconciliationAct ra = new ReconciliationAct(loginedUser);
         try {
             ra.getReconciliationAct(env.getProperty("act_catalog"), filename, response, this.servletContext);
         } catch (IOException ex) {
@@ -196,11 +193,11 @@ public class UserinfoController {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
             return userInfo(model, principal, locale);
         }
-        System.out.println(filename);
-        ReconciliationAct ra = new ReconciliationAct();
+        ReconciliationAct ra = new ReconciliationAct(loginedUser);
         try {
-            ra.sendEmail(sender, env.getProperty("tsmemailaddress"), env.getProperty("act_catalog"), filename,
-                    reconActParameters.getEmail());
+            ra.sendActFromEmail(sender, env.getProperty("tsmemailaddress"), env.getProperty("act_catalog"), filename,
+                    reconActParameters.getEmail(), messageByLocaleService.getMessage("table.reconciliation"),
+                    messageByLocaleService.getMessage("table.reconciliation"));
             model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.utils.sendreconact"));
         } catch (Exception ex) {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.utils.sendreconact") +

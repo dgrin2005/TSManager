@@ -3,7 +3,7 @@
  *    Basesofusers.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.model;
@@ -95,5 +95,16 @@ public class Basesofusers {
 
     public void setBasesByBaseid(Bases basesByBaseid) {
         this.basesByBaseid = basesByBaseid;
+    }
+
+    @Override
+    public String toString() {
+        return "Basesofusers{" +
+                "id=" + id +
+                ", userid=" + userid +
+                ", usersByUserid=" + usersByUserid +
+                ", baseid=" + baseid +
+                ", basesByBaseid=" + basesByBaseid +
+                '}';
     }
 }

@@ -3,11 +3,12 @@
  *    TerminalSessions.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.utils;
 
+import org.springframework.security.core.userdetails.User;
 import ru.trustsoft.model.TerminalSession;
 
 import java.io.*;
@@ -19,14 +20,19 @@ public class TerminalSessions {
     private static final Logger logger = Logger.getLogger(String.valueOf(TerminalSession.class));
     private final ArrayList<TerminalSession> terminalSessions = new ArrayList<>();
 
+    private final User loginedUser;
+
+    public TerminalSessions(User loginedUser) {
+        this.loginedUser = loginedUser;
+    }
+
     public void getSessions(String tsmserveraddress) throws IOException {
 
         //   qwinsta /server:terminal.example.com
         Runtime r = Runtime.getRuntime();
         Process p;
         String cmd = "qwinsta /server:" + tsmserveraddress;
-        System.out.println(cmd);
-        logger.info(cmd);
+        logger.info(loginedUser.getUsername() + " : " + cmd);
         p = r.exec(cmd);
         String s;
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -59,6 +65,7 @@ public class TerminalSessions {
             }
             if (username.length() != 0) {
                 terminalSessions.add(terminalSession);
+                logger.info(loginedUser.getUsername() + " : " + terminalSession.toString());
             }
         }
         br.close();
@@ -69,14 +76,10 @@ public class TerminalSessions {
 
         //  rwinsta /server:terminal.example.com <session-id>
         for (TerminalSession ts: terminalSessions) {
-            System.out.println(ts.getUsername() + "\\" + ts.getId());
-            logger.info(ts.getUsername() + "\\" + ts.getId());
             if (ts.getUsername().equals(username)) {
-                System.out.println("!!!");
                 Runtime r = Runtime.getRuntime();
                 String cmd = "rwinsta " + ts.getId() +" /server:" + tsmserveraddress;
-                System.out.println(cmd);
-                logger.info(cmd);
+                logger.info(loginedUser.getUsername() + " : " + cmd);
                 r.exec(cmd);
             }
         }

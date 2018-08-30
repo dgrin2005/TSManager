@@ -3,7 +3,7 @@
  *    Contragents.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft.model;
@@ -107,5 +107,17 @@ public class Contragents {
 
     public void setUsersById(Collection<Users> usersById) {
         this.usersById = usersById;
+    }
+
+    @Override
+    public String toString() {
+        return "Contragents{" +
+                "id=" + id +
+                ", contragentname='" + contragentname + '\'' +
+                ", description='" + description + '\'' +
+                ", inn='" + inn + '\'' +
+                ", basesById=" + basesById +
+                ", usersById=" + usersById +
+                '}';
     }
 }
