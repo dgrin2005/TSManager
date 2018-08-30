@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class TerminalSessions {
 
     private static final Logger logger = Logger.getLogger(String.valueOf(TerminalSession.class));
-    private final ArrayList<TerminalSession> terminalSessions = new ArrayList<>();
+    private ArrayList<TerminalSession> terminalSessions = new ArrayList<>();
 
     private final User loginedUser;
 
@@ -26,7 +26,7 @@ public class TerminalSessions {
         this.loginedUser = loginedUser;
     }
 
-    public void getSessions(String tsmserveraddress) throws IOException {
+    private void getSessions(String tsmserveraddress) throws IOException {
 
         //   qwinsta /server:terminal.example.com
         Runtime r = Runtime.getRuntime();
@@ -74,6 +74,7 @@ public class TerminalSessions {
 
     public void  termineSession(String tsmserveraddress, String username) throws IOException {
 
+        getSessions(tsmserveraddress);
         //  rwinsta /server:terminal.example.com <session-id>
         for (TerminalSession ts: terminalSessions) {
             if (ts.getUsername().equals(username)) {

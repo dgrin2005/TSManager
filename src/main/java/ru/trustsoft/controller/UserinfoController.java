@@ -87,7 +87,6 @@ public class UserinfoController {
         if (!loginedUser.getAuthorities().contains((GrantedAuthority) () -> "DEMO")) {
             TerminalSessions ts = new TerminalSessions(loginedUser);
             try {
-                ts.getSessions(env.getProperty("tsmserveraddress"));
                 ts.termineSession(env.getProperty("tsmserveraddress"), loginedUser.getUsername());
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.utils.disconnect"));
             } catch (IOException ex) {

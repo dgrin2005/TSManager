@@ -328,7 +328,6 @@ public class UsersController {
             } else {
                 TerminalSessions ts = new TerminalSessions(loginedUser);
                 try {
-                    ts.getSessions(env.getProperty("tsmserveraddress"));
                     ts.termineSession(env.getProperty("tsmserveraddress"), managedUser.getUsername());
                     model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.utils.disconnect"));
                 } catch (IOException ex) {
