@@ -138,6 +138,7 @@
             <th th:utext="#{baseslist.baseid}" align="center"></th>
             <th th:utext="#{baseslist.path}" align="center"></th>
             <th th:utext="#{baseslist.ipaddress}" align="center"></th>
+            <th th:utext="#{baseslist.lastarchivedate}" align="center"></th>
             <th th:hidden="${isadm eq 0}"></th>
             <th colspan="2"></th>
         </tr>
@@ -149,6 +150,7 @@
             <td th:utext="${baseofusers.basesByBaseid.getId()}" align="center">...</td>
             <td th:utext="${baseofusers.basesByBaseid.getPath()}">...</td>
             <td><a th:href="${baseofusers.basesByBaseid.getIpaddress()}" th:text="${baseofusers.basesByBaseid.getIpaddress()}">...</a></td>
+            <td th:utext="${baseofusers.basesByBaseid.getLastarchivedate()}" align="center">...</td>
             <td th:hidden="${isadm eq 0}">
                     <button type="submit" name="delete" th:onclick="'javascript:deleteClicked(\'' + ${baseofusers.id} +
                                 '\',\'' + ${currentPageSize} + '\');'">
@@ -186,12 +188,23 @@
     </table>
 </div>
 <br/>
-<div th:if="${isadm != 0}">
-    <button type="submit" th:onclick="'javascript:add_updateClicked(\''  + 'add' +
+<table  border="1">
+    <tr>
+        <div th:if="${isadm != 0}">
+            <td align="center">
+                <button type="submit" th:onclick="'javascript:add_updateClicked(\''  + 'add' +
                                 '\',\'' + #{button.add} + '\');'">
-        <span th:utext="#{button.add}"></span>
-    </button>
-</div>
+                    <span th:utext="#{button.add}"></span>
+                </button>
+            </td>
+        </div>
+        <td align="center">
+            <form method="POST">
+                <button type="submit" name="refreshlastarchivedate" style="width: 400px;"><span th:utext="#{button.refreshlastarchivedate}"></span></button>
+            </form>
+        </td>
+    </tr>
+</table>
 <br/>
 <div th:if="${infoMessage}" th:utext="${infoMessage}"
      style="color:blue;font-style:italic;">

@@ -32,6 +32,7 @@ import ru.trustsoft.utils.WebUtils;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -250,7 +251,7 @@ public class BasesofusersController {
                 Users user = baseofusersarc.getUsersByUserid();
                 if (user == currentUser || loginedUser.getAuthorities().contains((GrantedAuthority) () -> "ADMIN")) {
                     String path_1c_base = base.getPath();
-                    String basename = WebUtils.getArcBasename(loginedUser, userRepo, base);
+                    String basename = WebUtils.getArcBasename(base);
                     BaseArchive ba = new BaseArchive(loginedUser);
                     if (ba.checkBase(path_1c_base)) {
                         model.addAttribute("errorMessage", messageByLocaleService.getMessage("info.archive.check"));
@@ -289,7 +290,7 @@ public class BasesofusersController {
                 Bases base = baseofusersarc.getBasesByBaseid();
                 Users user = baseofusersarc.getUsersByUserid();
                 if (user == currentUser || loginedUser.getAuthorities().contains((GrantedAuthority) () -> "ADMIN")) {
-                    String basename = WebUtils.getArcBasename(loginedUser, userRepo, base);
+                    String basename = WebUtils.getArcBasename(base);
                     if (basename.isEmpty()) {
                         model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.no.contragent"));
                         return basesofusersList(model, principal, tablePageSize, page, size, order);
@@ -305,6 +306,36 @@ public class BasesofusersController {
             }
         } else {
             model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.utils.archivebasedemo"));
+        }
+        return basesofusersList(model, principal, tablePageSize, page, size, order);
+    }
+
+    @RequestMapping(value = { "/basesofuserslist" }, params={"refreshlastarchivedate"}, method = RequestMethod.POST)
+    public String refreshUsersStatus(Model model, Principal principal,
+                                     @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                                     @RequestParam("page") Optional<Integer> page,
+                                     @RequestParam("size") Optional<Integer> size,
+                                     @RequestParam("order") Optional<String> order) {
+
+        User loginedUser = (User) ((Authentication) principal).getPrincipal();
+        Users currentUser = userRepo.findByUsername(loginedUser.getUsername());
+        ArrayList<Basesofusers> basesArrayList = new ArrayList<>();
+        if (currentUser.isAdm()) {
+            basesArrayList = (ArrayList<Basesofusers>) baseofusersRepo.findAll();
+        } else {
+            basesArrayList = (ArrayList<Basesofusers>) baseofusersRepo.findBasesByUser(currentUser.getId());
+        }
+        for (Basesofusers baseofuser: basesArrayList) {
+            try {
+                Bases base = baseofuser.getBasesByBaseid();
+                base.setLastarchivedate(WebUtils.getFileDate(env.getProperty("arc_catalog"), WebUtils.getArcBasename(base)));
+                baseRepo.save(base);
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.refreshlastarchivedate"));
+            } catch (Exception ex) {
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.refreshlastarchivedate") +
+                        ": " + ex.toString());
+            }
+
         }
         return basesofusersList(model, principal, tablePageSize, page, size, order);
     }

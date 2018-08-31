@@ -9,6 +9,7 @@
 package ru.trustsoft.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +21,9 @@ import ru.trustsoft.repo.BasesRepo;
 import ru.trustsoft.repo.ContragentsRepo;
 import ru.trustsoft.service.MessageByLocaleService;
 import ru.trustsoft.utils.ControllerUtils;
+import ru.trustsoft.utils.WebUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +46,9 @@ public class BasesController {
 
     @Autowired
     MessageByLocaleService messageByLocaleService;
+
+    @Autowired
+    private Environment env;
 
     @GetMapping(path="/baseslist")
     public String basesList(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
@@ -120,7 +126,7 @@ public class BasesController {
         if (contragentid > 0) {
             Contragents contragent = contragentRepo.findById(contragentid);
             try {
-                Bases base = new Bases(basename, description, contragent, path, ipaddress);
+                Bases base = new Bases(basename, description, contragent, path, ipaddress, "");
                 baseRepo.save(base);
                 contragent.getBasesById().add(base);
                 model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.add.base"));
@@ -186,6 +192,26 @@ public class BasesController {
         catch (Exception ex) {
             model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.delete.base") +
                     ": " + ex.toString());
+        }
+        return basesList(model, tablePageSize, page, size, order);
+    }
+
+    @RequestMapping(value = { "/baseslist" }, params={"refreshlastarchivedate"}, method = RequestMethod.POST)
+    public String refreshUsersStatus(Model model, @ModelAttribute("tablePageSize") TablePageSize tablePageSize,
+                                     @RequestParam("page") Optional<Integer> page,
+                                     @RequestParam("size") Optional<Integer> size,
+                                     @RequestParam("order") Optional<String> order) {
+        ArrayList<Bases> basesArrayList = (ArrayList<Bases>)baseRepo.findAll();
+        for (Bases base: basesArrayList) {
+            try {
+                base.setLastarchivedate(WebUtils.getFileDate(env.getProperty("arc_catalog"), WebUtils.getArcBasename(base)));
+                baseRepo.save(base);
+                model.addAttribute("infoMessage", messageByLocaleService.getMessage("info.refreshlastarchivedate"));
+            } catch (Exception ex) {
+                model.addAttribute("errorMessage", messageByLocaleService.getMessage("error.refreshlastarchivedate") +
+                        ": " + ex.toString());
+            }
+
         }
         return basesList(model, tablePageSize, page, size, order);
     }

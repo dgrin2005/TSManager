@@ -102,9 +102,7 @@ public class Basesofusers {
         return "Basesofusers{" +
                 "id=" + id +
                 ", userid=" + userid +
-                ", usersByUserid=" + usersByUserid +
                 ", baseid=" + baseid +
-                ", basesByBaseid=" + basesByBaseid +
                 '}';
     }
 }

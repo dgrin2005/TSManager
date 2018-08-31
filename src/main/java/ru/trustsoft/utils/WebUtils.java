@@ -29,6 +29,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.logging.Logger;
@@ -106,11 +111,10 @@ public class WebUtils {
         return filename;
     }
 
-    public static String getArcBasename(User loginedUser, UsersRepo userRepo, Bases base)  throws Exception {
+    public static String getArcBasename(Bases base)  throws Exception {
         String filename = "";
         {
-            Users user = userRepo.findByUsername(loginedUser.getUsername());
-            Contragents contragent = user.getContragentsByContragentid();
+            Contragents contragent = base.getContragentsByContragentid();
             if (contragent != null) {
                 filename = contragent.getInn() + "_" + base.getId() + ".dt";
             }
@@ -123,10 +127,10 @@ public class WebUtils {
         MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(servletContext, fileName);
 
         if (new File(fileName).exists()) {
-
             File file = new File(fileName);
             response.setContentType(mediaType.getType());
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName());
+            response.setContentLength((int) file.length());
             InputStream inputStream = new FileInputStream(file);
             int nRead;
             while ((nRead = inputStream.read()) != -1) {
@@ -153,4 +157,17 @@ public class WebUtils {
         sender.send(message);
         logger.info(loginedUser.getUsername() + " : " + "Sended " + fileName + " to " + toAddress);
     }
+
+    public static String getFileDate(String arc_catalog, String fileName) throws IOException {
+        String dateCreated = "";
+        fileName = arc_catalog + fileName;
+        if (new File(fileName).exists()) {
+            Path path = Paths.get(fileName);
+            BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
+            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            dateCreated = df.format(attributes.creationTime().toMillis());
+        }
+        return dateCreated;
+    }
+
 }

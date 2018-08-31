@@ -1,9 +1,9 @@
 /**
  * TerminalServerManager
- *    Application.java
+ *    WebUtils.java
  *
  *  @author Dmitry Grinshteyn
- *  @version 1.0 dated 2018-08-23
+ *  @version 1.1 dated 2018-08-30
  */
 
 package ru.trustsoft;

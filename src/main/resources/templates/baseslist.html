@@ -111,6 +111,7 @@
             <th th:utext="#{baseslist.description}" align="center"></th>
             <th th:utext="#{baseslist.path}" align="center"></th>
             <th th:utext="#{baseslist.ipaddress}" align="center"></th>
+            <th th:utext="#{baseslist.lastarchivedate}" align="center"></th>
             <th align="center">
                 <a th:href="@{/baseslist(order='contragentname_d', size=${currentPageSize})}" style="text-decoration: none;" th:utext="'^'">
                 </a>
@@ -127,6 +128,7 @@
             <td th:utext="${base.description}">...</td>
             <td th:utext="${base.path}">...</td>
             <td><a th:href="${base.ipaddress}" th:text="${base.ipaddress}" align="center">...</a></td>
+            <td th:utext="${base.lastarchivedate}" align="center">...</td>
             <td th:utext="${base.contragentsByContragentid.getContragentname()}">...</td>
             <td th:utext="${base.contragentsByContragentid.getInn()}" align="center">...</td>
             <td>
@@ -162,15 +164,25 @@
 </table>
 </div>
 <br/>
-<button type="submit" th:onclick="'javascript:add_updateClicked(\''  + 'add' +
+<table  border="1">
+    <tr>
+        <td align="center">
+            <button type="submit" th:onclick="'javascript:add_updateClicked(\''  + 'add' +
                                 '\',\'' + #{button.add} + '\',\'' + '0' +
                                 '\',\'' + '' + '\',\'' + '' +
                                 '\',\'' + '' + '\',\'' + '' +
                                 '\',\'' + '0' + '\');'">
-    <span th:utext="#{button.add}"></span>
-</button>
+                <span th:utext="#{button.add}"></span>
+            </button>
+        </td>
+        <td align="center">
+            <form method="POST">
+                <button type="submit" name="refreshlastarchivedate" style="width: 400px;"><span th:utext="#{button.refreshlastarchivedate}"></span></button>
+            </form>
+        </td>
+    </tr>
+</table>
 <br/>
-
 <div th:if="${infoMessage}" th:utext="${infoMessage}"
      style="color:blue;font-style:italic;">
     ...

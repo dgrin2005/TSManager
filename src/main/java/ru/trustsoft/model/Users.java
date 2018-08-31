@@ -160,8 +160,6 @@ public class Users {
                 ", locked=" + locked +
                 ", adm=" + adm +
                 ", contragentid=" + contragentid +
-                ", contragentsByContragentid=" + contragentsByContragentid +
-                ", basesofusersById=" + basesofusersById +
                 '}';
     }
 }

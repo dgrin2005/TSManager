@@ -23,6 +23,9 @@
         <property name="ipaddress">
             <column name="ipaddress" sql-type="text"/>
         </property>
+        <property name="lastarchivedate">
+            <column name="lastarchivedate" sql-type="text"/>
+        </property>
         <set name="basesofusersById" inverse="true">
             <key>
                 <column name="baseid"/>

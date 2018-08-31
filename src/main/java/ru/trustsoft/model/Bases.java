@@ -23,19 +23,22 @@ public class Bases {
     private int contragentid;
     private String path;
     private String ipaddress;
+    private String lastarchivedate;
     private Contragents contragentsByContragentid;
     private Collection<Basesofusers> basesofusersById;
 
     public Bases() {
     }
 
-    public Bases(String basename, String description, Contragents contragentsByContragentid, String path, String ipaddress) {
+    public Bases(String basename, String description, Contragents contragentsByContragentid, String path,
+                 String ipaddress, String lastarchivedate) {
         this.basename = basename;
         this.description = description;
         this.contragentsByContragentid = contragentsByContragentid;
         this.contragentid = contragentsByContragentid.getId();
         this.path = path;
         this.ipaddress = ipaddress;
+        this.lastarchivedate = lastarchivedate;
     }
 
     @Id
@@ -80,13 +83,13 @@ public class Bases {
                 Objects.equals(description, bases.description) &&
                 Objects.equals(contragentid, bases.contragentid) &&
                 Objects.equals(path, bases.path) &&
-                Objects.equals(ipaddress, bases.ipaddress);
+                Objects.equals(ipaddress, bases.ipaddress) &&
+                Objects.equals(lastarchivedate, bases.lastarchivedate);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(id, basename, description, contragentid, path, ipaddress);
+        return Objects.hash(id, basename, description, contragentid, path, ipaddress, lastarchivedate);
     }
 
     @Basic
@@ -129,6 +132,16 @@ public class Bases {
         this.ipaddress = ipaddress;
     }
 
+    @Basic
+    @Column(name = "lastarchivedate", length = -1)
+    public String getLastarchivedate() {
+        return lastarchivedate;
+    }
+
+    public void setLastarchivedate(String lastarchivedate) {
+        this.lastarchivedate = lastarchivedate;
+    }
+
     @OneToMany(mappedBy = "basesByBaseid")
     public Collection<Basesofusers> getBasesofusersById() {
         return basesofusersById;
@@ -147,8 +160,7 @@ public class Bases {
                 ", contragentid=" + contragentid +
                 ", path='" + path + '\'' +
                 ", ipaddress='" + ipaddress + '\'' +
-                ", contragentsByContragentid=" + contragentsByContragentid +
-                ", basesofusersById=" + basesofusersById +
+                ", lastarchivedate='" + lastarchivedate +
                 '}';
     }
 }
